@@ -1,0 +1,6 @@
+{
+    "extension": "mp4",
+    "main_pass": ["-c:v", "libx264", "-preset", "medium", "-crf", "23", "-pix_fmt", "yuv420p"],
+    "audio_pass": ["-c:a", "aac", "-b:a", "192k"],
+    "save_metadata": "True"
+}

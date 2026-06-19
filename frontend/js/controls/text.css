@@ -1,0 +1,19 @@
+/* text control type.
+   Prod has no generic advanced-setting text input (prompt fields used bespoke
+   textareas / .prompt-area). This matches the .advanced-select look from
+   style.css so text inputs read as part of the same control family, without
+   editing the parity-locked style.css. */
+.os-text-input {
+  background-color: var(--upload-area-bg);
+  color: var(--text-color);
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.os-text-input:hover {
+  box-shadow: 0 0 5px rgba(169, 113, 251, 0.5);
+}

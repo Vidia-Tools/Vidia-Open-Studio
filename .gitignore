@@ -1,0 +1,11 @@
+.env
+.env.local
+node_modules/
+dist/
+.wrangler/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.log
+/tmp/

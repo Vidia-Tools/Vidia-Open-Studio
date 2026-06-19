@@ -1,0 +1,583 @@
+{
+  "1": {
+    "inputs": {
+      "double_layers": "7,8,9",
+      "single_layers": "7,8,9",
+      "scale": 4,
+      "start_percent": 0.01,
+      "end_percent": 0.30000000000000004,
+      "rescaling_scale": 0,
+      "model": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "SkipLayerGuidanceDiT",
+    "_meta": {
+      "title": "SkipLayerGuidanceDiT"
+    }
+  },
+  "2": {
+    "inputs": {
+      "shift": 3.0000000000000004,
+      "model": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "4": {
+    "inputs": {
+      "self_structural": 1,
+      "self_temporal": 1,
+      "cross_structural": 1.2000000000000002,
+      "cross_temporal": 1.3000000000000003,
+      "model": [
+        "28",
+        0
+      ]
+    },
+    "class_type": "UNetTemporalAttentionMultiply",
+    "_meta": {
+      "title": "UNetTemporalAttentionMultiply"
+    }
+  },
+  "9": {
+    "inputs": {
+      "samples": [
+        "34",
+        0
+      ],
+      "vae": [
+        "53",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "14": {
+    "inputs": {
+      "value": "a*b",
+      "a": [
+        "38",
+        1
+      ],
+      "b": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "🔧 Simple Math"
+    }
+  },
+  "16": {
+    "inputs": {
+      "pixels": [
+        "19",
+        0
+      ],
+      "vae": [
+        "53",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "17": {
+    "inputs": {
+      "value": "a*b",
+      "a": [
+        "38",
+        2
+      ],
+      "b": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "🔧 Simple Math"
+    }
+  },
+  "19": {
+    "inputs": {
+      "width": [
+        "14",
+        0
+      ],
+      "height": [
+        "17",
+        0
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "25",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "20": {
+    "inputs": {
+      "frame_rate": [
+        "49",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "NativeWanI2V/2026y-06-07",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "9",
+        0
+      ],
+      "audio": [
+        "56",
+        2
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Upscale test [out]"
+    }
+  },
+  "22": {
+    "inputs": {
+      "anything": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "easy cleanGpuUsed",
+    "_meta": {
+      "title": "Clean VRAM Used"
+    }
+  },
+  "23": {
+    "inputs": {
+      "ForceUnload": true,
+      "Passthrough": [
+        "56",
+        0
+      ]
+    },
+    "class_type": "UnloadModels",
+    "_meta": {
+      "title": "❌ Unload Models"
+    }
+  },
+  "24": {
+    "inputs": {
+      "anything": [
+        "22",
+        0
+      ]
+    },
+    "class_type": "easy clearCacheAll",
+    "_meta": {
+      "title": "Clear Cache All"
+    }
+  },
+  "25": {
+    "inputs": {
+      "blur_radius": 13,
+      "sigma": 0.2,
+      "image": [
+        "24",
+        0
+      ]
+    },
+    "class_type": "ImageBlur",
+    "_meta": {
+      "title": "Test just blurring source video"
+    }
+  },
+  "26": {
+    "inputs": {
+      "model_name": "Wan2.1/wan2.1_t2v_1.3B_fp16.safetensors",
+      "weight_dtype": "fp16",
+      "compute_dtype": "fp16",
+      "patch_cublaslinear": false,
+      "sage_attention": "disabled",
+      "enable_fp16_accumulation": false
+    },
+    "class_type": "DiffusionModelLoaderKJ",
+    "_meta": {
+      "title": "Diffusion Model Loader KJ"
+    }
+  },
+  "27": {
+    "inputs": {
+      "value": 3
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "Multiplier {upscale_multiplier}"
+    }
+  },
+  "28": {
+    "inputs": {
+      "lora_name": "WAN_wan2.1-1.3b-control-lora-tile-v1.0_comfy.safetensors",
+      "strength_model": 1,
+      "model": [
+        "36",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "30": {
+    "inputs": {
+      "model": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "CFGZeroStar",
+    "_meta": {
+      "title": "CFGZeroStar"
+    }
+  },
+  "31": {
+    "inputs": {
+      "positive": [
+        "81",
+        0
+      ],
+      "negative": [
+        "71",
+        0
+      ],
+      "vae": [
+        "53",
+        0
+      ],
+      "pixels": [
+        "19",
+        0
+      ]
+    },
+    "class_type": "InstructPixToPixConditioning",
+    "_meta": {
+      "title": "InstructPixToPixConditioning"
+    }
+  },
+  "33": {
+    "inputs": {
+      "weight": 3.000000000000001,
+      "model": [
+        "30",
+        0
+      ],
+      "latent": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "WanVideoEnhanceAVideoKJ",
+    "_meta": {
+      "title": "WanVideo Enhance A Video (native)"
+    }
+  },
+  "34": {
+    "inputs": {
+      "seed": 184377893785265,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "sgm_uniform",
+      "denoise": 0.6500000000000001,
+      "model": [
+        "33",
+        0
+      ],
+      "positive": [
+        "31",
+        0
+      ],
+      "negative": [
+        "31",
+        1
+      ],
+      "latent_image": [
+        "35",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "35": {
+    "inputs": {
+      "seed": 184377893785265,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "sgm_uniform",
+      "denoise": 0.4000000000000001,
+      "model": [
+        "30",
+        0
+      ],
+      "positive": [
+        "31",
+        0
+      ],
+      "negative": [
+        "31",
+        1
+      ],
+      "latent_image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "36": {
+    "inputs": {
+      "lora_name": "Wan21_CausVid_bidirect2_T2V_1_3B_lora_rank32.safetensors",
+      "strength_model": 1,
+      "model": [
+        "26",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "38": {
+    "inputs": {
+      "width": [
+        "45",
+        0
+      ],
+      "height": [
+        "44",
+        0
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "resize",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 16,
+      "device": "cpu",
+      "image": [
+        "56",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "41": {
+    "inputs": {
+      "input1": [
+        "49",
+        3
+      ],
+      "input2": [
+        "49",
+        4
+      ]
+    },
+    "class_type": "LogicGateCompare",
+    "_meta": {
+      "title": "ABiggerThanB"
+    }
+  },
+  "42": {
+    "inputs": {
+      "aspect_ratio": "16:9"
+    },
+    "class_type": "AspectRatioSelector",
+    "_meta": {
+      "title": "Aspect Ratio"
+    }
+  },
+  "43": {
+    "inputs": {
+      "aspect_ratio": "9:16"
+    },
+    "class_type": "AspectRatioSelector",
+    "_meta": {
+      "title": "Aspect Ratio"
+    }
+  },
+  "44": {
+    "inputs": {
+      "cond": [
+        "41",
+        0
+      ],
+      "tt_value": [
+        "42",
+        2
+      ],
+      "ff_value": [
+        "43",
+        2
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "height"
+    }
+  },
+  "45": {
+    "inputs": {
+      "cond": [
+        "41",
+        0
+      ],
+      "tt_value": [
+        "42",
+        1
+      ],
+      "ff_value": [
+        "43",
+        1
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "width"
+    }
+  },
+  "49": {
+    "inputs": {
+      "video_info": [
+        "56",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "53": {
+    "inputs": {
+      "vae_name": "wan_2.1_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "56": {
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+    }
+  },
+  "71": {
+    "inputs": {
+      "text": [
+        "86",
+        0
+      ],
+      "clip": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "81": {
+    "inputs": {
+      "text": [
+        "85",
+        0
+      ],
+      "clip": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "84": {
+    "inputs": {
+      "clip_name": "umt5_xxl_fp16.safetensors",
+      "type": "wan",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "85": {
+    "inputs": {
+      "value": "a cinematic scene"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "Prompt {prompt}"
+    }
+  },
+  "86": {
+    "inputs": {
+      "value": "ugly"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "Negative prompt {negative_prompt}"
+    }
+  }
+}

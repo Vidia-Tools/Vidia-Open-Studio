@@ -1,0 +1,240 @@
+{
+  "10": {
+    "inputs": {
+      "prefix": "Prompt:",
+      "value": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "12": {
+    "inputs": {
+      "prefix": "Original Prompt:",
+      "value": [
+        "18",
+        1
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "14": {
+    "inputs": {
+      "string": "ugly, CARTOON, overexposed, flashing, flicker, blurry, ugly, banding, cataracts, bad anatomy, bad eyes, poorly drawn\nNSFW, nudity, watermark, censored,\ndeformed, bad anatomy, poorly drawn face, mutated,\nextra limb, missing limb, floating limbs, disconnected limbs,\nmalformed hands, long neck,\ncropped, worst quality, low quality,\nabnormal proportions, fused body parts, disappearing body parts, blemishes, nasty, morphed, 过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+    },
+    "class_type": "String Literal",
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "15": {
+    "inputs": {
+      "separator": ", ",
+      "prompt1": [
+        "19",
+        0
+      ],
+      "prompt2": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "easy promptConcat",
+    "_meta": {
+      "title": "PromptConcat"
+    }
+  },
+  "16": {
+    "inputs": {
+      "cond": true,
+      "tt_value": [
+        "18",
+        0
+      ],
+      "ff_value": [
+        "18",
+        1
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "Prompt Enhance Toggle {prompt_enhance_enabled}"
+    }
+  },
+  "17": {
+    "inputs": {
+      "value": "navi, blue skin, pointy ears, tail"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "Lora Keywords {lora_keywords}"
+    }
+  },
+  "18": {
+    "inputs": {
+      "text": [
+        "27",
+        0
+      ],
+      "random_seed": 624641073580523,
+      "model": "Mistral-7B-Instruct-v0.3.Q4_K_M.gguf",
+      "max_tokens": 226,
+      "apply_instructions": true,
+      "instructions": [
+        "26",
+        0
+      ]
+    },
+    "class_type": "Searge_LLM_Node",
+    "_meta": {
+      "title": "Searge LLM Node"
+    }
+  },
+  "19": {
+    "inputs": {
+      "cond": true,
+      "tt_value": [
+        "21",
+        0
+      ],
+      "ff_value": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "Advanced cloud model Toggle {use_cloud_llm}"
+    }
+  },
+  "20": {
+    "inputs": {
+      "openrouter_api_key": "OPENROUTER_API_KEY",
+      "endpoint": "https://openrouter.ai/api/v1"
+    },
+    "class_type": "AV_OpenRouterApi",
+    "_meta": {
+      "title": "OpenRouter API {openrouter_api_key}"
+    }
+  },
+  "21": {
+    "inputs": {
+      "seed": 1066843721364008,
+      "messages": [
+        "23",
+        0
+      ],
+      "api": [
+        "20",
+        0
+      ],
+      "config": [
+        "22",
+        0
+      ]
+    },
+    "class_type": "AV_LLMChat",
+    "_meta": {
+      "title": "LLM Chat"
+    }
+  },
+  "22": {
+    "inputs": {
+      "model": "gemini-2.5-flash",
+      "max_token": 1024,
+      "temperature": 0.5,
+      "custom_model": ""
+    },
+    "class_type": "AV_LLMApiConfig",
+    "_meta": {
+      "title": "LLM API Config"
+    }
+  },
+  "23": {
+    "inputs": {
+      "role": "system",
+      "text": [
+        "26",
+        0
+      ],
+      "messages": [
+        "24",
+        0
+      ]
+    },
+    "class_type": "AV_LLMMessage",
+    "_meta": {
+      "title": "LLM Message"
+    }
+  },
+  "24": {
+    "inputs": {
+      "role": "user",
+      "text": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "AV_LLMMessage",
+    "_meta": {
+      "title": "LLM Message"
+    }
+  },
+  "26": {
+    "inputs": {
+      "value": "You are an AI assistant specializing in creating detailed, vivid descriptive prompts for video generation based on simple user inputs. Your task is to transform the given user input into a comprehensive prompt that can guide the creation of a video sequence.  Here is the user's input: <user_input>{prompt}</user_input>  Please follow these instructions to generate an enhanced video prompt:  1. Carefully analyze the user input. 2. Transform the input into a detailed video generation prompt using the following guidelines:     a. Medium and style:        - If the user input explicitly mentions a medium (e.g., \"a film of\", \"a documentary about\") or a style (e.g., \"cinematic\", \"stop-motion\"), include it in the final prompt.       - If no medium or style is specified, do not add any.     b. Subject:        - Describe the main subject's appearance, pose, and emotions in detail.       - For multiple subjects, explain their relationships and interactions.     c. Lighting:        - Describe the lighting conditions and how they contribute to the mood of the scene.     d. Color:        - Suggest a harmonious color scheme that enhances the overall atmosphere.     e. Composition:        - Indicate framing, perspective, or focal points for key scenes.     f. Details:        - Enhance the scene with relevant details, but avoid mentioning specific backgrounds unless they're crucial to the user's input.     g. Camera work:       - Describe any relevant camera movements, angles, or techniques that would enhance the video  3. Structure the final prompt as follows:    Medium if specified of Subject, important features, details, pose/action, framing, lighting, camera angle/movement, camera properties if relevant.  4. Create 2-3 cohesive sentences that flow naturally and provide a clear vision for the video.  5. Ensure the prompt is appropriate and avoid any content involving minors in inappropriate situations or famous people in sexual contexts."
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "System instructions {prompt_enhance_template}"
+    }
+  },
+  "27": {
+    "inputs": {
+      "value": "a cinematic scene"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "PROMPT {prompt}"
+    }
+  },
+  "32": {
+    "inputs": {
+      "output_file_path": "/ComfyUI/output",
+      "file_name": "PROMPT",
+      "file_extension": "txt",
+      "overwrite": true,
+      "text": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "easy saveText",
+    "_meta": {
+      "title": "Save Text [out:prompt]"
+    }
+  },
+  "35": {
+    "inputs": {
+      "output_file_path": "/ComfyUI/output",
+      "file_name": "NEG-PROMPT",
+      "file_extension": "txt",
+      "overwrite": true,
+      "text": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "easy saveText",
+    "_meta": {
+      "title": "Save Text [out:negative_prompt]"
+    }
+  }
+}

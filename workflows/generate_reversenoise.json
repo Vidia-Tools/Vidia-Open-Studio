@@ -1,0 +1,1519 @@
+{
+  "103": {
+    "inputs": {
+      "desiredXSIZE": [
+        "105",
+        3
+      ],
+      "desiredYSIZE": [
+        "105",
+        4
+      ]
+    },
+    "class_type": "RecommendedResCalc",
+    "_meta": {
+      "title": "Recommended Resolution Calculator"
+    }
+  },
+  "104": {
+    "inputs": {
+      "int": 2
+    },
+    "class_type": "Int Literal",
+    "_meta": {
+      "title": "Divider {frame_divider}"
+    }
+  },
+  "105": {
+    "inputs": {
+      "video_info": [
+        "106",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "106": {
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": [
+        "104",
+        0
+      ],
+      "format": "None"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+    }
+  },
+  "144": {
+    "inputs": {
+      "ckpt_name": "Juggernaut-X-RunDiffusion.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "146": {
+    "inputs": {
+      "lora_name": "Hyper-SDXL-8steps-CFG-lora.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "160",
+        0
+      ],
+      "clip": [
+        "147",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load SDXL Speed LoRA {speed_lora}"
+    }
+  },
+  "147": {
+    "inputs": {
+      "lora_name": "SDXL_AnimeArt.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "144",
+        0
+      ],
+      "clip": [
+        "144",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load SDXL Style LoRA {style_lora}"
+    }
+  },
+  "148": {
+    "inputs": {
+      "b1": 0.9,
+      "b2": 0.8,
+      "s1": 0.9,
+      "s2": 0.3,
+      "model": [
+        "151",
+        0
+      ]
+    },
+    "class_type": "FreeU_V2",
+    "_meta": {
+      "title": "FreeU_V2"
+    }
+  },
+  "151": {
+    "inputs": {
+      "Temperature": 1,
+      "Attention": "both",
+      "Dynamic_Scale_Temperature": true,
+      "Dynamic_Scale_Output": false,
+      "model": [
+        "161",
+        0
+      ]
+    },
+    "class_type": "Unet Temperature",
+    "_meta": {
+      "title": "Unet Temperature"
+    }
+  },
+  "160": {
+    "inputs": {
+      "cond": true,
+      "tt_value": [
+        "148",
+        0
+      ],
+      "ff_value": [
+        "161",
+        0
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "Temperature Toggle"
+    }
+  },
+  "161": {
+    "inputs": {
+      "cond": true,
+      "tt_value": [
+        "166",
+        0
+      ],
+      "ff_value": [
+        "147",
+        0
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "SDXL Style Transfer Toggle"
+    }
+  },
+  "162": {
+    "inputs": {
+      "type": "gaussian",
+      "strength": 0.75,
+      "blur": 0,
+      "image_optional": [
+        "164",
+        0
+      ]
+    },
+    "class_type": "IPAdapterNoise",
+    "_meta": {
+      "title": "IPAdapter Noise"
+    }
+  },
+  "163": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "crop": "center",
+      "image": [
+        "1011",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "164": {
+    "inputs": {
+      "interpolation": "LANCZOS",
+      "crop_position": "center",
+      "sharpening": 0,
+      "image": [
+        "163",
+        0
+      ]
+    },
+    "class_type": "PrepImageForClipVision",
+    "_meta": {
+      "title": "Prep Image For ClipVision"
+    }
+  },
+  "165": {
+    "inputs": {
+      "preset": "PLUS (high strength)",
+      "model": [
+        "147",
+        0
+      ]
+    },
+    "class_type": "IPAdapterUnifiedLoader",
+    "_meta": {
+      "title": "IPAdapter Unified Loader"
+    }
+  },
+  "166": {
+    "inputs": {
+      "weight_style": 1.2,
+      "weight_composition": 1,
+      "expand_style": false,
+      "combine_embeds": "average",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "165",
+        0
+      ],
+      "ipadapter": [
+        "165",
+        1
+      ],
+      "image_style": [
+        "164",
+        0
+      ],
+      "image_composition": [
+        "164",
+        0
+      ],
+      "image_negative": [
+        "162",
+        0
+      ]
+    },
+    "class_type": "IPAdapterStyleComposition",
+    "_meta": {
+      "title": "IPAdapter Style & Composition SDXL"
+    }
+  },
+  "167": {
+    "inputs": {
+      "image": "https://raw.githubusercontent.com/comfyanonymous/ComfyUI/master/comfyui_screenshot.png",
+      "keep_alpha_channel": false,
+      "output_mode": false
+    },
+    "class_type": "LoadImageFromUrl",
+    "_meta": {
+      "title": "Load Image From URL [in_style_ref]"
+    }
+  },
+  "182": {
+    "inputs": {
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "crop_w": 0,
+      "crop_h": 0,
+      "target_width": [
+        "103",
+        0
+      ],
+      "target_height": [
+        "103",
+        1
+      ],
+      "text_g": [
+        "183",
+        0
+      ],
+      "text_l": [
+        "183",
+        0
+      ],
+      "clip": [
+        "146",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncodeSDXL",
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "183": {
+    "inputs": {
+      "string": "ugly, CARTOON, overexposed, flashing, flicker, blurry, ugly, banding, cataracts, bad anatomy, bad eyes, poorly drawn\nNSFW, nudity, watermark, censored,\ndeformed, bad anatomy, poorly drawn face, mutated,\nextra limb, missing limb, floating limbs, disconnected limbs,\nmalformed hands, long neck,\ncropped, worst quality, low quality,\nabnormal proportions, fused body parts, disappearing body parts, blemishes, nasty, morphed, 过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+    },
+    "class_type": "String Literal",
+    "_meta": {
+      "title": "Negative {negative_prompt}"
+    }
+  },
+  "184": {
+    "inputs": {
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "crop_w": 0,
+      "crop_h": 0,
+      "target_width": [
+        "103",
+        0
+      ],
+      "target_height": [
+        "103",
+        1
+      ],
+      "text_g": [
+        "1036",
+        0
+      ],
+      "text_l": [
+        "1036",
+        0
+      ],
+      "clip": [
+        "146",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncodeSDXL",
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "199": {
+    "inputs": {
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 0.3,
+      "positive": [
+        "184",
+        0
+      ],
+      "negative": [
+        "182",
+        0
+      ],
+      "control_net": [
+        "200",
+        0
+      ],
+      "image": [
+        "206",
+        0
+      ],
+      "vae": [
+        "144",
+        2
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {
+      "title": "Apply ControlNet"
+    }
+  },
+  "200": {
+    "inputs": {
+      "control_net_name": "control-lora-depth-rank128.safetensors"
+    },
+    "class_type": "ControlNetLoaderAdvanced",
+    "_meta": {
+      "title": "Load Advanced ControlNet Model 🛂🅐🅒🅝"
+    }
+  },
+  "201": {
+    "inputs": {
+      "control_net_name": "OpenPoseXL2.safetensors"
+    },
+    "class_type": "ControlNetLoaderAdvanced",
+    "_meta": {
+      "title": "Load Advanced ControlNet Model 🛂🅐🅒🅝"
+    }
+  },
+  "202": {
+    "inputs": {
+      "strength": 0.5,
+      "start_percent": 0,
+      "end_percent": 1,
+      "positive": [
+        "199",
+        0
+      ],
+      "negative": [
+        "199",
+        1
+      ],
+      "control_net": [
+        "201",
+        0
+      ],
+      "image": [
+        "205",
+        0
+      ],
+      "vae": [
+        "144",
+        2
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {
+      "title": "Apply ControlNet (OpenPose)"
+    }
+  },
+  "203": {
+    "inputs": {
+      "control_net_name": "control-lora-canny-rank128.safetensors"
+    },
+    "class_type": "ControlNetLoaderAdvanced",
+    "_meta": {
+      "title": "Load Advanced ControlNet Model 🛂🅐🅒🅝"
+    }
+  },
+  "204": {
+    "inputs": {
+      "strength": 0.5,
+      "start_percent": 0,
+      "end_percent": 1,
+      "positive": [
+        "202",
+        0
+      ],
+      "negative": [
+        "202",
+        1
+      ],
+      "control_net": [
+        "203",
+        0
+      ],
+      "image": [
+        "207",
+        0
+      ],
+      "vae": [
+        "144",
+        2
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {
+      "title": "Apply ControlNet (Canny))"
+    }
+  },
+  "205": {
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "resolution": [
+        "103",
+        0
+      ],
+      "bbox_detector": "yolox_l.onnx",
+      "pose_estimator": "dw-ll_ucoco_384.onnx",
+      "scale_stick_for_xinsr_cn": "enable",
+      "image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor",
+    "_meta": {
+      "title": "DWPose Estimator"
+    }
+  },
+  "206": {
+    "inputs": {
+      "ckpt_name": "depth_anything_v2_vitl.pth",
+      "resolution": [
+        "103",
+        0
+      ],
+      "image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "DepthAnythingV2Preprocessor",
+    "_meta": {
+      "title": "Depth Anything V2 - Relative"
+    }
+  },
+  "207": {
+    "inputs": {
+      "low_threshold": 0.05,
+      "high_threshold": 0.25,
+      "image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "Canny",
+    "_meta": {
+      "title": "Canny"
+    }
+  },
+  "226": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "crop": "disabled",
+      "image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Scale Image"
+    }
+  },
+  "289": {
+    "inputs": {
+      "model_name": "hsxl_temporal_layers.f16.safetensors"
+    },
+    "class_type": "ADE_LoadAnimateDiffModel",
+    "_meta": {
+      "title": "Load AnimateDiff Model 🎭🅐🅓②"
+    }
+  },
+  "575": {
+    "inputs": {
+      "frame_rate": [
+        "105",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "GenPreview",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "1046",
+        0
+      ],
+      "audio": [
+        "106",
+        2
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "GENERATION PREVIEW [out]"
+    }
+  },
+  "616": {
+    "inputs": {
+      "prefix": "FPS:",
+      "value": [
+        "105",
+        0
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "617": {
+    "inputs": {
+      "prefix": "Duration:",
+      "value": [
+        "105",
+        2
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "773": {
+    "inputs": {
+      "anything": [
+        "1046",
+        0
+      ]
+    },
+    "class_type": "easy cleanGpuUsed",
+    "_meta": {
+      "title": "Clean VRAM Used"
+    }
+  },
+  "880": {
+    "inputs": {
+      "ckpt_name": "512-inpainting-ema.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "882": {
+    "inputs": {
+      "text": [
+        "183",
+        0
+      ],
+      "clip": [
+        "880",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "883": {
+    "inputs": {
+      "text": "a close-up of a delicate pink rose with velvety petals,reflecting soft ambient light,Dark green-toned light\n\nThe background consists of blurred pink roses and green foliage, creating a dreamy and harmonious depth. \n\n(soft lighting, dim background, cinematic lighting, realistic shading, gentle contrast, warm tones), ",
+      "clip": [
+        "880",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "887": {
+    "inputs": {
+      "image": [
+        "167",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "892": {
+    "inputs": {
+      "text": "max(0, round((%AUX4% * (%AUX% / %AUX2%) - %AUX3%) / 2))",
+      "output_type": "FORMULA",
+      "aux": [
+        "103",
+        0
+      ],
+      "aux2": [
+        "103",
+        1
+      ],
+      "aux3": [
+        "887",
+        0
+      ],
+      "aux4": [
+        "887",
+        1
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "Left Padding"
+    }
+  },
+  "895": {
+    "inputs": {
+      "text": "max(0, round((%AUX4% * (%AUX% / %AUX2%) - %AUX3%) / 2))",
+      "output_type": "FORMULA",
+      "aux": [
+        "103",
+        0
+      ],
+      "aux2": [
+        "103",
+        1
+      ],
+      "aux3": [
+        "887",
+        0
+      ],
+      "aux4": [
+        "887",
+        1
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "Right Padding"
+    }
+  },
+  "897": {
+    "inputs": {
+      "text": "max(0, round((%AUX3% * (%AUX2% / %AUX%) - %AUX4%) / 2))",
+      "output_type": "FORMULA",
+      "aux": [
+        "103",
+        0
+      ],
+      "aux2": [
+        "103",
+        1
+      ],
+      "aux3": [
+        "887",
+        0
+      ],
+      "aux4": [
+        "887",
+        1
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "Top Padding"
+    }
+  },
+  "898": {
+    "inputs": {
+      "text": "max(0, round((%AUX3% * (%AUX2% / %AUX%) - %AUX4%) / 2))",
+      "output_type": "FORMULA",
+      "aux": [
+        "103",
+        0
+      ],
+      "aux2": [
+        "103",
+        1
+      ],
+      "aux3": [
+        "887",
+        0
+      ],
+      "aux4": [
+        "887",
+        1
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "Bottom Padding"
+    }
+  },
+  "950": {
+    "inputs": {
+      "ckpt_name": "dreamshaperXL_v21TurboDPMSDE.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "951": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus-face_sdxl_vit-h.safetensors"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "IPAdapter Model Loader"
+    }
+  },
+  "952": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "953": {
+    "inputs": {
+      "model_name": "big-lama.pt"
+    },
+    "class_type": "INPAINT_LoadInpaintModel",
+    "_meta": {
+      "title": "Load Inpaint Model"
+    }
+  },
+  "954": {
+    "inputs": {
+      "left": [
+        "892",
+        0
+      ],
+      "top": [
+        "897",
+        0
+      ],
+      "right": [
+        "895",
+        0
+      ],
+      "bottom": [
+        "898",
+        0
+      ],
+      "feathering": 80,
+      "image": [
+        "167",
+        0
+      ]
+    },
+    "class_type": "ImagePadForOutpaint",
+    "_meta": {
+      "title": "Pad Image for Outpainting"
+    }
+  },
+  "955": {
+    "inputs": {
+      "grow_mask_by": 40,
+      "pixels": [
+        "956",
+        0
+      ],
+      "vae": [
+        "950",
+        2
+      ],
+      "mask": [
+        "954",
+        1
+      ]
+    },
+    "class_type": "VAEEncodeForInpaint",
+    "_meta": {
+      "title": "VAE Encode (for Inpainting)"
+    }
+  },
+  "956": {
+    "inputs": {
+      "seed": 551282692749067,
+      "inpaint_model": [
+        "953",
+        0
+      ],
+      "image": [
+        "954",
+        0
+      ],
+      "mask": [
+        "954",
+        1
+      ]
+    },
+    "class_type": "INPAINT_InpaintWithModel",
+    "_meta": {
+      "title": "Inpaint (using Model)"
+    }
+  },
+  "957": {
+    "inputs": {
+      "head": "fooocus_inpaint_head.pth",
+      "patch": "inpaint_v26.fooocus.patch"
+    },
+    "class_type": "INPAINT_LoadFooocusInpaint",
+    "_meta": {
+      "title": "Load Fooocus Inpaint"
+    }
+  },
+  "958": {
+    "inputs": {
+      "text": [
+        "183",
+        0
+      ],
+      "clip": [
+        "950",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "959": {
+    "inputs": {
+      "text": [
+        "1036",
+        0
+      ],
+      "clip": [
+        "950",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "960": {
+    "inputs": {
+      "noise_mask": true,
+      "positive": [
+        "959",
+        0
+      ],
+      "negative": [
+        "958",
+        0
+      ],
+      "vae": [
+        "950",
+        2
+      ],
+      "pixels": [
+        "956",
+        0
+      ],
+      "mask": [
+        "954",
+        1
+      ]
+    },
+    "class_type": "InpaintModelConditioning",
+    "_meta": {
+      "title": "InpaintModelConditioning"
+    }
+  },
+  "961": {
+    "inputs": {
+      "weight": 0.7000000000000001,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "950",
+        0
+      ],
+      "ipadapter": [
+        "951",
+        0
+      ],
+      "image": [
+        "167",
+        0
+      ],
+      "image_negative": [
+        "956",
+        0
+      ],
+      "clip_vision": [
+        "952",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "962": {
+    "inputs": {
+      "model": [
+        "961",
+        0
+      ],
+      "patch": [
+        "957",
+        0
+      ],
+      "latent": [
+        "955",
+        0
+      ]
+    },
+    "class_type": "INPAINT_ApplyFooocusInpaint",
+    "_meta": {
+      "title": "Apply Fooocus Inpaint"
+    }
+  },
+  "963": {
+    "inputs": {
+      "seed": 453999163378832,
+      "steps": 30,
+      "cfg": 2,
+      "sampler_name": "dpmpp_sde",
+      "scheduler": "karras",
+      "denoise": 0.9,
+      "model": [
+        "962",
+        0
+      ],
+      "positive": [
+        "960",
+        0
+      ],
+      "negative": [
+        "960",
+        1
+      ],
+      "latent_image": [
+        "960",
+        2
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "964": {
+    "inputs": {
+      "samples": [
+        "963",
+        0
+      ],
+      "vae": [
+        "950",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "965": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "resize_source": false,
+      "destination": [
+        "954",
+        0
+      ],
+      "source": [
+        "964",
+        0
+      ],
+      "mask": [
+        "954",
+        1
+      ]
+    },
+    "class_type": "ImageCompositeMasked",
+    "_meta": {
+      "title": "ImageCompositeMasked"
+    }
+  },
+  "972": {
+    "inputs": {
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "crop",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "965",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "981": {
+    "inputs": {
+      "width": [
+        "103",
+        0
+      ],
+      "height": [
+        "103",
+        1
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "972",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "987": {
+    "inputs": {
+      "value": "a/b",
+      "a": [
+        "103",
+        0
+      ],
+      "b": [
+        "103",
+        1
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "Desired ratio"
+    }
+  },
+  "990": {
+    "inputs": {
+      "value": "a/b",
+      "a": [
+        "992",
+        0
+      ],
+      "b": [
+        "992",
+        1
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "Current ratio"
+    }
+  },
+  "992": {
+    "inputs": {
+      "image": [
+        "972",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "1005": {
+    "inputs": {
+      "comparison": "a != b",
+      "a": [
+        "987",
+        0
+      ],
+      "b": [
+        "990",
+        0
+      ]
+    },
+    "class_type": "easy compare",
+    "_meta": {
+      "title": "Compare"
+    }
+  },
+  "1010": {
+    "inputs": {
+      "input1": [
+        "1005",
+        0
+      ]
+    },
+    "class_type": "LogicGateAnd",
+    "_meta": {
+      "title": "AAndBGate"
+    }
+  },
+  "1011": {
+    "inputs": {
+      "cond": [
+        "1010",
+        0
+      ],
+      "tt_value": [
+        "972",
+        0
+      ],
+      "ff_value": [
+        "981",
+        0
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "Outpaint condition"
+    }
+  },
+  "1017": {
+    "inputs": {
+      "prefix": "Frames loaded: ",
+      "value": [
+        "105",
+        6
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "1036": {
+    "inputs": {
+      "string": "a cinematic scene"
+    },
+    "class_type": "String Literal",
+    "_meta": {
+      "title": "Positive {prompt}"
+    }
+  },
+  "1039": {
+    "inputs": {
+      "start_percent": 0,
+      "end_percent": 1,
+      "motion_model": [
+        "289",
+        0
+      ]
+    },
+    "class_type": "ADE_ApplyAnimateDiffModel",
+    "_meta": {
+      "title": "Apply AnimateDiff Model (Adv.) 🎭🅐🅓②"
+    }
+  },
+  "1043": {
+    "inputs": {
+      "sigmas": [
+        "1060",
+        0
+      ]
+    },
+    "class_type": "FlipSigmas",
+    "_meta": {
+      "title": "FlipSigmas"
+    }
+  },
+  "1046": {
+    "inputs": {
+      "samples": [
+        "1064",
+        0
+      ],
+      "vae": [
+        "144",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "1047": {
+    "inputs": {
+      "add_noise": true,
+      "noise_seed": 0,
+      "cfg": 2,
+      "model": [
+        "1048",
+        0
+      ],
+      "positive": [
+        "204",
+        0
+      ],
+      "negative": [
+        "204",
+        1
+      ],
+      "sampler": [
+        "1059",
+        0
+      ],
+      "sigmas": [
+        "1043",
+        0
+      ],
+      "latent_image": [
+        "1057",
+        0
+      ]
+    },
+    "class_type": "SamplerCustom",
+    "_meta": {
+      "title": "SamplerCustom"
+    }
+  },
+  "1048": {
+    "inputs": {
+      "beta_schedule": "autoselect",
+      "model": [
+        "146",
+        0
+      ],
+      "m_models": [
+        "1039",
+        0
+      ],
+      "context_options": [
+        "1050",
+        0
+      ],
+      "sample_settings": [
+        "1063",
+        0
+      ]
+    },
+    "class_type": "ADE_UseEvolvedSampling",
+    "_meta": {
+      "title": "Use Evolved Sampling 🎭🅐🅓②"
+    }
+  },
+  "1049": {
+    "inputs": {
+      "start_percent": 0,
+      "end_percent": 1,
+      "motion_model": [
+        "289",
+        0
+      ]
+    },
+    "class_type": "ADE_ApplyAnimateDiffModel",
+    "_meta": {
+      "title": "Apply AnimateDiff Model (Adv.) 🎭🅐🅓②"
+    }
+  },
+  "1050": {
+    "inputs": {
+      "context_length": 8,
+      "context_stride": 1,
+      "context_overlap": 2,
+      "fuse_method": "pyramid",
+      "use_on_equal_length": false,
+      "start_percent": 0,
+      "guarantee_steps": 1
+    },
+    "class_type": "ADE_StandardUniformContextOptions",
+    "_meta": {
+      "title": "Context Options◆Standard Uniform 🎭🅐🅓"
+    }
+  },
+  "1057": {
+    "inputs": {
+      "pixels": [
+        "226",
+        0
+      ],
+      "vae": [
+        "144",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "1059": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "1060": {
+    "inputs": {
+      "scheduler": "sgm_uniform",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "1048",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "1062": {
+    "inputs": {
+      "batch_offset": 0,
+      "noise_type": "empty",
+      "seed_gen": "comfy",
+      "seed_offset": 0,
+      "adapt_denoise_steps": false
+    },
+    "class_type": "ADE_AnimateDiffSamplingSettings",
+    "_meta": {
+      "title": "Sample Settings 🎭🅐🅓"
+    }
+  },
+  "1063": {
+    "inputs": {
+      "batch_offset": 0,
+      "noise_type": "empty",
+      "seed_gen": "comfy",
+      "seed_offset": 0,
+      "adapt_denoise_steps": false
+    },
+    "class_type": "ADE_AnimateDiffSamplingSettings",
+    "_meta": {
+      "title": "Sample Settings 🎭🅐🅓"
+    }
+  },
+  "1064": {
+    "inputs": {
+      "add_noise": 0,
+      "noise_seed": 0,
+      "cfg": 5,
+      "model": [
+        "1065",
+        0
+      ],
+      "positive": [
+        "204",
+        0
+      ],
+      "negative": [
+        "204",
+        1
+      ],
+      "sampler": [
+        "1059",
+        0
+      ],
+      "sigmas": [
+        "1060",
+        0
+      ],
+      "latent_image": [
+        "1047",
+        0
+      ]
+    },
+    "class_type": "SamplerCustom",
+    "_meta": {
+      "title": "SamplerCustom"
+    }
+  },
+  "1065": {
+    "inputs": {
+      "beta_schedule": "autoselect",
+      "model": [
+        "146",
+        0
+      ],
+      "m_models": [
+        "1049",
+        0
+      ],
+      "context_options": [
+        "1050",
+        0
+      ],
+      "sample_settings": [
+        "1062",
+        0
+      ]
+    },
+    "class_type": "ADE_UseEvolvedSampling",
+    "_meta": {
+      "title": "Use Evolved Sampling 🎭🅐🅓②"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+[
+  { "key": "forge", "label": "Forge", "description": "Create a new video, built on your chosen foundation", "icon": "forge" },
+  { "key": "evolve", "label": "Evolve", "description": "Radically modify your video", "icon": "evolve" },
+  { "key": "trace", "label": "Trace", "description": "Refine and style your video while keeping its essence", "icon": "trace" }
+]

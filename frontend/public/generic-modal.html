@@ -1,0 +1,76 @@
+<div class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <div id="modalDynamicContent">
+            <h2>Default Title</h2>
+            <p>This is default content. Replace it dynamically!</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1000;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Black w/ opacity */
+        display: flex;
+        /* Use flexbox */
+        justify-content: center;
+        /* Center horizontally */
+        align-items: center;
+        /* Center vertically */
+    }
+
+    .modal-content {
+        background-color: var(--upload-area-bg, #fefefe);
+        color: var(--text-color, #333);
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        /* Added for positioning the close button if needed */
+    }
+
+    .close-button {
+        /* Renamed from .close for clarity if you have other close buttons */
+        color: var(--text-color, #aaa);
+        position: absolute;
+        /* Position it relative to modal-content */
+        top: 10px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--primary-color, #333);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* You can add more generic styles for h2, p within the modal if needed */
+    #modalDynamicContent h2 {
+        color: var(--primary-color, #a971fb);
+        margin-bottom: 1rem;
+        /* Adjusted from 1.5rem for a more generic title */
+        text-align: center;
+        font-size: 1.8rem;
+    }
+</style>

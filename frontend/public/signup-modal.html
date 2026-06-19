@@ -1,0 +1,193 @@
+<div class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>One last step!</h2>
+        <div id="signupSteps">
+            <!-- Step 1: Email -->
+            <div id="step1">
+                <p>Don't wait: We'll email when your video is ready.</p>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+                <button id="nextButton" class="signup-button" type="button">Submit</button>
+            </div>
+
+            <!-- Step 2: Password -->
+            <div id="step2" style="display: none;">
+                <p>Your video gallery awaits: Set a password to view all your creations.</p>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required />
+                </div>
+                <div class="form-group">
+                    <label for="repeatPassword">Repeat Password</label>
+                    <input type="password" id="repeatPassword" name="repeatPassword" required />
+                </div>
+                <div class="button-group">
+                    <button id="backButton" class="back-button">Go Back</button>
+                    <button id="signupButton" class="signup-button">Sign Up</button>
+                </div>
+            </div>
+        </div>
+        <!-- Magic link system makes login/signup distinction irrelevant -->
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal-content {
+    background-color: var(--upload-area-bg, #fefefe); /* Use CSS variable with fallback */
+    color: var(--text-color, #333);
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; /* Could be more or less, depending on screen size */
+    max-width: 500px; /* Maximum width */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+}
+
+.close {
+    color: var(--text-color, #aaa); /* Gray color */
+    float: right; /* Align to the right */
+    font-size: 28px; /* Font size */
+    font-weight: bold; /* Bold text */
+}
+
+.close:hover,
+.close:focus {
+    color: var(--primary-color, #333); /* Change color on hover */
+    text-decoration: none; /* No underline */
+    cursor: pointer; /* Pointer cursor */
+}
+
+.modal-content h2 {
+    color: var(--primary-color, #a971fb);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color, #333);
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 0.5rem;
+    border: 1px solid var(--primary-color, #a971fb);
+    border-radius: 5px;
+    background-color: var(--background-color, #f8f7ff);
+    color: var(--text-color, #333);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color, #fa9570);
+    box-shadow: 0 0 0 2px rgba(250, 149, 112, 0.2);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 1rem;
+}
+
+.signup-button {
+    background-color: var(--primary-color, #a971fb);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+/* For the signup button in the button group */
+.button-group .signup-button {
+    width: 60%; /* Make the signup button narrower */
+    margin-top: 0; /* Remove top margin when in button group */
+}
+
+/* For the standalone signup button (in step 1) */
+#step1 .signup-button {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.signup-button:hover {
+    background-color: var(--secondary-color, #fa9570);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.signup-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.back-button {
+    background-color: var(--button-bg, #f0f0f0);
+    color: var(--button-text, #333);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    width: 40%; /* Make the back button narrower than signup */
+}
+
+.back-button:hover {
+    background-color: var(--advanced-setting-hover-bg, #e0e0e0);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--text-color, #333);
+}
+
+.signup-link a {
+    color: var(--primary-color, #a971fb);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Dark mode styles will be applied automatically through CSS variables */
+</style>

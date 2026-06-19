@@ -1,0 +1,23 @@
+# Wrangler local development files
+.wrangler/
+
+# Node modules
+node_modules/
+
+# Environment variables (use wrangler secrets instead)
+.env
+.dev.vars
+
+# OS files
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Real wrangler config (account-specific values + bindings); use wrangler.toml.example as template
+wrangler.toml

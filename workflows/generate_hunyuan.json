@@ -1,0 +1,374 @@
+{
+  "104": {
+    "inputs": {
+      "int": 2
+    },
+    "class_type": "Int Literal",
+    "_meta": {
+      "title": "Divider {frame_divider}"
+    }
+  },
+  "105": {
+    "inputs": {
+      "video_info": [
+        "106",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "106": {
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": [
+        "104",
+        0
+      ],
+      "format": "None"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+    }
+  },
+  "183": {
+    "inputs": {
+      "string": "ugly, CARTOON, overexposed, flashing, flicker, blurry, ugly, banding, cataracts, bad anatomy, bad eyes, poorly drawn\nNSFW, nudity, watermark, censored,\ndeformed, bad anatomy, poorly drawn face, mutated,\nextra limb, missing limb, floating limbs, disconnected limbs,\nmalformed hands, long neck,\ncropped, worst quality, low quality,\nabnormal proportions, fused body parts, disappearing body parts, blemishes, nasty, morphed, 过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+    },
+    "class_type": "String Literal",
+    "_meta": {
+      "title": "Negative {negative_prompt}"
+    }
+  },
+  "1036": {
+    "inputs": {
+      "string": "a cinematic scene"
+    },
+    "class_type": "String Literal",
+    "_meta": {
+      "title": "Positive {prompt}"
+    }
+  },
+  "1039": {
+    "inputs": {
+      "model_name": "hunyuan_video_vae_bf16.safetensors",
+      "precision": "bf16"
+    },
+    "class_type": "HyVideoVAELoader",
+    "_meta": {
+      "title": "HunyuanVideo VAE Loader"
+    }
+  },
+  "1040": {
+    "inputs": {
+      "llm_model": "Kijai/llava-llama-3-8b-text-encoder-tokenizer",
+      "clip_model": "openai/clip-vit-large-patch14",
+      "precision": "fp16",
+      "apply_final_norm": false,
+      "hidden_state_skip_layer": 2,
+      "quantization": "disabled",
+      "load_device": "offload_device"
+    },
+    "class_type": "DownloadAndLoadHyVideoTextEncoder",
+    "_meta": {
+      "title": "(Down)Load HunyuanVideo TextEncoder"
+    }
+  },
+  "1041": {
+    "inputs": {
+      "prompt": [
+        "1036",
+        0
+      ],
+      "force_offload": "bad quality video",
+      "prompt_template": "video",
+      "text_encoders": [
+        "1040",
+        0
+      ]
+    },
+    "class_type": "HyVideoTextEncode",
+    "_meta": {
+      "title": "HunyuanVideo TextEncode"
+    }
+  },
+  "1043": {
+    "inputs": {
+      "split_index": [
+        "1065",
+        0
+      ],
+      "images": [
+        "1064",
+        0
+      ]
+    },
+    "class_type": "VHS_SplitImages",
+    "_meta": {
+      "title": "Split Images 🎥🅥🅗🅢"
+    }
+  },
+  "1044": {
+    "inputs": {
+      "prefix": "a",
+      "value": [
+        "1043",
+        1
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "1045": {
+    "inputs": {
+      "prefix": "b",
+      "value": [
+        "1043",
+        3
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  },
+  "1046": {
+    "inputs": {
+      "width": 768,
+      "height": 768,
+      "upscale_method": "lanczos",
+      "keep_proportion": true,
+      "divisible_by": 16,
+      "crop": 0,
+      "image": [
+        "1043",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJ",
+    "_meta": {
+      "title": "Resize Image (deprecated)"
+    }
+  },
+  "1047": {
+    "inputs": {
+      "image": [
+        "1046",
+        0
+      ]
+    },
+    "class_type": "GetImageSizeAndCount",
+    "_meta": {
+      "title": "Get Image Size & Count"
+    }
+  },
+  "1048": {
+    "inputs": {
+      "enable_vae_tiling": true,
+      "temporal_tiling_sample_size": 64,
+      "spatial_tile_sample_min_size": 256,
+      "auto_tile_size": true,
+      "skip_latents": 0,
+      "balance_brightness": false,
+      "vae": [
+        "1039",
+        0
+      ],
+      "samples": [
+        "1059",
+        0
+      ]
+    },
+    "class_type": "HyVideoDecode",
+    "_meta": {
+      "title": "HunyuanVideo Decode"
+    }
+  },
+  "1056": {
+    "inputs": {
+      "frame_rate": [
+        "105",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "AnimateDiff",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "1048",
+        0
+      ],
+      "audio": [
+        "106",
+        2
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Hunyuan Preview [out]"
+    }
+  },
+  "1057": {
+    "inputs": {
+      "lora": "hunyuan_samusHunyuan.safetensors",
+      "strength": 0
+    },
+    "class_type": "HyVideoLoraSelect",
+    "_meta": {
+      "title": "HunyuanVideo Lora Select {lora_strength}"
+    }
+  },
+  "1058": {
+    "inputs": {
+      "weight": 1.0000000000000002,
+      "single_blocks": true,
+      "double_blocks": true,
+      "start_percent": 0,
+      "end_percent": 1
+    },
+    "class_type": "HyVideoEnhanceAVideo",
+    "_meta": {
+      "title": "HunyuanVideo Enhance A Video"
+    }
+  },
+  "1059": {
+    "inputs": {
+      "width": [
+        "1047",
+        1
+      ],
+      "height": [
+        "1047",
+        2
+      ],
+      "num_frames": [
+        "1047",
+        3
+      ],
+      "steps": 30,
+      "embedded_guidance_scale": 6.000000000000001,
+      "flow_shift": 9,
+      "seed": 120518250833866,
+      "force_offload": 1,
+      "denoise_strength": 0.6500000000000001,
+      "scheduler": "DPMSolverMultistepScheduler",
+      "riflex_freq_index": 0,
+      "i2v_mode": "dynamic",
+      "model": [
+        "1061",
+        0
+      ],
+      "hyvid_embeds": [
+        "1041",
+        0
+      ],
+      "samples": [
+        "1060",
+        0
+      ],
+      "feta_args": [
+        "1058",
+        0
+      ]
+    },
+    "class_type": "HyVideoSampler",
+    "_meta": {
+      "title": "HunyuanVideo Sampler"
+    }
+  },
+  "1060": {
+    "inputs": {
+      "enable_vae_tiling": true,
+      "temporal_tiling_sample_size": 16,
+      "spatial_tile_sample_min_size": 256,
+      "auto_tile_size": true,
+      "noise_aug_strength": 0.030000000000000006,
+      "latent_strength": 1,
+      "latent_dist": "sample",
+      "vae": [
+        "1039",
+        0
+      ],
+      "image": [
+        "1047",
+        0
+      ]
+    },
+    "class_type": "HyVideoEncode",
+    "_meta": {
+      "title": "HunyuanVideo Encode"
+    }
+  },
+  "1061": {
+    "inputs": {
+      "model": "hunyuan_video_720_fp8_e4m3fn.safetensors",
+      "base_precision": "bf16",
+      "quantization": "fp8_e4m3fn",
+      "load_device": "offload_device",
+      "attention_mode": "sdpa",
+      "auto_cpu_offload": false,
+      "upcast_rope": true,
+      "lora": [
+        "1057",
+        0
+      ]
+    },
+    "class_type": "HyVideoModelLoader",
+    "_meta": {
+      "title": "HunyuanVideo Model Loader"
+    }
+  },
+  "1064": {
+    "inputs": {
+      "image": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "GetImageSizeAndCount",
+    "_meta": {
+      "title": "Get Image Size & Count"
+    }
+  },
+  "1065": {
+    "inputs": {
+      "value": "a - ((a - 1) % 4)",
+      "a": [
+        "1064",
+        3
+      ]
+    },
+    "class_type": "SimpleMath+",
+    "_meta": {
+      "title": "🔧 Simple Math"
+    }
+  },
+  "1066": {
+    "inputs": {
+      "prefix": "Hunyuan frames: ",
+      "value": [
+        "1065",
+        0
+      ]
+    },
+    "class_type": "ConsoleDebug+",
+    "_meta": {
+      "title": "🔧 Console Debug"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "generation_id": "gen_test_minimal_0001",
+  "user_id": "test-user",
+  "params": {
+    "method": "forge",
+    "prompt": "a calm seaside village at golden hour",
+    "negative_prompt": "",
+    "features": {
+      "fullBodyReplace": false,
+      "detailer": false,
+      "faceSwap": false,
+      "liveportrait": false,
+      "upscaler": false,
+      "genAudio": false
+    },
+    "files": {}
+  }
+}

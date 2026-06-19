@@ -1,0 +1,4 @@
+/* select control type.
+   The .advanced-select dropdown visuals live in the parity-locked style.css.
+   Nothing to add here; this file exists to keep the lego contract (type = js +
+   css) and as the home for any future select-only styling. */

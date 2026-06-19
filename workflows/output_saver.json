@@ -1,0 +1,163 @@
+{
+  "1": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "2": {
+    "inputs": {
+      "video_info": [
+        "9",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "3": {
+    "inputs": {
+      "video": "https://customer-tx4sic63nzl9h8jm.cloudflarestream.com/8c255d5c990db719255a8f30380afc9a/downloads/default.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "appended watermark sound"
+    }
+  },
+  "7": {
+    "inputs": {
+      "frame_rate": [
+        "16",
+        0
+      ],
+      "filename_prefix": "VidiaExport",
+      "format": "video/h264-mp4",
+      "save_output": true,
+      "corner_opacity": 0.4,
+      "append_watermark_source_fps": [
+        "2",
+        0
+      ],
+      "images": [
+        "12",
+        0
+      ],
+      "audio": [
+        "12",
+        2
+      ],
+      "append_watermark": [
+        "9",
+        0
+      ],
+      "watermark_audio": [
+        "3",
+        2
+      ],
+      "corner_watermark": [
+        "11",
+        0
+      ],
+      "corner_watermark_mask": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "VidiaVideoSaver",
+    "_meta": {
+      "title": "Vidia Video Saver [out]"
+    }
+  },
+  "9": {
+    "inputs": {
+      "video": "https://customer-tx4sic63nzl9h8jm.cloudflarestream.com/5ceae9f219f7d5a25d4bba8828e5d38f/downloads/default.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "appended watermark"
+    }
+  },
+  "10": {
+    "inputs": {
+      "video": "https://customer-tx4sic63nzl9h8jm.cloudflarestream.com/87635b4c1d0932bdadde1c7baa04f195/downloads/default.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "corner watermark mask"
+    }
+  },
+  "11": {
+    "inputs": {
+      "video": "https://customer-tx4sic63nzl9h8jm.cloudflarestream.com/e71796efa194ac34b8d1f87c38f10b34/downloads/default.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "corner watermark"
+    }
+  },
+  "12": {
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+    }
+  },
+  "16": {
+    "inputs": {
+      "video_info": [
+        "12",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  }
+}

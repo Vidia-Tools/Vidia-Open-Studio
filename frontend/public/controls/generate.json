@@ -1,0 +1,34 @@
+{
+  "stage": "generate",
+  "controls": [
+    { "type": "slider", "param": "denoise", "range": [0, 1, 0.01], "default": 0.65, "label": "Change amount", "modes": ["evolve"], "definingFeature": true, "hint": "Adjust how much the video changes from the original. Higher values create more dramatic changes, while lower values keep it closer to the source." },
+
+    { "type": "slider", "param": "denoise", "range": [0, 1, 0.01], "default": 0.65, "label": "Creativity strength", "modes": ["hunyuan"], "definingFeature": true, "hint": "Adjust how much freedom the AI has to create. Higher values generate more creative but less predictable results, while lower values stay closer to your original prompt." },
+
+    { "type": "subject-checklist", "param": "subject", "label": "Subject", "modes": ["forge"], "definingFeature": true, "hint": "Choose the subject type of your video for best results. This affects how the AI analyzes your video." },
+
+    { "type": "select", "param": "speed", "options": ["Quality", "Balanced", "Speed", "High Speed"], "default": "Quality", "label": "Speed Priority", "modes": ["evolve", "trace"], "optionParams": { "Quality": { "steps": 30, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors" }, "Balanced": { "steps": 12, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors" }, "Speed": { "steps": 8, "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors" }, "High Speed": { "steps": 4, "speed_lora": "Hyper-SDXL-4steps-CFG-lora.safetensors" } }, "hint": "Higher speed may reduce quality but will make generation time faster. It is recommended to run previews at a high speed to get the gist of the result, and full generations at full quality." },
+
+    { "type": "image-upload", "param": "style_ref", "slot": "in_style_ref", "fileType": "style", "strengthParam": "ipadapter_style_weight", "range": [0, 2, 0.01], "default": 1.2, "label": "Style Transfer", "hint": "Upload an image to transfer its style. Adjust strength to control the intensity." },
+
+    { "type": "image-upload", "param": "face_image", "slot": "in_face_image", "fileType": "face", "enablesFeature": "faceSwap", "label": "Face Swap", "hint": "Upload a face image to replace all faces in the video with your uploaded face. Adjust strength as needed." },
+
+    { "type": "toggle", "param": "liveportrait", "default": false, "label": "Face Expression Transfer", "hint": "Transfers facial expressions from the original video to the new video." },
+
+    { "type": "toggle", "param": "fullBodyReplace", "default": false, "label": "Full Body Replacement", "badge": "Experimental", "hint": "Replaces the subject of the video with a character of your choosing. You'll need to select the subject by placing points on the canvas. <b>WARNING: increases processing time significantly, and may not work properly with vertical videos.</b>" },
+    { "type": "image-upload", "param": "body_image", "slot": "in_ref_image", "fileType": "body", "feature": "fullBodyReplace", "label": "Body Replacement Image", "hint": "Upload a full-body image of the character you want to use for replacement." },
+    { "type": "canvas-points", "param": "points_positive", "feature": "fullBodyReplace", "label": "Subject Points", "hint": "Place points on the canvas to mark the subject (green) and the background (red) for replacement." },
+
+    { "type": "lora-gallery", "param": "effects_lora", "label": "Effects", "hint": "Choose a card to apply special effects. Adjust strength to control the intensity." },
+
+    { "type": "toggle", "param": "detailer", "default": false, "label": "Detailer", "badge": "Legacy", "hint": "Tells the generation to add more details to the face, the hands, or the person in your creation. May increase generation time." },
+
+    { "type": "toggle", "param": "skinImprovement", "default": false, "label": "Skin Improvement", "hint": "Slightly improves the quality of skin tones and textures in the output." },
+
+    { "type": "toggle", "param": "upscaler", "default": false, "label": "Increase output resolution", "hint": "Increase your video's detail, sharpness, and resolution." },
+    { "type": "slider", "param": "upscale_multiplier", "range": [2, 4, 1], "default": 2, "label": "Upscale multiplier", "feature": "upscaler", "hint": "Choose how much to increase the resolution by." },
+
+    { "type": "select", "param": "seed_mode", "options": ["Random", "Static"], "default": "Random", "optionParams": { "Random": { "seed": -1 }, "Static": {} }, "label": "Seed Control", "badge": "Advanced", "group": "advanced", "hint": "Control the randomness of generation. Random creates unique results each time, while Static allows reproducible results." },
+    { "type": "text", "param": "seed", "default": -1, "label": "Seed", "group": "advanced", "hint": "The seed used when Seed Control is set to Static (-1 = random)." }
+  ]
+}

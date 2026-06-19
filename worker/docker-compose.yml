@@ -1,0 +1,31 @@
+# Vidia Open Studio worker, local mode.
+# Usage: copy ../.env.example to ../.env, fill values, then `docker compose up`.
+# Requires Docker with the NVIDIA Container Toolkit.
+services:
+  worker:
+    build: .
+    image: vidia-open-studio-worker
+    env_file:
+      - ../.env
+    environment:
+      VIDIA_MODE: local
+      DEPLOYMENT_MODE: serverless
+      # The image entrypoint is updater.sh (updater -> bootstrap -> start). The
+      # self-update env vars (VIDIA_DOCKER_REPO_URL, VIDIA_DOCKER_REPO_REF,
+      # VIDIA_NODE_REPO_URL, VIDIA_NODE_REPO_REF, *_DEPLOY_KEY, COMFY_VERSION)
+      # are read from ../.env via env_file above; set them there to point at a
+      # fork. If unset the scripts default to the public codeberg repos on main
+      # and fall back to the image-baked scripts when a clone fails.
+    ports:
+      - "8189:8189"   # app server (POST /generate, GET /progress)
+      - "8188:8188"   # ComfyUI
+    volumes:
+      # Models and custom nodes live outside the image (see scripts/fetch_models.py)
+      - ./models-volume:/runpod-volume
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

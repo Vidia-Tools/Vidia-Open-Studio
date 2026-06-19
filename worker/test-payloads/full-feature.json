@@ -1,0 +1,28 @@
+{
+  "generation_id": "gen_test_full_0001",
+  "user_id": "test-user",
+  "params": {
+    "method": "evolve",
+    "prompt": "a dancer performing in a neon-lit studio, cinematic",
+    "negative_prompt": "blurry, low quality, distorted",
+    "seed": 123456789,
+    "steps": 30,
+    "cfg": 7,
+    "denoise": 0.75,
+    "frame_divider": 2,
+    "aspect": "16:9",
+    "features": {
+      "fullBodyReplace": true,
+      "detailer": true,
+      "faceSwap": true,
+      "liveportrait": true,
+      "upscaler": true,
+      "genAudio": true
+    },
+    "files": {
+      "in_video": "https://example.com/placeholder/in_video.mp4",
+      "in_style_ref": "https://example.com/placeholder/in_style_ref.png",
+      "in_face_image": "https://example.com/placeholder/in_face_image.png"
+    }
+  }
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QRTYX74EX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6QRTYX74EX');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits - Vidia AI</title>
+    <link rel="icon" type="image/x-icon" href="/assets/icon2.ico">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 2rem 0.5rem;
+        }
+        .credits-content {
+            background-color: var(--upload-area-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: var(--text-color);
+        }
+        .credits-content h1, .credits-content h2, .credits-content h3 {
+            color: var(--primary-color);
+        }
+        .credits-content p, .credits-content ul {
+            margin-bottom: 1rem;
+        }
+        .credits-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        .credits-content a:hover {
+            text-decoration: underline;
+        }
+        .creators-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .effect-card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            height: 100%;
+        }
+        .effect-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .effect-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .effect-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        .effect-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .effect-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        .effect-creator {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .notice-box {
+            background-color: rgba(var(--primary-color-rgb), 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .creators-box {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        .creator-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        @media (max-width: 768px) {
+            .effects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="container">
+        <div class="credits-content">
+            <h1>Credits</h1>
+            
+            <div class="notice-box">
+                <p>During Vidia's alpha stage, we're showcasing what's possible with our platform by temporarily featuring artistic styles created by talented members of the AI art community. We deeply respect these creators and their work, which is why we've created this page to properly acknowledge their contributions.</p>
+                <p>As Vidia evolves beyond alpha, we'll be developing our approach to artistic styles and effects, but we wanted to be transparent about the amazing work we're currently featuring to demonstrate Vidia's capabilities.</p>
+            </div>
+
+            <section class="creators-section">
+                <h2>Vidia Team</h2>
+                <div class="creators-box">
+                    <p><span class="creator-name">Federico</span> - Creator and Developer</p>
+                    <p><span class="creator-name">Andres Felipe Daza</span> - Collaborator</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Featured Artistic Effects</h2>
+                <p>These artistic effects (known officially as LoRAs) help transform your videos with unique visual styles. We're grateful to the following creators for their exceptional work that helps showcase Vidia's capabilities:</p>
+                
+                <div class="effects-grid">
+                    <a href="http://civitai.com/models/1396847/everything-blossoms" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/26d4cd99-8bea-4081-b6bb-a069f9cca000/public" alt="Everything Blossoms effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Everything Blossoms</div>
+                                <div class="effect-creator">Created by: color2023</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/1674101/breathing-fire" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/d80b0d0e-be03-4fa4-3434-283e9bfc5900/public" alt="Breathing Fire effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Breathing Fire</div>
+                                <div class="effect-creator">Created by: color2023</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/1705248/h-invisibility" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/80b98c62-37cd-4deb-77ee-7bd72a10d600/public" alt="Invisibility effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Invisibility</div>
+                                <div class="effect-creator">Created by: color2023</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/1690168/dark-angel" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/9548623c-aa94-41d9-7d75-434dee479a00/public" alt="Dark Angel effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Dark Angel</div>
+                                <div class="effect-creator">Created by: color2023</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/1655634/ratatoskr-animal-creature-and-furry-for-wan-21-i2v-lora" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/164622c0-6774-4fb3-2947-dd40d9ac1b00/public" alt="Ratatoskr effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Ratatoskr</div>
+                                <div class="effect-creator">Created by: freek22</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/1598575/disguise-drop-wan21-14b-flf2v-720p" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/6ad1376e-278b-4f66-3774-7e3a2e2c9b00/public" alt="Disguise Drop effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Disguise Drop</div>
+                                <div class="effect-creator">Created by: kabachuha</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="https://civitai.com/models/262880/eldritch-comics-comic-book-style-illustration" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3f6aa056-23d3-4c3c-97f2-3b010b7f4611/width=450/SDXL-Lora-NoRefiner_03862_.jpeg" alt="Eldritch Comics effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Eldritch Comics</div>
+                                <div class="effect-creator">Created by: eldritchadam</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="effect-card">
+                        <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a198444b-573d-40f1-a8b1-570112754304/original=true,quality=90/06421.jpeg" alt="Vintage VHS effect" class="effect-image">
+                        <div class="effect-info">
+                            <div class="effect-name">Vintage VHS</div>
+                            <div class="effect-creator">Creator unknown</div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://civitai.com/models/120096/pixel-art-xl" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/0770e5fc-4260-4e3c-a0ee-bf2253028e9f/width=450/x8_upscaled__00144_.jpeg" alt="Pixel Art XL effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Pixel Art XL</div>
+                                <div class="effect-creator">Created by: NeriJS</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/273002/animeart" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/00bfef19-7400-4f4a-a043-26ec790c4591/width=450/00004-313237122.jpeg" alt="Anime Art effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Anime Art</div>
+                                <div class="effect-creator">Created by: Jonas716</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/73756/3d-rendering-style" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/76b40ceb-72ff-4863-91f7-0c070993c63b/original=true,quality=90/3dmm_00011_.jpeg" alt="3D Model Maker XL effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">3D Model Maker XL</div>
+                                <div class="effect-creator">Created by: LONGD.</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/208168/claymate-claymation-style-for-sdxl" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f776f326-1d99-4eca-9fa4-af4af3a7f4af/width=450/00426-3216997761-_lora_Clay%20Animation_1_Clay%20Animation%20-%20a%20CLAYMATION%20a%20happy%2024%20year%20old%20man%20with%20a%20beard%20in%20the%20style%20of%20Erwin%20Olaf%20in%20CLAYMATI.jpeg" alt="Clay Animation effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Clay Animation</div>
+                                <div class="effect-creator">Created by: Clumsy_Trainer</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="effect-card">
+                        <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7a6bf100-2ed8-445e-9f78-2cdc66de58bf/width=450/00578-944440993.jpeg" alt="Facial Expression Style effect" class="effect-image">
+                        <div class="effect-info">
+                            <div class="effect-name">Facial Expression Style</div>
+                            <div class="effect-creator">Creator unknown</div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://civitai.com/models/365275?modelVersionId=408195" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f5467d42-d16c-477e-bf37-ba48d8f93187/width=450/00093-998533311.jpeg" alt="Technicolor effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Technicolor</div>
+                                <div class="effect-creator">Created by: EauDeNoire</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="effect-card">
+                        <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3bd7d928-472f-49ed-bb15-13f9cb2ee19e/width=450/06_Euler%20a_lora%20101%20novuschroma%201%201%20dragon%20novuschroma%20style.jpeg" alt="Novus Chroma effect" class="effect-image">
+                        <div class="effect-info">
+                            <div class="effect-name">Novus Chroma</div>
+                            <div class="effect-creator">Creator unknown</div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://civitai.com/models/24833/minimalist-anime-style" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/592bad92-3e9c-4b75-a653-b63b7e8f233e/width=450/Minimalist_vector_art_e000010_00_20240818121750.jpeg" alt="Minimalist Vector Art effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Minimalist Vector Art</div>
+                                <div class="effect-creator">Created by: hortacreator</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/725614?modelVersionId=820720" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f989fc61-ceb3-4483-b369-7376d1515a7e/width=450/00016-1030514297.jpeg" alt="Kodak Portra 400 effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Kodak Portra 400</div>
+                                <div class="effect-creator">Created by: EauDeNoire</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/421162?modelVersionId=469308" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/745a834c-5afe-4183-b90f-9566f8409c5c/width=450/00563-4125486649.jpeg" alt="Detailed Style effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Detailed Style</div>
+                                <div class="effect-creator">Created by: EauDeNoire</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/553811?modelVersionId=653954" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6c66ed8a-02d5-4164-b975-6f3575e71e1d/width=450/DMWZY3PDK75B5XDPTCXHNK6FC0.jpeg" alt="Stained Glass effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Stained Glass</div>
+                                <div class="effect-creator">Created by: ArsMachina</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/156164?modelVersionId=175257" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/52714ba5-23ad-4ad8-9d9e-12baccc3b449/width=450/08350-2407568206-(Masterpiece,%20high%20quality,%20best%20quality,%20official%20art,%20beauty%20and%20aesthetics_1.2),(fire%20element_1.1),composed%20of%20fire%20elements,.jpeg" alt="Shanbailing Fire effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Shanbailing Fire</div>
+                                <div class="effect-creator">Created by: bailing_SHAN</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.green/models/520524?modelVersionId=578357" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d42e4e38-d837-42b4-8be1-8d5756d043f2/width=450/00137-4193514465.jpeg" alt="Hollywood Anamorphic effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Hollywood Anamorphic</div>
+                                <div class="effect-creator">Created by: EauDeNoire</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/api/download/models/1463848?type=Model&format=SafeTensor" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/placeholder" alt="Glitchy Camcorder Style effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Glitchy Camcorder Style</div>
+                                <div class="effect-creator">Created by: DSlater</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/1267274/hunyuan-video-dreamyvibes-style-lora?modelVersionId=1429353" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/placeholder" alt="Dreamyvibes Style effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Dreamyvibes Style</div>
+                                <div class="effect-creator">Created by: DSlater</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://civitai.com/models/1200874/cyberhunyuan?modelVersionId=1352204" class="effect-card-link" target="_blank" rel="noopener noreferrer">
+                        <div class="effect-card">
+                            <img src="https://image.civitai.com/placeholder" alt="Cyber effect" class="effect-image">
+                            <div class="effect-info">
+                                <div class="effect-name">Cyber</div>
+                                <div class="effect-creator">Created by: Ciro_Negrogni</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="notice-box" style="margin-top: 2rem;">
+                    <p>If you're a creator whose work is featured here and have any questions or concerns, please reach out to us at <a href="mailto:hello@vidia.tools">hello@vidia.tools</a>. We're committed to respecting intellectual property rights and will promptly address any concerns.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script type="module" src="/js/ui/includes.js"></script>
+</body>
+</html>

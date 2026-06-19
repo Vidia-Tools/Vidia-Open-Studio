@@ -1,0 +1,11 @@
+# wrangler.toml
+name = 'vidia-app'
+compatibility_date = "2023-10-30"
+
+# Static site config - Vite builds to dist/
+[site]
+bucket = "./dist"
+
+[env.production]
+name = "vidia-alpha"
+route = ""

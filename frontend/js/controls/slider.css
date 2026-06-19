@@ -1,0 +1,7 @@
+/* slider control type.
+   Range track/thumb visuals and .advanced-setting-value live in the
+   parity-locked style.css. This file only pins the value readout so it does
+   not get stretched by the flex .advanced-setting-control. */
+.advanced-setting-control .advanced-setting-value {
+  flex: 0 0 auto;
+}

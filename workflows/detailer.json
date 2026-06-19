@@ -1,0 +1,307 @@
+{
+  "2": {
+    "inputs": {
+      "text": [
+        "41",
+        0
+      ],
+      "clip": [
+        "29",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "4": {
+    "inputs": {
+      "text": [
+        "40",
+        0
+      ],
+      "clip": [
+        "29",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "6": {
+    "inputs": {
+      "model_name": "sam_vit_b_01ec64.pth",
+      "device_mode": "AUTO"
+    },
+    "class_type": "SAMLoader",
+    "_meta": {
+      "title": "SAMLoader (Impact)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "model": [
+        "31",
+        0
+      ],
+      "clip": [
+        "29",
+        1
+      ],
+      "vae": [
+        "27",
+        2
+      ],
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "ToBasicPipe",
+    "_meta": {
+      "title": "ToBasicPipe"
+    }
+  },
+  "9": {
+    "inputs": {
+      "feather": 5,
+      "alpha": 255,
+      "image": [
+        "35",
+        0
+      ],
+      "segs": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "SEGSPaste",
+    "_meta": {
+      "title": "SEGSPaste"
+    }
+  },
+  "12": {
+    "inputs": {
+      "guide_size": 256,
+      "guide_size_for": true,
+      "max_size": 768,
+      "seed": 831006328220493,
+      "steps": 8,
+      "cfg": 5,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "sgm_uniform",
+      "denoise": 0.18,
+      "refiner_ratio": 0.2,
+      "noise_mask_feather": 20,
+      "image_frames": [
+        "35",
+        0
+      ],
+      "segs": [
+        "24",
+        0
+      ],
+      "basic_pipe": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "SEGSDetailerForAnimateDiff",
+    "_meta": {
+      "title": "SEGSDetailer For Video (SEGS/pipe) {seed} {denoise}"
+    }
+  },
+  "13": {
+    "inputs": {
+      "model_name": "segm/person_yolov8m-seg.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "22": {
+    "inputs": {
+      "frame_rate": [
+        "36",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "GenPreview",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "face PREVIEW [out]"
+    }
+  },
+  "24": {
+    "inputs": {
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 10,
+      "crop_factor": 2.5,
+      "drop_size": 50,
+      "sub_threshold": 0.5,
+      "sub_dilation": 10,
+      "sub_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7,
+      "masking_mode": "Pivot SEGS",
+      "segs_pivot": "Combined mask",
+      "bbox_detector": [
+        "13",
+        0
+      ],
+      "image_frames": [
+        "35",
+        0
+      ],
+      "sam_model_opt": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ImpactSimpleDetectorSEGS_for_AD",
+    "_meta": {
+      "title": "Simple Detector for Video (SEGS)"
+    }
+  },
+  "26": {
+    "inputs": {
+      "facedetection": "retinaface_resnet50",
+      "model": "codeformer-v0.1.0.pth",
+      "visibility": 0.65,
+      "codeformer_weight": 0.5,
+      "image": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "ReActorRestoreFace",
+    "_meta": {
+      "title": "Restore Face 🌌 ReActor"
+    }
+  },
+  "27": {
+    "inputs": {
+      "ckpt_name": "Juggernaut-X-RunDiffusion.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "28": {
+    "inputs": {
+      "lora_name": "SDXL_AnimeArt.safetensors",
+      "strength_model": 0,
+      "strength_clip": 0,
+      "model": [
+        "27",
+        0
+      ],
+      "clip": [
+        "27",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load SDXL Style LoRA {style_lora}"
+    }
+  },
+  "29": {
+    "inputs": {
+      "lora_name": "Hyper-SDXL-8steps-CFG-lora.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "27",
+        0
+      ],
+      "clip": [
+        "28",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load SDXL Speed LoRA {speed_lora}"
+    }
+  },
+  "31": {
+    "inputs": {
+      "beta_schedule": "autoselect",
+      "model": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "ADE_UseEvolvedSampling",
+    "_meta": {
+      "title": "Use Evolved Sampling 🎭🅐🅓②"
+    }
+  },
+  "35": {
+    "inputs": {
+      "video": "input.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideoPath",
+    "_meta": {
+      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+    }
+  },
+  "36": {
+    "inputs": {
+      "video_info": [
+        "35",
+        3
+      ]
+    },
+    "class_type": "VHS_VideoInfo",
+    "_meta": {
+      "title": "Video Info 🎥🅥🅗🅢"
+    }
+  },
+  "40": {
+    "inputs": {
+      "value": "a cinematic scene"
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "Prompt {prompt}"
+    }
+  },
+  "41": {
+    "inputs": {
+      "value": ""
+    },
+    "class_type": "PrimitiveString",
+    "_meta": {
+      "title": "Negative Prompt {negative_prompt}"
+    }
+  }
+}

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6QRTYX74EX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6QRTYX74EX');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Changelog - Vidia</title>
+  <link rel="icon" type="image/x-icon" href="/assets/icon2.ico">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 2rem 0.5rem;
+    }
+    .changelog-content {
+      background-color: var(--upload-area-bg);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      color: var(--text-color);
+    }
+    .changelog-content h1, .changelog-content h2, .changelog-content h3 {
+      color: var(--primary-color);
+    }
+    .changelog-content p, .changelog-content ul {
+      margin-bottom: 1rem;
+    }
+    .changelog-content ul {
+      padding-left: 1.25rem;
+    }
+    .date-block {
+      border-left: 4px solid var(--primary-color);
+      padding-left: 1rem;
+      margin: 2rem 0;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      margin: 0 0.25rem 0.25rem 0;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: var(--primary-color);
+      color: #fff;
+    }
+    .area-group {
+      margin-top: 0.5rem;
+    }
+    .area-title {
+      font-weight: 600;
+      margin: 0.5rem 0;
+      color: var(--secondary-color);
+    }
+    .intro {
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+      opacity: 0.9;
+    }
+    .legend {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 0.25rem;
+    }
+    /* Make Alpha badge clickable affordance (consistent with dashboard) */
+    .logo-container .demo-badge {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <div class="container">
+    <div class="changelog-content">
+      <h1>Changelog</h1>
+
+      <!-- Apr 1–3, 2026 -->
+      <div class="date-block">
+        <h2>Apr 1-3, 2026</h2>
+        <div class="legend">
+          <span class="tag">Security</span>
+          <span class="tag">Performance</span>
+          <span class="tag">Reliability</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Full platform overhaul</div>
+          <ul>
+            <li>Every layer of Vidia was audited, restructured, and hardened: the backend, the frontend, the GPU worker, and the video processing pipeline. This is the largest single update since launch.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Tighter security</div>
+          <ul>
+            <li>Authentication is now enforced on all sensitive endpoints. Generating a video requires a valid login.</li>
+            <li>All communication between the GPU worker and the backend is cryptographically verified.</li>
+            <li>Rate limiting protects login, upload, and generation from abuse.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Faster loads</div>
+          <ul>
+            <li>The app now bundles and minifies all code before deployment. Page load dropped from 30+ network requests to 3, with automatic cache-busting so you always get the latest version.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">More reliable results</div>
+          <ul>
+            <li>Your video now appears on screen as soon as it is ready, and the notification email sends correctly.</li>
+            <li>False error messages ("generation heartbeat lost") no longer appear after a successful generation.</li>
+            <li>Starting a new generation properly clears the previous result.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Under the hood</div>
+          <ul>
+            <li>The backend was rebuilt from a single 1,500-line file into a modular architecture with dedicated routing, middleware, and utilities.</li>
+            <li>The video processing node was split into six focused modules and now auto-updates on every GPU worker restart.</li>
+            <li>All frontend feature modules follow a consistent structure, making it faster to add new features going forward.</li>
+            <li>A staging environment is available for testing changes before they reach production.</li>
+            <li>Multiple long-standing bugs fixed across function signatures, state management, and mode detection.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Oct 4, 2025 -->
+      <div class="date-block">
+        <h2>Oct 4, 2025</h2>
+        <div class="legend">
+          <span class="tag">Communication</span>
+          <span class="tag">Security</span>
+          <span class="tag">Automation</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Stay in the loop effortlessly</div>
+          <ul>
+            <li>Newsletter integration connects you with updates and announcements—subscribe on the landing page to hear about new features first.</li>
+            <li>Your account automatically joins our community mailing list when you sign up, keeping you informed without extra steps.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Smarter spam protection</div>
+          <ul>
+            <li>Built-in blocking for throwaway email addresses keeps the community genuine and improves communication quality.</li>
+            
+          </ul>
+        </div>
+
+
+      </div>
+
+      <!-- Sep 7, 2025 -->
+      <div class="date-block">
+        <h2>Sep 7, 2025</h2>
+        <div class="legend">
+          <span class="tag">Quality</span>
+          <span class="tag">Automation</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Automatic image enhancement</div>
+          <ul>
+            <li>New behind‑the‑scenes systems in Forge automatically improve your uploaded images when needed. No extra settings required.</li>
+            <li>Smart outpainting technology expands reference image boundaries intelligently to optimize composition and quality.</li>
+            <li>Enhanced processing pipeline ensures better results across different image types and aspect ratios.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sep 4, 2025 -->
+      <div class="date-block">
+        <h2>Sep 4, 2025</h2>
+        <div class="legend">
+          <span class="tag">Experience</span>
+          <span class="tag">Reliability</span>
+          <span class="tag">Performance</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Smoother startup and progress</div>
+          <ul>
+            <li>New, clearer “preparing…” visuals during worker startup so you immediately know what’s happening.</li>
+            <li>Progress bar feels more natural and better reflects real progress while the job warms up.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Faster, steadier connections</div>
+          <ul>
+            <li>Improved checks reduce brief disconnects and false “lost connection” messages during startup.</li>
+            <li>General stability updates to keep the app responsive while your job begins.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sep 3, 2025 -->
+      <div class="date-block">
+        <h2>Sep 3, 2025</h2>
+        <div class="legend">
+          <span class="tag">Reliability</span>
+          <span class="tag">Clarity</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Clearer status and results</div>
+          <ul>
+            <li>The app now waits to show “active” until your job truly starts, reducing confusion during the warm‑up period.</li>
+            <li>“Your video is ready” appears right when the file is truly available.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">More accurate tracking</div>
+          <ul>
+            <li>Better job tracking behind the scenes so progress stays linked to the right generation.</li>
+            <li>Overall improvements to how the app communicates what’s happening during a run.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Aug 22–23, 2025 -->
+      <div class="date-block">
+        <h2>Aug 22–23, 2025</h2>
+        <div class="legend">
+          <span class="tag">Performance</span>
+          <span class="tag">Experience</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Smoother pipeline</div>
+          <ul>
+            <li>Multiple improvements to how jobs move from start to finish, helping them begin and complete more smoothly.</li>
+            <li>Refinements to preview and scheduling behaviors for more consistent results.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">UI polish</div>
+          <ul>
+            <li>Small visual tweaks keep the interface clean and easy to follow as your job progresses.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Aug 20–21, 2025 -->
+      <div class="date-block">
+        <h2>Aug 20–21, 2025</h2>
+        <div class="legend">
+          <span class="tag">Quality</span>
+          <span class="tag">Experience</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Quality & safeguards</div>
+          <ul>
+            <li>Better defaults and safeguards in certain modes keep results consistent and reduce surprises.</li>
+            <li>Minor quick fixes to keep controls behaving as expected.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Mid–Late July 2025 -->
+      <div class="date-block">
+        <h2>Mid–Late Jul 2025</h2>
+        <div class="legend">
+          <span class="tag">Experience</span>
+          <span class="tag">Audio</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Effect library clean‑up</div>
+          <ul>
+            <li>Clearer names and organization for visual effects make it easier to find what you want.</li>
+            <li>Fewer unexpected previews while setting up your job.</li>
+          </ul>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Audio consistency</div>
+          <ul>
+            <li>Improvements to audio handling and watermark behavior for more consistent outputs.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Jul 13, 2025 -->
+      <div class="date-block">
+        <h2>Jul 13, 2025</h2>
+        <div class="legend">
+          <span class="tag">Experience</span>
+          <span class="tag">Modes</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Mode refinements</div>
+          <ul>
+            <li>Updates to a creation mode to make menu choices clearer and results more predictable.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- May 31–26, 2025 -->
+      <div class="date-block">
+        <h2>May 26–31, 2025</h2>
+        <div class="legend">
+          <span class="tag">Analytics</span>
+          <span class="tag">Help</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Guidance and insight</div>
+          <ul>
+            <li>Improved analytics to understand what helps users succeed.</li>
+            <li>Small help content and UI improvements to make getting started easier.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- May 23–20, 2025 -->
+      <div class="date-block">
+        <h2>May 20–23, 2025</h2>
+        <div class="legend">
+          <span class="tag">Safety</span>
+          <span class="tag">Reliability</span>
+        </div>
+
+        <div class="area-group">
+          <div class="area-title">Safer navigation & stability</div>
+          <ul>
+            <li>Warnings before leaving the page while a job is running, so progress isn’t lost accidentally.</li>
+            <li>Behind‑the‑scenes clean‑ups to reduce errors and keep things smooth.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- May 7, 2025 -->
+      <div class="date-block">
+        <h2>May 7, 2025</h2>
+        <div class="legend">
+          <span class="tag">Experience</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Clearer feedback</div>
+          <ul>
+            <li>Introduced a friendly dialog for full generations so expectations and next steps are clear.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Apr 22–21–20, 2025 -->
+      <div class="date-block">
+        <h2>Apr 20–22, 2025</h2>
+        <div class="legend">
+          <span class="tag">Mobile</span>
+          <span class="tag">Experience</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Mobile experience</div>
+          <ul>
+            <li>Multiple refinements for phones and tablets—cleaner layouts, smoother animations, and clearer text.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Apr 19–18–17–16, 2025 -->
+      <div class="date-block">
+        <h2>Apr 16–19, 2025</h2>
+        <div class="legend">
+          <span class="tag">Notifications</span>
+          <span class="tag">History</span>
+          <span class="tag">Diagnostics</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Email & history</div>
+          <ul>
+            <li>Get an email when your video is ready.</li>
+            <li>Your generated videos are saved to your account so you can find them later.</li>
+          </ul>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Better diagnostics</div>
+          <ul>
+            <li>Improved behind‑the‑scenes troubleshooting tools to keep things running smoothly.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Apr 15, 2025 -->
+      <div class="date-block">
+        <h2>Apr 15, 2025</h2>
+        <div class="legend">
+          <span class="tag">Uploads</span>
+          <span class="tag">Performance</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Faster uploads</div>
+          <ul>
+            <li>Streamlined how files are sent to storage, reducing errors and speeding things up.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Apr 14, 2025 -->
+      <div class="date-block">
+        <h2>Apr 14, 2025</h2>
+        <div class="legend">
+          <span class="tag">Admin</span>
+          <span class="tag">Reliability</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Reliability & controls</div>
+          <ul>
+            <li>Improved connection behavior with clearer feedback if the connection drops.</li>
+            <li>Internal tools improved to help keep the service healthy.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Apr 10–12, 2025 -->
+      <div class="date-block">
+        <h2>Apr 10–12, 2025</h2>
+        <div class="legend">
+          <span class="tag">Access</span>
+          <span class="tag">Infrastructure</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Easier sign‑in & improved setup</div>
+          <ul>
+            <li>Added one‑click email sign‑in to get you using Vidia faster.</li>
+            <li>Infrastructure updates to simplify deployment and keep pages loading consistently.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Mar–Feb–Dec milestones -->
+      <div class="date-block">
+        <h2>Mar 2025 — Feb 2025 — Dec 2024</h2>
+        <div class="legend">
+          <span class="tag">Foundation</span>
+          <span class="tag">Milestones</span>
+        </div>
+        <div class="area-group">
+          <div class="area-title">Laying the foundation</div>
+          <ul>
+            <li>Core features for sending jobs, storing results, and managing user flows.</li>
+            <li>Multiple version milestones to mark steady growth and new capabilities.</li>
+            <li>Early releases that set the stage for everything you see today.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="intro">
+        This is a living page—we’ll continue to summarize meaningful improvements so you can see how
+        Vidia evolves over time.
+      </p>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <script type="module" src="/js/ui/includes.js"></script>
+</body>
+</html>

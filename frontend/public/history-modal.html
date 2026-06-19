@@ -1,0 +1,229 @@
+<div class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Your Generation History</h2>
+        <div id="historyContent">
+            <div id="loadingHistory" class="history-loading">
+                <p>Loading your video history...</p>
+                <div class="loading-spinner"></div>
+            </div>
+            
+            <div id="emptyHistory" class="empty-history" style="display: none;">
+                <p>You don't have any video generations yet.</p>
+                <p>Create your first video to see it here!</p>
+            </div>
+            
+            <div id="historyList" class="history-list" style="display: none;">
+                <!-- History items will be inserted here dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal-content {
+    background-color: var(--upload-area-bg, #fefefe);
+    color: var(--text-color, #333);
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+}
+
+.close {
+    color: var(--text-color, #aaa);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--primary-color, #333);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    color: var(--primary-color, #a971fb);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.history-loading {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(169, 113, 251, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color, #a971fb);
+    animation: spin 1s ease-in-out infinite;
+    margin: 1rem auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-history {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color-secondary, #666);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-item {
+    background-color: var(--background-color, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.history-date {
+    font-weight: bold;
+    color: var(--primary-color, #a971fb);
+}
+
+.history-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-pending {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-in-progress {
+    background-color: #b8daff;
+    color: #004085;
+}
+
+.status-completed {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.status-error {
+    background-color: #f5c6cb;
+    color: #721c24;
+}
+
+.status-expired {
+    background-color: #d6d8db;
+    color: #383d41;
+}
+
+.history-item-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-thumbnail {
+    width: 120px;
+    height: 68px;
+    background-color: var(--input-bg, #eee);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-color-secondary, #666);
+}
+
+.history-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.history-details {
+    flex: 1;
+}
+
+.history-expiry {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary, #666);
+    margin-top: 0.5rem;
+}
+
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.history-button {
+    background-color: var(--primary-color, #a971fb);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.history-button:hover {
+    background-color: var(--secondary-color, #fa9570);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.history-button.disabled {
+    background-color: var(--button-bg, #f0f0f0);
+    color: var(--text-color-secondary, #999);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Dark mode styles will be applied automatically through CSS variables */
+</style>

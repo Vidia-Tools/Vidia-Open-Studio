@@ -1,0 +1,90 @@
+# Vidia Open Studio backend - Cloudflare Workers config (template).
+# Copy to wrangler.toml and fill in your own account-specific values.
+# Secrets (JWT_SECRET, RUNPOD_API_KEY, etc.) are NOT set here; use
+# `wrangler secret put NAME` or the root setup.sh. See root .env.example.
+
+name = "vidia-backend"
+main = "worker.js"
+compatibility_date = "2024-10-22"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Comma-separated list of allowed browser origins for CORS.
+ALLOWED_ORIGINS = "https://app.example.com,https://example.com"
+
+# Admin account email (grants access to /api/admin/* routes).
+ADMIN_EMAIL = "admin@example.com"
+
+# Base URL of the deployed frontend (used in magic-link + email templates).
+APP_BASE_URL = "https://app.example.com"
+
+# Sender identity for outgoing email (Resend).
+EMAIL_FROM = "Vidia <noreply@example.com>"
+
+# R2 bucket names and their public custom domains.
+IMPORTS_BUCKET_NAME = "imports"
+EXPORTS_BUCKET_NAME = "exports"
+IMPORTS_BUCKET_DOMAIN = "imports.example.com"
+EXPORTS_BUCKET_DOMAIN = "exports.example.com"
+
+# Cloudflare account ID (required for S3 presigned URLs).
+ACCOUNT_ID = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+
+# RunPod serverless endpoint IDs, one per plan tier.
+RUNPOD_BASIC_ENDPOINT_ID = "YOUR_BASIC_ENDPOINT_ID"
+RUNPOD_STANDARD_ENDPOINT_ID = "YOUR_STANDARD_ENDPOINT_ID"
+RUNPOD_PRO_ENDPOINT_ID = "YOUR_PRO_ENDPOINT_ID"
+
+# Payments are experimental and out of scope for v1. Leave false unless you
+# have wired up Stripe (STRIPE_* secrets + STRIPE_PRICE_ID + CHECKOUT_RETURN_URL).
+VIDIA_PAYMENTS_ENABLED = "false"
+STRIPE_PRICE_ID = "YOUR_STRIPE_PRICE_ID"
+CHECKOUT_RETURN_URL = "https://app.example.com"
+
+# Cron trigger: monthly refresh of the disposable email domain blocklist.
+[triggers]
+crons = ["0 0 1 * *"]
+
+# KV namespace for the disposable email domain blocklist + rate-limit counters.
+# Create with: wrangler kv namespace create DISPOSABLE_EMAIL_DOMAINS
+[[kv_namespaces]]
+binding = "DISPOSABLE_EMAIL_DOMAINS"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# R2 buckets. Create with: wrangler r2 bucket create imports / exports
+[[r2_buckets]]
+binding = "IMPORTS_BUCKET"
+bucket_name = "imports"
+
+[[r2_buckets]]
+binding = "EXPORTS_BUCKET"
+bucket_name = "exports"
+
+[durable_objects]
+bindings = [
+    { name = "USER_AUTH", class_name = "UserAuth" },
+    { name = "LOG_MANAGER", class_name = "LogManager" },
+    { name = "PAYMENT_MANAGER", class_name = "PaymentManager" },
+    { name = "RUNPOD_RUN_MANAGER", class_name = "RunpodRunManager" },
+    { name = "VIDIA_GENERATION_MANAGER", class_name = "VidiaGenerationManager" },
+    { name = "WEBSOCKET_MANAGER", class_name = "WebSocketManager" },
+    { name = "VIDEO_HISTORY_MANAGER", class_name = "VideoHistoryManager" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = [
+    "UserAuth",
+    "LogManager",
+    "PaymentManager",
+    "RunpodRunManager",
+    "VidiaGenerationManager"
+]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["WebSocketManager"]
+
+[[migrations]]
+tag = "v3"
+new_classes = ["VideoHistoryManager"]

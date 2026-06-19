@@ -1,0 +1,11 @@
+{
+	"userId": "string",
+	"runId": "string",
+	"status": "string",
+	"completed": "boolean",
+	"workerId": "string",
+	"started": "timestamp",
+	"succeeded": "boolean",
+	"delayTime": "number",
+	"executionTime": "number"
+}

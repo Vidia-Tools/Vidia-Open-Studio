@@ -1,0 +1,19 @@
+{
+  "stages": [
+    { "name": "prompt_prep",  "file": "workflows/prompt_prep.json",  "feature": "promptEnhance", "passthrough_on_skip": true },
+    { "name": "body_replace", "file": "workflows/body_replace.json", "feature": "fullBodyReplace" },
+    { "name": "generate",     "files": { "forge": "workflows/generate_wan.json",
+                                         "evolve": "workflows/generate_animatediff.json",
+                                         "trace": "workflows/generate_reversenoise.json",
+                                         "hunyuan": "workflows/generate_hunyuan.json" },
+                              "select": "method" },
+    { "name": "detailer",     "file": "workflows/detailer.json",     "feature": "detailer" },
+    { "name": "faceswap",     "file": "workflows/faceswap.json",     "feature": "faceSwap" },
+    { "name": "liveportrait", "file": "workflows/liveportrait.json", "feature": "liveportrait" },
+    { "name": "upscale",      "file": "workflows/upscale.json",      "feature": "upscaler" },
+    { "name": "skin",         "file": "workflows/skin.json",         "feature": "skinImprovement" },
+    { "name": "post",         "file": "workflows/post.json",         "feature": null },
+    { "name": "audio",        "file": "workflows/audio.json",        "feature": "genAudio" },
+    { "name": "output",       "file": "workflows/output_saver.json", "local_file": "workflows/output_saver_local.json", "feature": null, "final": true }
+  ]
+}

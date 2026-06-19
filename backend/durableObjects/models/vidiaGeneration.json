@@ -1,0 +1,16 @@
+{
+	"userId": "string",
+	"runId": "string",
+	"status": "string",
+	"completed": "boolean",
+	"dateCreated": "string",
+	"dateUpdated": "string",
+	"dateCompleted": "string",
+	"filename": "string",
+	"fileSize": "number",
+	"fileType": "string",
+	"fileUrl": "string",
+	"vidiaProduct": "string",
+	"id": "string",
+	"expired": "boolean"
+}

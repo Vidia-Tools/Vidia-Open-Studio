@@ -1,0 +1,14 @@
+{
+	"paymentId": "string",
+	"userId": "string",
+	"amount": "number",
+	"currency": "string",
+	"status": "string",
+	"createdAt": "timestamp",
+	"updatedAt": "timestamp",
+	"stripeSessionId": "string",
+	"metadata": {
+		"subscriptionId": "string",
+		"orderId": "string"
+	}
+}

@@ -1,0 +1,9 @@
+/* lora-gallery chrome. All gallery visuals (.lora-gallery-button,
+   .lora-gallery-drawer, .lora-option, .lora-selected-slot, .deselect-button on
+   selected cards) live in the parity-locked style.css. Only the inline strength
+   slider spacing is added here; the range itself is styled by style.css's
+   .advanced-setting-control input[type="range"] rule. */
+
+.os-lora-strength {
+  margin-left: 10px;
+}

@@ -1,0 +1,31 @@
+/* image-upload control chrome not already covered by the parity-locked
+   style.css. Prod applies the deselect button + container styles inline via
+   ui-style-constants.js (DESELECT_BUTTON_STYLES / CONTAINER_WITH_BUTTON_STYLES);
+   reproduced here as CSS so the data-driven control matches without editing
+   style.css. The strength range itself is styled by style.css's
+   .advanced-setting-control input[type="range"] rule. */
+
+.small-upload {
+  position: relative;
+}
+
+.small-upload .deselect-button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #f44336;
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.os-upload-strength {
+  margin-left: 10px;
+}

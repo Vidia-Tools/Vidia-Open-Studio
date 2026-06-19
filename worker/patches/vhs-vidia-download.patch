@@ -1,0 +1,367 @@
+diff --git a/videohelpersuite/load_video_nodes.py b/videohelpersuite/load_video_nodes.py
+index 2c4ee3f..ab7b27b 100644
+--- a/videohelpersuite/load_video_nodes.py
++++ b/videohelpersuite/load_video_nodes.py
+@@ -508,7 +508,10 @@ class LoadVideoPath:
+         if kwargs['video'] is None or validate_path(kwargs['video']) != True:
+             raise Exception("video is not a valid path: " + kwargs['video'])
+         if is_url(kwargs['video']):
+-            kwargs['video'] = try_download_video(kwargs['video']) or kwargs['video']
++            local_path = try_download_video(kwargs['video'])
++            if (not local_path) or (not os.path.isfile(local_path)) or (os.path.getsize(local_path) == 0):
++                raise Exception(f"Download failed or produced empty file for URL: {kwargs['video']}")
++            kwargs['video'] = local_path
+         return load_video(**kwargs)
+ 
+     @classmethod
+@@ -609,7 +612,10 @@ class LoadVideoFFmpegPath:
+         if kwargs['video'] is None or validate_path(kwargs['video']) != True:
+             raise Exception("video is not a valid path: " + kwargs['video'])
+         if is_url(kwargs['video']):
+-            kwargs['video'] = try_download_video(kwargs['video']) or kwargs['video']
++            local_path = try_download_video(kwargs['video'])
++            if (not local_path) or (not os.path.isfile(local_path)) or (os.path.getsize(local_path) == 0):
++                raise Exception(f"Download failed or produced empty file for URL: {kwargs['video']}")
++            kwargs['video'] = local_path
+         image, _, audio, video_info =  load_video(**kwargs, generator=ffmpeg_frame_generator)
+         if isinstance(image, dict):
+             return (image, None, audio, video_info)
+diff --git a/videohelpersuite/utils.py b/videohelpersuite/utils.py
+index 75431d5..c4c29b0 100644
+--- a/videohelpersuite/utils.py
++++ b/videohelpersuite/utils.py
+@@ -14,6 +14,24 @@ from torch import Tensor
+ import server
+ from .logger import logger
+ import folder_paths
++import urllib.request
++import urllib.parse
++
++def _sanitize_url(url: str) -> str:
++    """
++    Percent-encode unsafe characters in the URL path/query while preserving existing escapes.
++    This avoids urllib InvalidURL errors for spaces and other control characters.
++    """
++    try:
++        parts = urllib.parse.urlsplit(url)
++        # Preserve existing % escapes; encode spaces and other unsafe path chars
++        path = urllib.parse.quote(parts.path, safe="/%._-~")
++        # Re-encode query pairs safely and preserve blank values
++        query = urllib.parse.urlencode(urllib.parse.parse_qsl(parts.query, keep_blank_values=True))
++        return urllib.parse.urlunsplit((parts.scheme, parts.netloc, path, query, parts.fragment))
++    except Exception:
++        # On any parsing issue, fall back to original URL
++        return url
+ 
+ BIGMIN = -(2**53-1)
+ BIGMAX = (2**53-1)
+@@ -100,28 +118,194 @@ if gifski_path is None:
+ ytdl_path = os.environ.get("VHS_YTDL", None) or shutil.which('yt-dlp') \
+         or shutil.which('youtube-dl')
+ download_history = {}
++def _safe_filename_from_url(url: str) -> str:
++    """
++    Derive a safe local filename from a URL path. Fall back to a hashed name if needed.
++    Keeps extensions when present to help remux logic decide correctly.
++    """
++    try:
++        parsed = urllib.parse.urlparse(url)
++        base = os.path.basename(parsed.path)
++    except Exception:
++        base = ""
++    if not base or base in (".", ".."):
++        # Fall back to a hashed name; extension will be inferred later from Content-Type
++        h = hashlib.sha256(url.encode(*ENCODE_ARGS[:1])).hexdigest()  # use utf-8
++        return h
++
++    # Sanitize filename to avoid filesystem issues
++    allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-"
++    safe = "".join(ch if ch in allowed else "_" for ch in base)
++    # Keep original name without forcing an extension; extension will be inferred from Content-Type if available.
++    return safe
++
++
++def _http_download_to_temp(url: str) -> str:
++    """
++    Stream-download a remote file to Comfy temp dir using stdlib HTTP with headers and atomic write.
++    Returns the absolute final path. Raises on failure/empty downloads.
++    """
++    tmp_dir = folder_paths.get_temp_directory()
++    os.makedirs(tmp_dir, exist_ok=True)
++
++    name = _safe_filename_from_url(url)
++    # Defer choosing final name/extension until after inspecting Content-Type
++
++    headers = {
++        "Accept": "video/mp4,video/*;q=0.8,*/*;q=0.5",
++        "User-Agent": "Mozilla/5.0 (compatible; Vidia-Loader/1.0)"
++    }
++    url = _sanitize_url(url)
++    req = urllib.request.Request(url, headers=headers)
++
++    try:
++        with urllib.request.urlopen(req, timeout=120) as resp:
++            # Infer extension from Content-Type when original name lacks an extension
++            content_type = resp.headers.get("Content-Type") or resp.info().get_content_type()
++            base, ext = os.path.splitext(name)
++            final_path = os.path.join(tmp_dir, name)  # default to original
++            if (not ext) and content_type:
++                ct = content_type.split(";")[0].strip().lower()
++                ext_map = {
++                    "video/mp4": ".mp4",
++                    "video/quicktime": ".mov",
++                    "video/webm": ".webm",
++                    "video/x-matroska": ".mkv",
++                }
++                mapped = ext_map.get(ct)
++                if mapped:
++                    final_path = os.path.join(tmp_dir, base + mapped)
++
++            # Prepare partial path and cleanup now that final_path is decided
++            part_path = os.path.join(tmp_dir, base + ".part")
++            try:
++                if os.path.exists(part_path):
++                    os.remove(part_path)
++            except Exception:
++                pass
++
++            with open(part_path, "wb") as out:
++                chunk = resp.read(1024 * 1024)
++                while chunk:
++                    out.write(chunk)
++                    chunk = resp.read(1024 * 1024)
++    except Exception as e:
++        # Ensure partial is removed on error
++        try:
++            if os.path.exists(part_path):
++                os.remove(part_path)
++        except Exception:
++            pass
++        raise Exception(f"HTTP download failed for {url}: {e}")
++
++    if not os.path.isfile(part_path) or os.path.getsize(part_path) == 0:
++        try:
++            if os.path.exists(part_path):
++                os.remove(part_path)
++        except Exception:
++            pass
++        raise Exception(f"Downloaded file is empty for {url}")
++
++    # Atomic move into place
++    os.replace(part_path, final_path)
++    return final_path
++
++
++def _remux_to_mp4_if_needed(in_path: str) -> str:
++    """
++    If the input isn't an .mp4, attempt a fast remux to mp4 with ffmpeg.
++    Returns the best path to use (mp4 if remux succeeded, else original).
++    """
++    try:
++        ext = os.path.splitext(in_path)[1].lower()
++        if ext == ".mp4" or ffmpeg_path is None:
++            return in_path
++
++        out_path = os.path.splitext(in_path)[0] + ".mp4"
++        args = [
++            ffmpeg_path, "-y",
++            "-i", in_path,
++            "-c", "copy",
++            "-movflags", "+faststart",
++            out_path
++        ]
++        res = subprocess.run(args, capture_output=True, check=True)
++        if os.path.isfile(out_path) and os.path.getsize(out_path) > 0:
++            return out_path
++        else:
++            # Fall back to original if remux produced nothing
++            logger.warn("FFmpeg remux produced no output, using original file. stderr: %s",
++                        res.stderr.decode(*ENCODE_ARGS))
++            return in_path
++    except subprocess.CalledProcessError as e:
++        logger.warn("FFmpeg remux failed, using original file. stderr: %s",
++                    e.stderr.decode(*ENCODE_ARGS))
++        return in_path
++    except Exception as e:
++        logger.warn("FFmpeg remux unexpected error (%s), using original file.", str(e))
++        return in_path
++
++
+ def try_download_video(url):
+-    if ytdl_path is None:
+-        return None
++    # Cache hit
+     if url in download_history:
+         return download_history[url]
++
++    # Always ensure temp directory exists
+     os.makedirs(folder_paths.get_temp_directory(), exist_ok=True)
+-    #Format information could be added to only download audio for Load Audio,
+-    #but this gets hairy if same url is also used for video.
+-    #Best to just always keep defaults
+-    #dl_format = ['-f', 'ba'] if is_audio else []
++
++    # Prefer direct HTTP path for our known CDN host
+     try:
+-        res = subprocess.run([ytdl_path, "--print", "after_move:filepath",
+-                              "-P", folder_paths.get_temp_directory(), url],
+-                             capture_output=True, check=True)
+-        #strip newline
+-        file = res.stdout.decode(*ENCODE_ARGS)[:-1]
+-    except subprocess.CalledProcessError as e:
+-        raise Exception("An error occurred in the yt-dl process:\n" \
+-                + e.stderr.decode(*ENCODE_ARGS))
+-        file = None
+-    download_history[url] = file
+-    return file
++        host = urllib.parse.urlparse(url).netloc.lower()
++    except Exception:
++        host = ""
++
++    # Fast, reliable path for imports.vidia.tools links (your canonical format)
++    if host.endswith("imports.vidia.tools"):
++        local_path = _http_download_to_temp(url)
++        # Normalize container when possible for downstream robustness
++        local_path = _remux_to_mp4_if_needed(local_path)
++        download_history[url] = local_path
++        return local_path
++
++    # General path: if yt-dlp is available, use it robustly; otherwise fall back to HTTP
++    if ytdl_path is not None:
++        out_tpl = os.path.join(folder_paths.get_temp_directory(), "%(id)s.%(ext)s")
++        args = [
++            ytdl_path,
++            "--print", "after_move:filepath",
++            "-o", out_tpl,
++            "--format", "bv*+ba/best",
++            "--merge-output-format", "mp4",
++            "--remux-video", "mp4",
++            "--hls-prefer-ffmpeg",
++            "--downloader", "ffmpeg",
++            "--retries", "10",
++            "--fragment-retries", "10",
++            "--concurrent-fragments", "5",
++            "--no-continue",
++            "--no-part",
++            "--add-header", "Accept: video/mp4",
++            "--user-agent", "Mozilla/5.0",
++            "-P", folder_paths.get_temp_directory(),
++            url
++        ]
++        try:
++            res = subprocess.run(args, capture_output=True, check=True)
++            file = res.stdout.decode(*ENCODE_ARGS).strip()
++            if not file or not os.path.isfile(file) or os.path.getsize(file) == 0:
++                raise Exception(f"yt-dlp produced no file for {url}\n{res.stderr.decode(*ENCODE_ARGS)}")
++            download_history[url] = file
++            return file
++        except subprocess.CalledProcessError as e:
++            # Surface yt-dlp stderr to caller for diagnostics
++            raise Exception("An error occurred in the yt-dl process:\n" + e.stderr.decode(*ENCODE_ARGS))
++
++    # Fallback when yt-dlp is unavailable: use plain HTTP
++    local_path = _http_download_to_temp(url)
++    local_path = _remux_to_mp4_if_needed(local_path)
++    download_history[url] = local_path
++    return local_path
+ 
+ def is_safe_path(path, strict=False):
+     if "VHS_STRICT_PATHS" not in os.environ and not strict:
+diff --git a/web/js/VHS.core.js b/web/js/VHS.core.js
+index eb27c64..a265062 100755
+--- a/web/js/VHS.core.js
++++ b/web/js/VHS.core.js
+@@ -2412,6 +2412,7 @@ app.registerExtension({
+     },
+ });
+ let previewImages = []
++let animateInterval
+ api.addEventListener('executing', ({ detail }) => {
+     if (detail === null) {
+         for (let graph of [app.graph, ...app.graph.subgraphs.values()]) {
+@@ -2481,22 +2482,32 @@ function getLatentPreviewCtx(id, width, height) {
+     }
+     return canvasEl.getContext("2d")
+ }
+-let animateIntervals = {}
+-function beginLatentPreview(id, previewImages, rate) {
+-    latentPreviewNodes.add(id)
+-    if (animateIntervals[id]) {
+-        clearTimeout(animateIntervals[id])
++//TODO: Figure out means of concurrency here. map of active nodes and finish event?
++// Information has been squirreled away to the execution store which isn't exposed.
++api.addEventListener('VHS_latentpreview', ({ detail }) => {
++    let setting = app.ui.settings.getSettingValue("VHS.LatentPreview")
++    if (!setting) {
++        return
++    }
++    let id = detail.id
++    if (id == null) {
++        return
+     }
++    latentPreviewNodes.add(id)
++
++    previewImages = []
++    previewImages.length = detail.length
+     let displayIndex = 0
+-    let node = getNodeById(id)
++    if (animateInterval) {
++        clearTimeout(animateInterval)
++    }
+     //While progress is safely cleared on execution completion.
+     //Initial progress must be started here to avoid a race condition
+-    node.progress = 0
+-    animateIntervals[id] = setInterval(() => {
+-        if (getNodeById(id)?.progress == undefined
+-            || app.canvas.graph.rootGraph != node.graph.rootGraph) {
+-            clearTimeout(animateIntervals[id])
+-            delete animateIntervals[id]
++    getNodeById(id).progress = 0
++    animateInterval = setInterval(() => {
++        if (getNodeById(id).progress == undefined) {
++            clearTimeout(animateInterval)
++            animateInterval = undefined
+             return
+         }
+         if (!previewImages[displayIndex]) {
+@@ -2505,26 +2516,10 @@ function beginLatentPreview(id, previewImages, rate) {
+         getLatentPreviewCtx(id, previewImages[displayIndex].width,
+             previewImages[displayIndex].height)?.drawImage?.(previewImages[displayIndex],0,0)
+         displayIndex = (displayIndex + 1) % previewImages.length
+-    }, 1000/rate);
+-
+-}
+-let previewImagesDict = {}
+-api.addEventListener('VHS_latentpreview', ({ detail }) => {
+-    if (detail.id == null) {
+-        return
+-    }
+-    let previewImages = previewImagesDict[detail.id] = []
+-    previewImages.length = detail.length
+-
+-    let idParts = detail.id.split(':')
+-    for (let i=1; i <= idParts.length; i++) {
+-        let id = idParts.slice(0,i).join(':')
+-        beginLatentPreview(id, previewImages, detail.rate)
+-    }
++    }, 1000/detail.rate);
+ });
+-let td = new TextDecoder()
+ api.addEventListener('b_preview', async (e) => {
+-    if (Object.keys(animateIntervals).length == 0) {
++    if (!animateInterval) {
+         return
+     }
+     e.preventDefault()
+@@ -2532,8 +2527,8 @@ api.addEventListener('b_preview', async (e) => {
+     e.stopPropagation()
+     const dv = new DataView(await e.detail.slice(0,24).arrayBuffer())
+     const index = dv.getUint32(4)
+-    const idlen = dv.getUint8(8)
+-    const id = td.decode(dv.buffer.slice(9,9+idlen))
+-    previewImagesDict[id][index] = await window.createImageBitmap(e.detail.slice(24))
++    //const idlen = dv.getUint8(5)
++    //const id = dv.getstring???(6,idlen)
++    previewImages[index] = await window.createImageBitmap(e.detail.slice(24))
+     return false
+ }, true);

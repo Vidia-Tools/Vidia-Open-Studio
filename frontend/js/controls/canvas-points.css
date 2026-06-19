@@ -1,0 +1,21 @@
+/* canvas-points chrome. The .canvas-container and .advanced-button (reset) are
+   already styled by the parity-locked style.css; only the canvas element sizing,
+   the helper line, and reset spacing are added here. */
+
+.os-points-canvas {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 6px;
+  cursor: crosshair;
+}
+
+.os-points-hint {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.os-reset-points {
+  margin-top: 8px;
+}

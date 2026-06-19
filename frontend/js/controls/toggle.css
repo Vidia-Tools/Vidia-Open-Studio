@@ -1,0 +1,7 @@
+/* toggle control type.
+   The iOS switch visuals (.switch, .slider, input states) live in the
+   parity-locked style.css and are NOT duplicated here. This file only keeps
+   the switch from stretching inside the flex .advanced-setting-control. */
+.advanced-setting-control .switch {
+  flex: 0 0 auto;
+}
