@@ -42,6 +42,15 @@ if git clone --depth 1 -b "$VIDIA_DOCKER_REPO_REF" "$VIDIA_DOCKER_REPO_URL" "$TE
     else
         log "  worker/src/ not found in repo; keeping embedded copies"
     fi
+
+    # Refresh workflows/ so new/edited workflow JSON files in the repo roll out
+    # via self-update without an image rebuild (repo is the source of truth).
+    if [ -d "$TEMP_DIR/workflows" ]; then
+        cp -r "$TEMP_DIR/workflows/." /workflows/
+        log "  workflows/ refreshed"
+    else
+        log "  workflows/ not found in repo; keeping embedded copies"
+    fi
 else
     log "Failed to clone monorepo; using embedded boot files"
 fi

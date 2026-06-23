@@ -54,11 +54,14 @@ else
     log "  [SKIP] HunyuanVideoWrapper already patched or file not found."
 fi
 
-# Universal hotfix for RunPod aiohttp/brotli decompression bug
-log "  [PATCH] Applying aiohttp/brotli hotfix..."
+# Universal hotfix for RunPod aiohttp/brotli decompression bug.
+# ComfyUI v0.25.1 requires aiohttp 3.10+ (server.py imports AppKey from
+# aiohttp.helpers), so we must NOT downgrade aiohttp. The original RunPod bug
+# was brotli decompression; removing brotli forces gzip/identity and avoids it
+# without touching the aiohttp version.
+log "  [PATCH] Removing brotli (aiohttp left at ComfyUI-required 3.10+)..."
 /usr/bin/python3 -m pip uninstall -y brotli brotlicffi >/dev/null 2>&1 || true
-/usr/bin/python3 -m pip install "aiohttp<3.10.0" >/dev/null 2>&1 || true
-log "  [PATCH] aiohttp/brotli hotfix applied."
+log "  [PATCH] brotli removed."
 
 log "[Startup] All runtime hotfixes applied."
 # =================================================================
