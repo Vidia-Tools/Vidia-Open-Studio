@@ -11,6 +11,15 @@ log() {
 
 log "Updater started"
 
+# RunPod hosts misconfigure the container DNS forwarder (127.0.0.11 -> 127.0.0.1
+# with no real resolver), so every host fails to resolve and the self-update clone
+# silently fails. Probe a public host; if it does not resolve, override
+# /etc/resolv.conf with public resolvers before cloning. No-op on healthy hosts.
+if ! getent hosts codeberg.org >/dev/null 2>&1; then
+    log "DNS probe failed; overriding /etc/resolv.conf with public resolvers"
+    printf "nameserver 8.8.8.8\nnameserver 1.1.1.1\n" > /etc/resolv.conf
+fi
+
 VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia/Vidia-Open-Studio.git}"
 VIDIA_DOCKER_REPO_REF="${VIDIA_DOCKER_REPO_REF:-main}"
 
