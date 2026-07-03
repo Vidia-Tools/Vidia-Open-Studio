@@ -23,7 +23,7 @@ ROOT = build_mode.REPO_ROOT
 SNAPSHOT_FILES = [
     os.path.join(ROOT, "worker/src/pipeline/manifest.json"),
     os.path.join(ROOT, "frontend/js/config/modes.json"),
-    os.path.join(ROOT, "controls/generate.json"),
+    os.path.join(ROOT, "frontend/public/controls/generate.json"),
 ]
 
 PASS_WORKFLOW = os.path.join(ROOT, "workflows/generate_wan.json")

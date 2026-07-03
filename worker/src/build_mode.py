@@ -23,7 +23,7 @@ _ALLOWED = {
     "manifest":     ("worker/src/pipeline", "manifest.json"),
     "modes":        ("frontend/js/config", "modes.json"),
     "dependencies": ("worker", "dependencies.json"),
-    "controls":     ("controls", None),      # controls/<stage>.json
+    "controls":     ("frontend/public/controls", None),      # frontend/public/controls/<stage>.json
     "workflow":     ("workflows", None),     # workflows/<name>.json
 }
 

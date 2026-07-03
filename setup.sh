@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Vidia Open Studio - environment distributor (plan section 8.1).
-# Reads the filled-in root .env and distributes values to each component via its
-# native mechanism. Currently handles backend (Cloudflare Worker) secrets via
-# `wrangler secret put`. ST1.1 / ST4 extend this for worker + frontend.
+# Reads the filled-in root .env and distributes BACKEND (Cloudflare Worker) secrets
+# only, via `wrangler secret put`. It does NOT write worker env (set those on the
+# RunPod endpoint) or frontend env (set VITE_* in the Pages build environment, or
+# manually in frontend/.env.local for local development).
 #
 # Usage:  ./setup.sh
 # Prereqs: a filled-in ./.env (copy from .env.example) and `wrangler` logged in.

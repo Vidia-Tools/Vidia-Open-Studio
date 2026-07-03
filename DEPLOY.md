@@ -15,21 +15,33 @@ Legend:
 
 Resolve these BEFORE the worker can run a real generation:
 
-1. `[BLOCKED]` **Unpinned custom nodes (8).** `worker/dependencies.json` pins most
-   nodes from the live pod map, but 8 nodes were manually installed on the dev pod
-   with no upstream pin and must have a `repo_url` + `commit` resolved and added:
-   - ComfyUI-WanVideoWrapper
-   - comfyui-custom-scripts
-   - comfyui-easy-use
-   - comfyui-easyurlloader
-   - comfyui-frameskipping
-   - comfyui-get-meta
-   - comfyui-videohelpersuite-custom (CUSTOM VHS fork or modified copy; critical,
-     every workflow uses VHS nodes; resolve the exact source/version)
-   - joycaption_comfyui
+1. `[DONE]` **Custom node pins (8).** The 8 custom nodes that were previously
+   unpinned are now pinned in `worker/dependencies.json` with `repo_url` +
+   `commit`: ComfyUI-WanVideoWrapper, comfyui-custom-scripts, comfyui-easy-use,
+   comfyui-easyurlloader, comfyui-frameskipping, comfyui-get-meta,
+   comfyui-videohelpersuite-custom, and joycaption_comfyui. VHS uses the upstream
+   ComfyUI-VideoHelperSuite base commit plus `patches/vhs-vidia-download.patch`
+   (applied by `start.sh`); no custom fork is required. No action needed for these
+   pins unless a contributor changes a node version.
 2. `[BLOCKED]` **Model URLs.** `worker/dependencies.json` model entries with
-   `"url": "TODO"` are skipped by `fetch_models.py`. Fill HF/Civitai URLs for every
-   model a flow actually uses before populating the volume.
+   `"url": "TODO"` (e.g. `v6.safetensors`, `xlMerges.safetensors`) are skipped by
+   `fetch_models.py`. Fill direct downloadable HF/Civitai URLs for every model a
+   flow actually uses before populating the volume.
+3. `[BLOCKED]` **Non-direct / bundle model sources.** Several model entries point
+   at sources `fetch_models.py` cannot consume as-is: GitHub `tree/main` directory
+   listings, Civitai model pages (not the direct download file), `openmodeldb.info`
+   pages, bundle-level repositories, and note-only sources. Resolve each to a
+   direct downloadable file URL (or document the manual fetch step) before relying
+   on it.
+4. `[BLOCKED]` **Empty `used_by` / license review.** Many models have empty
+   `used_by` arrays, so it is unclear which flows need them; a license/usage
+   review is also pending for redistributable model files. Populate `used_by` and
+   confirm licensing before the volume is considered reproducible.
+5. `[BLOCKED]` **Dependency validation / checksum gaps.** `fetch_models.py` does
+   not support checksums, bundle traversal/extraction, HF tree traversal,
+   OpenModelDB resolution, or validation that required URLs are direct
+   downloadable files. Until that lands, model population is not reproducible or
+   verified; treat the volume as best-effort.
 
 Tooling you need:
 - Cloudflare account with Workers, Pages, R2, KV, Durable Objects enabled.
@@ -126,8 +138,9 @@ Note: the script's argument DEFAULTS are `/workspace/...` (pod mode). For a
 serverless endpoint the volume mounts at `/runpod-volume`, so pass the dirs
 explicitly as above. `start.sh` (serverless) sets `BASE_PATH=/runpod-volume` and
 symlinks `/ComfyUI/models` and `/ComfyUI/custom_nodes` to it. `[BLOCKED]` entries
-with `url: TODO` / unresolved node sources are skipped with a warning; the flows
-that need them will fail until section 0 is done.
+with `url: TODO` or non-direct/bundle sources are skipped with a warning; the flows
+that need them will fail until section 0 is done. (Custom node pins are resolved;
+node fetch is not a blocker.)
 
 3d. `[HUMAN]` Create the RunPod serverless endpoint pointing at `<IMAGE>`, attach
 the network volume, and set endpoint env vars (the worker block from `.env`):

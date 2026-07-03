@@ -278,12 +278,22 @@ export function runpodRoutes(router) {
 		}
 	});
 
-	// Worker restart acknowledgment
-	router.post('/api/runpod/restartWorker', async (request, env) => {
+	// Worker restart endpoint. Restart is NOT implemented in Open Studio v1: there
+	// is no real RunPod restart path behind this route. The endpoint is kept so
+	// imports/routes stay intact, but it is now authenticated, rate limited, and
+	// returns 501 Not Implemented rather than a misleading 202 success.
+	router.post('/api/runpod/restartWorker', withAuth, withRateLimit(3, 600), async (request, env) => {
 		try {
 			const { generation_id } = await request.json();
+			if (!generation_id) {
+				return jsonResponse({ success: false, message: 'Missing required field: generation_id' }, 400);
+			}
 			console.log(`[RestartWorker] Request received for generation_id: ${generation_id}`);
-			return jsonResponse({ success: true, message: 'Restart request acknowledged', generation_id }, 202);
+			return jsonResponse({
+				success: false,
+				message: 'Worker restart is not supported in Open Studio v1. Restart is disabled until a secured restart implementation exists.',
+				generation_id
+			}, 501);
 		} catch (error) {
 			console.error('Restart endpoint error:', error);
 			return jsonResponse({ success: false, message: 'Failed to process restart request' }, 500);
@@ -320,11 +330,26 @@ export function runpodRoutes(router) {
 
 	// --- RunpodRunManager DO forwarding ---
 
-	router.get('/api/runpod/runs/:userId', async (request, env) => {
+	router.get('/api/runpod/runs/:userId', withAuth, withRateLimit(30, 600), async (request, env) => {
+		const requestedUserId = request.params.userId;
+		const tokenUserId = request.user && request.user.userId;
+
+		// Enforce per-user ownership: a user may only list their own runs.
+		// Admins (email matches env.ADMIN_EMAIL) may list any user's runs.
+		// These checks run before any DO access so 401/403 never reach the DO.
+		if (!tokenUserId) {
+			return jsonResponse({ success: false, message: 'Forbidden: authentication token did not include a user identity' }, 403);
+		}
+
+		const isAdminUser = request.user.email === env.ADMIN_EMAIL;
+		if (requestedUserId !== tokenUserId && !isAdminUser) {
+			return jsonResponse({ success: false, message: 'Forbidden: you may only list your own runs' }, 403);
+		}
+
 		const id = env.RUNPOD_RUN_MANAGER.idFromName('default');
 		const runManager = env.RUNPOD_RUN_MANAGER.get(id);
 
-		const userId = request.params.userId;
+		const userId = requestedUserId;
 		const status = new URL(request.url).searchParams.get('status');
 
 		let response;

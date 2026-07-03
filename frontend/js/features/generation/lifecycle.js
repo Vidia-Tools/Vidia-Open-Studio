@@ -13,6 +13,7 @@ import {
     FALLBACK_T1_MS,
     STALL_T2_MS,
     RESTART_WORKER_ENABLED,
+    RUNPOD_MODE,
 } from '../../config/constants.js';
 import { buildParams } from '../../core/workflow.js';
 import * as store from '../../core/generation-store.js';
@@ -21,7 +22,7 @@ import { sendGAEvent, GA_EVENT_CATEGORIES } from '../../analytics.js';
 import { wsManager } from '../../core/websocket.js';
 import { startAnimation, stopAnimation } from '../../ui/animations.js';
 import { updateNotification, showToastNotification, handleFatalError } from '../../ui/helpers.js';
-import { displayResult, clearResult } from '../../ui/result-display.js';
+import { displayResult, clearResult, displayLocalOutputPath } from '../../ui/result-display.js';
 import {
     setProgressBarState,
     setHeaderStartupProgress,
@@ -54,6 +55,74 @@ function animationElements() {
 }
 
 /**
+ * Local mode generation path. The local app_server POST /generate blocks until
+ * the pipeline finishes and returns the output path, so there is no hosted
+ * auth, WebSocket, R2 upload, health poll, or watchdog. The local output_file
+ * is a filesystem path (not a browser-served URL); if it is not an http(s) URL
+ * it is surfaced as text via displayLocalOutputPath instead of a <video>.
+ * @param {string} type - 'preview' or 'full'
+ * @param {Object} options
+ * @param {number} options.cost - Credit cost (unused in local mode)
+ * @param {string} options.generation_id - Pre-minted generation id
+ */
+async function runLocalGeneration(type, { cost = 0, generation_id } = {}) {
+    // Local mode has no hosted R2 upload path; pending file inputs are not
+    // wired here. Rely on params.files.* already set where available.
+    const payload = buildParams(generation_id);
+
+    sendGAEvent('generation_api_request_sent', {
+        event_category: GA_EVENT_CATEGORIES.GENERATION_FUNNEL,
+        event_label: `API Request - ${type}`,
+        generation_type: type,
+        generation_id,
+    });
+
+    state.setCurrentHelperText('Generating locally...');
+
+    const response = await fetch(generateUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, type }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.status !== 'success' || result.error) {
+        const envelope = result.error
+            ? result
+            : { error: result.message || `Generate failed (${response.status})` };
+        throw Object.assign(new Error(envelope.error), {
+            stage: envelope.stage || result.stage,
+            generation_id,
+        });
+    }
+
+    const outputFile = result.output_file || null;
+    const resolvedSeed = (result.resolved_seed !== undefined && result.resolved_seed !== null)
+        ? result.resolved_seed
+        : null;
+
+    state.setRunDetails({
+        generation_id: result.generation_id || generation_id,
+        videoUrl: outputFile,
+        resolved_seed: resolvedSeed,
+    });
+    state.setWorkflowCompleted(true);
+
+    if (outputFile && /^https?:\/\//i.test(outputFile)) {
+        displayResult(outputFile, resolvedSeed);
+    } else {
+        displayLocalOutputPath(outputFile, resolvedSeed);
+    }
+
+    sendGAEvent('generation_successful', {
+        event_category: GA_EVENT_CATEGORIES.GENERATION_FUNNEL,
+        event_label: `Generation Success - ${type}`,
+        generation_type: type,
+        generation_id,
+        video_url: outputFile,
+    });
+}
+
+/**
  * Main generation handler. Builds the params payload, uploads pending files,
  * submits to the handler, then waits for completion via WebSocket.
  * @param {string} type - 'preview' or 'full'
@@ -68,15 +137,15 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
     const { generation_id } = buildParams();
     logDebug(`Minted generation_id: ${generation_id}`);
 
-    // Auth gate.
+    // Auth gate (hosted only; local mode has no backend auth).
     const { isLoggedIn, getSession } = await import('../../session.js');
-    if (!isLoggedIn()) {
+    if (RUNPOD_MODE && !isLoggedIn()) {
         showToastNotification('Please sign in to generate.', 'warning');
         return;
     }
 
-    // Credit gate.
-    if (cost > state.getCurrentCredits()) {
+    // Credit gate (hosted only; local mode has no credit system).
+    if (RUNPOD_MODE && cost > state.getCurrentCredits()) {
         throw new Error(MESSAGES.NOTIFICATION.ERROR.INSUFFICIENT_CREDITS);
     }
 
@@ -100,6 +169,13 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
     startAnimation(type, animationElements());
 
     try {
+        // Local mode: complete directly from the blocking POST /generate
+        // response. Skips hosted upload, WebSocket, health poll, and watchdogs.
+        if (!RUNPOD_MODE) {
+            await runLocalGeneration(type, { cost, generation_id });
+            return;
+        }
+
         // Upload pending files; workflow-prep records params.files.* by slot.
         const pendingFiles = await getAllPendingFiles();
         if (pendingFiles.length > 0) {
@@ -141,13 +217,13 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
         // 2s x 60 via API_BASE. Transitions the bar from 'starting' -> 'active' and
         // surfaces a confirmed backend 'failed' job immediately. Fire-and-forget; it
         // self-terminates on active/failed or after 60 polls (~2min). The hosted
-        // backend reads the camelCase generationID query param.
+        // backend reads the canonical snake_case generation_id query param.
         (async () => {
             const POLL_MS = 2000;
             const MAX_POLLS = 60;
             for (let i = 0; i < MAX_POLLS; i++) {
                 try {
-                    const resp = await fetch(`${API_BASE}/api/vidiaGeneration/status?generationID=${encodeURIComponent(generation_id)}`, {
+                    const resp = await fetch(`${API_BASE}/api/vidiaGeneration/status?generation_id=${encodeURIComponent(generation_id)}`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                     });
@@ -231,7 +307,9 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
 
             // Watchdog (c): stall watchdog + restartWorker. After STALL_T2_MS without
             // progress, POST /api/runpod/restartWorker once. The hosted backend reads
-            // the camelCase generationID body field.
+            // the canonical snake_case generation_id body field. Disabled for v1 via
+            // RESTART_WORKER_ENABLED in constants.js until a real secured restart
+            // implementation exists.
             if (RESTART_WORKER_ENABLED && !restartAttempted) {
                 const last = state.getLastProgressAt?.() || 0;
                 if (last && (Date.now() - last) >= STALL_T2_MS) {
@@ -244,7 +322,7 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
                         const resp = await fetch(`${API_BASE}/api/runpod/restartWorker`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', ...h },
-                            body: JSON.stringify({ generationID: generation_id }),
+                            body: JSON.stringify({ generation_id }),
                         });
                         if (!resp.ok) throw new Error(`Restart failed (${resp.status})`);
                         showToastNotification('Worker restarted. Monitoring progress...', 'info', { autoHideDelay: 4000 });

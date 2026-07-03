@@ -1,3 +1,5 @@
+// Import the global config (sets window.APP_CONFIG) before anything that reads it.
+import './config.js';
 // Import VidiaApp class
 import { VidiaApp } from './core/app.js';
 

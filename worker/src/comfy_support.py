@@ -86,8 +86,9 @@ def validate_input(job_input):
     method = params.get("method")
     if method not in VALID_METHODS:
         return None, f"params.method must be one of {VALID_METHODS}"
-    if not isinstance(params.get("prompt", ""), str):
-        return None, "params.prompt must be a string"
+    prompt = params.get("prompt")
+    if not isinstance(prompt, str) or prompt.strip() == "":
+        return None, "params.prompt is required and must be a non-empty string"
     if not isinstance(params.get("features", {}), dict):
         return None, "params.features must be an object"
     if not isinstance(params.get("files", {}), dict):

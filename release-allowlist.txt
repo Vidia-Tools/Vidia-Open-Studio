@@ -1,0 +1,34 @@
+# Vidia Open Studio - release allowlist
+#
+# Explicit list of files/directories intended for public open-source release.
+# Consumed by scripts/release-check.mjs. One pattern per line. Blank lines and
+# lines starting with '#' are ignored.
+#
+# Pattern forms:
+#   path/to/file        exact file (relative to repo root)
+#   dir/**              include every file under dir/ recursively
+#
+# The checker ALWAYS strips forbidden nested paths by rule (see
+# scripts/release-check.mjs FORBIDDEN_*), so listing a directory here does NOT
+# opt in to .env, backend/wrangler.toml, node_modules/, dist/, .wrangler/,
+# __pycache__/, .DS_Store, logs, or other local-only artifacts. Those are
+# excluded unconditionally even if a directory pattern would otherwise match.
+#
+# Required safe template files (must exist, checked separately):
+#   .env.example
+#   backend/wrangler.toml.example
+
+# --- Root metadata, docs, scripts ---
+.gitignore
+.env.example
+DEPLOY.md
+setup.sh
+release-allowlist.txt
+scripts/release-check.mjs
+
+# --- Source trees (forbidden nested paths stripped by rule) ---
+backend/**
+frontend/**
+worker/**
+workflows/**
+controls/**

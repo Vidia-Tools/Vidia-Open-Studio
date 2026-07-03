@@ -125,13 +125,82 @@ export function displayResult(videoUrl, resolvedSeed = null) {
     }, 500); // Wait for animation fade out
 }
 
+/**
+ * Display a local-mode output that is a filesystem path rather than a
+ * browser-served URL. Browsers cannot load arbitrary filesystem paths as media
+ * sources, so the path is shown as text with a copy button instead of a
+ * <video>. This keeps local mode from crashing on a non-URL output_file.
+ * @param {string|null} outputPath - Local filesystem path from app_server /generate
+ * @param {number|null} resolvedSeed - Resolved seed for reproducibility
+ */
+export function displayLocalOutputPath(outputPath, resolvedSeed = null) {
+    const animationContainer = document.querySelector('.animation-container');
+    const resultContent = document.querySelector('.result-content');
+
+    animationContainer.style.opacity = '0';
+
+    setTimeout(() => {
+        animationContainer.classList.add('hidden');
+        resultContent.innerHTML = '';
+        resultContent.style.opacity = '0';
+
+        const info = document.createElement('div');
+        info.className = 'video-container local-output-info';
+
+        const heading = document.createElement('p');
+        heading.textContent = 'Generation complete.';
+        heading.style.fontWeight = '600';
+        info.appendChild(heading);
+
+        const pathRow = document.createElement('p');
+        pathRow.className = 'local-output-path';
+        pathRow.textContent = outputPath || 'No output path returned.';
+        pathRow.style.wordBreak = 'break-all';
+        pathRow.style.fontFamily = 'monospace';
+        info.appendChild(pathRow);
+
+        if (outputPath) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'result-button';
+            copyBtn.textContent = 'Copy path';
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(outputPath);
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyBtn.textContent = 'Copy path'; }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy output path:', err);
+                }
+            });
+            info.appendChild(copyBtn);
+        }
+
+        resultContent.appendChild(info);
+
+        if (resolvedSeed !== null && resolvedSeed !== undefined) {
+            const seedEl = document.createElement('div');
+            seedEl.className = 'result-seed';
+            seedEl.textContent = `Seed: ${resolvedSeed}`;
+            resultContent.appendChild(seedEl);
+        }
+
+        requestAnimationFrame(() => {
+            resultContent.style.opacity = '1';
+            resultContent.classList.add('visible');
+        });
+
+        updateNotification(MESSAGES.NOTIFICATION.VIDEO_EXPIRY);
+        logDebug('Local output path displayed:', outputPath);
+    }, 500);
+}
+
 // Create download button
 function createDownloadButton(videoUrl) {
     const downloadButton = document.createElement('a');
     downloadButton.href = videoUrl;
     downloadButton.download = 'vidia.mp4';
     downloadButton.className = 'result-button download-button';
-    downloadButton.innerHTML = `
+    downloadButtonInnerHTML = `
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>

@@ -76,4 +76,4 @@ export function setDebugMode(enabled) {
 export const EXECUTED_FALLBACK_ENABLED = true;      // Allow executed-with-URL fallback (guarded) in RUNPOD_MODE
 export const FALLBACK_T1_MS = 120000;               // Wait 120s for videoReady before considering fallback
 export const STALL_T2_MS = 600000;                  // 10 minutes without progress => consider worker restart
-export const RESTART_WORKER_ENABLED = true;         // Attempt one backend worker restart on stall
+export const RESTART_WORKER_ENABLED = false;        // Disabled for v1: no real secured RunPod restart implementation exists yet. Re-enable only after a secured, rate-limited, authenticated restart path is built.
