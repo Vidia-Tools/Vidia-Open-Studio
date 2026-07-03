@@ -1,9 +1,10 @@
-# Vidia Open Studio backend - Cloudflare Workers config (template).
-# Copy to wrangler.toml and fill in your own account-specific values.
-# Secrets (JWT_SECRET, RUNPOD_API_KEY, etc.) are NOT set here; use
-# `wrangler secret put NAME` or the root setup.sh. See root .env.example.
+# Vidia Open Studio backend - Cloudflare Workers config (tracked, live).
+# Deployed by git-connected Cloudflare Workers Builds (npx wrangler deploy).
+# Contains only non-secret resource ids/vars. Secrets (JWT_SECRET,
+# RUNPOD_API_KEY, etc.) are set as Worker secrets via `wrangler secret put`
+# or the dashboard, never here. See root .env.example and wrangler.toml.example.
 
-name = "vidia-backend"
+name = "vidia-open-studio-test"
 main = "worker.js"
 compatibility_date = "2024-10-22"
 compatibility_flags = ["nodejs_compat"]
@@ -11,13 +12,13 @@ account_id = "cb5a472009030142b598cddb8e98f733"
 
 [vars]
 # Comma-separated list of allowed browser origins for CORS.
-ALLOWED_ORIGINS = "https://app.vidia.tools,https://vidia-app.pages.dev"
+ALLOWED_ORIGINS = "https://vidia-open-studio.pages.dev,https://vidia-open-studio-test.pages.dev,http://localhost:5173"
 
 # Admin account email (grants access to /api/admin/* routes).
 ADMIN_EMAIL = "admin@vidia.tools"
 
 # Base URL of the deployed frontend (used in magic-link + email templates).
-APP_BASE_URL = "https://app.vidia.tools"
+APP_BASE_URL = "https://vidia-open-studio.pages.dev"
 
 # Sender identity for outgoing email (Resend).
 EMAIL_FROM = "Vidia <noreply@accounts.vidia.tools>"
@@ -40,7 +41,7 @@ RUNPOD_PRO_ENDPOINT_ID = "pa7spb8nax9idw"
 # have wired up Stripe (STRIPE_* secrets + STRIPE_PRICE_ID + CHECKOUT_RETURN_URL).
 VIDIA_PAYMENTS_ENABLED = "false"
 STRIPE_PRICE_ID = "price_test"
-CHECKOUT_RETURN_URL = "https://app.vidia.tools"
+CHECKOUT_RETURN_URL = "https://vidia-open-studio.pages.dev"
 
 # Cron trigger: monthly refresh of the disposable email domain blocklist.
 [triggers]
