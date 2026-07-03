@@ -1,11 +1,6 @@
-# wrangler.toml
-name = 'vidia-app'
-compatibility_date = "2023-10-30"
-
-# Static site config - Vite builds to dist/
-[site]
-bucket = "./dist"
-
-[env.production]
-name = "vidia-alpha"
-route = ""
+# Cloudflare Pages config for the Vidia Open Studio frontend.
+# Pages reads pages_build_output_dir to locate the Vite build output (relative
+# to the Pages "Root directory" setting, which is this frontend/ folder).
+name = "vidia-app"
+compatibility_date = "2024-10-22"
+pages_build_output_dir = "dist"
