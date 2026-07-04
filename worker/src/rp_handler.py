@@ -76,7 +76,8 @@ def handler(job):
 
         start_time = time.time()
         try:
-            result = runner.run_pipeline(generation_id, user_id, params, relay, progress)
+            result = runner.run_pipeline(generation_id, user_id, params, relay, progress,
+                                         run_type=validated.get("type", "full"))
             summary = {"generation_id": generation_id, "status": "success",
                        "durations": {"total_s": int(time.time() - start_time)},
                        "stages": result.get("stages")}

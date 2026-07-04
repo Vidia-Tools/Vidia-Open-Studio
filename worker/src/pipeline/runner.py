@@ -34,6 +34,10 @@ VIDIA_MODE = os.environ.get("VIDIA_MODE", "runpod")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
 OPENROUTER_PLACEHOLDERS = {"", "OPENROUTER_API_KEY", "dummy-key", "change-me"}
 
+# Preview frame caps per method (Prod parity: lifecycle.js frame_load_cap values).
+# Full generation leaves the load node untouched (cap = 0).
+PREVIEW_FRAME_CAPS = {"evolve": 16, "trace": 8, "forge": 120, "hunyuan": 120}
+
 
 class PipelineError(Exception):
     def __init__(self, message, stage=None):
@@ -293,7 +297,7 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
     raise PipelineError("Max retries reached while waiting for stage completion")
 
 
-def run_pipeline(generation_id, user_id, params, relay, progress):
+def run_pipeline(generation_id, user_id, params, relay, progress, run_type="full"):
     """Execute all active stages for one generation. Returns result dict."""
     _apply_runtime_defaults(params)
     manifest = load_manifest()
@@ -318,6 +322,16 @@ def run_pipeline(generation_id, user_id, params, relay, progress):
     # the user's uploaded source video (files.in_video).
     prev_output = file_paths.get("in_video")
 
+    # Preview frame cap (Prod parity): cap the initial source video load only.
+    # frame_cap is passed to load_stage solely while prev_output is still the
+    # original source video; once a video stage runs, prev_output becomes the
+    # re-encoded intermediate and the cap no longer applies. Full runs = 0.
+    frame_cap = 0
+    if run_type == "preview":
+        frame_cap = PREVIEW_FRAME_CAPS.get(params.get("method"), 0)
+        if frame_cap:
+            logger.info(f"[PREVIEW] frame_cap={frame_cap} for method={params.get('method')}")
+
     log_state = {"position": 0, "last_check": time.time(), "user_id": user_id}
     if os.path.exists(COMFY_LOG_PATH):
         with open(COMFY_LOG_PATH, "r") as f:
@@ -337,9 +351,14 @@ def run_pipeline(generation_id, user_id, params, relay, progress):
                 continue
 
             logger.info(f"[STAGE {index + 1}/{total}] {name}: {stage['path']}")
+            # Cap only the initial source video load: pass frame_cap while the
+            # pending previous output is still the original uploaded source.
+            stage_frame_cap = (frame_cap if frame_cap and prev_output == file_paths.get("in_video")
+                               else None)
             graph, info = loader.load_stage(
                 stage["path"], name, generation_id, params, file_paths,
-                prev_output=prev_output, text_output_dir=text_dir, final=stage["final"])
+                prev_output=prev_output, text_output_dir=text_dir,
+                final=stage["final"], frame_cap=stage_frame_cap)
 
             stage_relay = StageRelay(relay, name, index + 1, total)
             stage_relay.send_progress("stage_start", {"status": "started"})

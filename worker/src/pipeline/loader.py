@@ -99,7 +99,7 @@ def _inject_param(node, key, value):
 
 
 def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
-               prev_output=None, text_output_dir=None, final=False):
+               prev_output=None, text_output_dir=None, final=False, frame_cap=None):
     """Build a concrete graph for one stage.
 
     params:       flat dict of tunable values ({param} tags)
@@ -107,6 +107,10 @@ def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
     prev_output:  local path of the previous stage's output ([in_prev])
     text_output_dir: directory for [out:name] saveText files
     final:        True for the output stage (save-node format left untouched)
+    frame_cap:    optional positive int; when set, caps the source video load
+                  (VHS_LoadVideoPath nodes receiving [in_video]/[in_prev]) by
+                  setting frame_load_cap and zeroing skip_first_frames. Preview
+                  runs pass this only for the initial source video load.
 
     Returns (graph, info) where info = {
       "inputs": {slot: [node_ids]}, "output_node": id or None,
@@ -138,6 +142,13 @@ def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
                     f"{node.get('class_type')} for [{slot}] (node {node_id})")
             inputs[field] = value
             info["inputs"].setdefault(slot, []).append(node_id)
+            # Preview frame cap (Prod parity): cap the source video load only.
+            # Applies to VHS_LoadVideoPath nodes receiving [in_video]/[in_prev].
+            if (isinstance(frame_cap, int) and frame_cap > 0
+                    and slot in ("in_video", "in_prev")
+                    and node.get("class_type") == "VHS_LoadVideoPath"):
+                inputs["frame_load_cap"] = frame_cap
+                inputs["skip_first_frames"] = 0
 
         if out_tag == "out":
             if info["output_node"] is not None:

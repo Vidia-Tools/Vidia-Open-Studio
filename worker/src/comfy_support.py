@@ -96,10 +96,17 @@ def validate_input(job_input):
     params.setdefault("features", {})
     params.setdefault("files", {})
 
+    # Frontend sends {"type": "preview"|"full", ...} as a top-level sibling of
+    # params. Pass it through so the runner can cap preview frames per method.
+    run_type = job_input.get("type", "full")
+    if run_type not in ("preview", "full"):
+        run_type = "full"
+
     return {
         "generation_id": generation_id,
         "user_id": job_input.get("user_id", "unknown"),
         "params": params,
+        "type": run_type,
     }, None
 
 

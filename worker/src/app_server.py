@@ -126,7 +126,8 @@ def run_generation(validated):
 
     try:
         return runner.run_pipeline(generation_id, validated["user_id"],
-                                   validated["params"], relay, progress)
+                                   validated["params"], relay, progress,
+                                   run_type=validated.get("type", "full"))
     finally:
         if progress:
             try:
