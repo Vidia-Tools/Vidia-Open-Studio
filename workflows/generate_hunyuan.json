@@ -288,7 +288,7 @@
     },
     "class_type": "HyVideoSampler",
     "_meta": {
-      "title": "HunyuanVideo Sampler"
+      "title": "HunyuanVideo Sampler {scheduler}"
     }
   },
   "1060": {

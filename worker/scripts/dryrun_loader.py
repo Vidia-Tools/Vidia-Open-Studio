@@ -53,6 +53,8 @@ DUMMY_PARAMS = {
     "lora_keywords": "keywords",
     "prompt_enhance_template": "enhance {prompt}",
     "model_temperature": False,
+    "sampler_name": "multistep/dpmpp_2m",
+    "scheduler": "sgm_uniform",
 }
 
 DUMMY_FILES = {

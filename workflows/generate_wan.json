@@ -553,7 +553,7 @@
     },
     "class_type": "ClownsharKSampler_Beta",
     "_meta": {
-      "title": "ClownsharKSampler"
+      "title": "ClownsharKSampler {sampler_name} {scheduler}"
     }
   },
   "1131": {
@@ -884,7 +884,7 @@
     },
     "class_type": "ClownsharKSampler_Beta",
     "_meta": {
-      "title": "ClownsharKSampler"
+      "title": "ClownsharKSampler {sampler_name} {scheduler}"
     }
   },
   "1153": {
