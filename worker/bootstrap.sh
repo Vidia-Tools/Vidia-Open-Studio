@@ -24,6 +24,7 @@ fi
 TEMP_DIR=$(mktemp -d)
 if git clone --depth 1 -b "$VIDIA_DOCKER_REPO_REF" "$VIDIA_DOCKER_REPO_URL" "$TEMP_DIR" 2>/dev/null; then
     log "Monorepo cloned, refreshing src/ files..."
+    echo "[BOOT] repo commit: $(git -C "$TEMP_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
     if [ -d "$TEMP_DIR/worker/src" ]; then
         cp -r "$TEMP_DIR/worker/src/." /src/
         [ -f /src/start.sh ] && chmod +x /src/start.sh
@@ -42,6 +43,7 @@ if git clone --depth 1 -b "$VIDIA_DOCKER_REPO_REF" "$VIDIA_DOCKER_REPO_URL" "$TE
     fi
 else
     log "Failed to clone monorepo; using embedded src/ files"
+    echo "[BOOT] repo commit: baked-image (self-update failed)"
 fi
 rm -rf "$TEMP_DIR"
 unset GIT_SSH_COMMAND
