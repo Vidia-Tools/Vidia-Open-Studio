@@ -148,7 +148,7 @@
     },
     "class_type": "ImpactConditionalBranch",
     "_meta": {
-      "title": "Temperature Toggle"
+      "title": "Temperature Toggle {model_temperature}"
     }
   },
   "161": {

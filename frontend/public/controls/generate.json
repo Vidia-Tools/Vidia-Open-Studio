@@ -31,6 +31,7 @@
     { "type": "slider", "param": "upscale_multiplier", "range": [2, 4, 1], "default": 2, "label": "Upscale multiplier", "feature": "upscaler", "hint": "Choose how much to increase the resolution by." },
 
     { "type": "select", "param": "seed_mode", "options": ["Random", "Static"], "default": "Random", "optionParams": { "Random": { "seed": -1 }, "Static": {} }, "label": "Seed Control", "badge": "Advanced", "group": "advanced", "hint": "Control the randomness of generation. Random creates unique results each time, while Static allows reproducible results." },
-    { "type": "text", "param": "seed", "default": -1, "label": "Seed", "group": "advanced", "hint": "The seed used when Seed Control is set to Static (-1 = random)." }
+    { "type": "text", "param": "seed", "default": -1, "label": "Seed", "group": "advanced", "hint": "The seed used when Seed Control is set to Static (-1 = random)." },
+    { "type": "toggle", "param": "model_temperature", "default": false, "label": "'Creativity' Adjustments", "badge": "Experimental", "group": "advanced", "modes": ["evolve", "trace"], "hint": "In AI, temperature refers to how \"creative\" you want the model to be. I added a few configurations that sometimes work and sometimes don't. Enabling model temperature adjustments may produce unexpected results and encourages your experimentation." }
   ]
 }

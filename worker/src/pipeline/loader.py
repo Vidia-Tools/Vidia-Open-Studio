@@ -57,6 +57,8 @@ PARAM_INPUT_CANDIDATES = {
     "subject_object": ["cond"],
     "subject_place": ["cond"],
     "subject_original": ["cond"],
+    # Creativity/Model Temperature toggle (ImpactConditionalBranch cond input).
+    "model_temperature": ["cond"],
 }
 
 # 2026-06-12: intermediates are re-encoded once per stage; near-lossless h264

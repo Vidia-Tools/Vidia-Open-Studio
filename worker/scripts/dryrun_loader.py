@@ -50,6 +50,7 @@ DUMMY_PARAMS = {
     "openrouter_api_key": "dummy-key",
     "lora_keywords": "keywords",
     "prompt_enhance_template": "enhance {prompt}",
+    "model_temperature": False,
 }
 
 DUMMY_FILES = {
