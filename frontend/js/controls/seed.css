@@ -1,0 +1,24 @@
+/* seed control type.
+   Prod's dashboard.html seed section uses an inline flex row (gap 10px) with a
+   number input + two .advanced-button buttons. style.css already styles
+   .advanced-button; this file only lays out the row and the input, mirroring
+   prod's inline styling intent without editing the parity-locked style.css. */
+.os-seed-row {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+}
+
+.os-seed-input {
+  flex-grow: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.os-seed-btn {
+  padding: 0.5rem;
+  margin: 0;
+}

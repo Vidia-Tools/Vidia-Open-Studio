@@ -14,6 +14,7 @@ import imageUpload from './image-upload.js';
 import loraGallery from './lora-gallery.js';
 import canvasPoints from './canvas-points.js';
 import subjectChecklist from './subject-checklist.js';
+import seed from './seed.js';
 
 /**
  * @typedef {Object} ControlModule
@@ -25,7 +26,7 @@ import subjectChecklist from './subject-checklist.js';
  * @property {'input'|'change'} event - DOM event that signals a value change.
  */
 
-const modules = [toggle, slider, select, text, imageUpload, loraGallery, canvasPoints, subjectChecklist];
+const modules = [toggle, slider, select, text, imageUpload, loraGallery, canvasPoints, subjectChecklist, seed];
 
 /** @type {Record<string, ControlModule>} */
 const registry = Object.fromEntries(modules.map(m => [m.type, m]));
