@@ -33,6 +33,7 @@ PARAM_INPUT_CANDIDATES = {
     "negative_prompt": ["string", "value", "text"],
     "frame_divider": ["int", "value"],
     "steps": ["steps", "value", "int"],
+    "forge_quality": ["value", "int"],
     "seed": ["seed", "noise_seed"],
     "denoise": ["denoise"],
     "cfg": ["cfg"],

@@ -26,6 +26,7 @@ DUMMY_PARAMS = {
     "negative_prompt": "ugly, blurry",
     "seed": 12345,
     "steps": 20,
+    "forge_quality": 50,
     "cfg": 6.0,
     "denoise": 0.7,
     "aspect": "16:9",

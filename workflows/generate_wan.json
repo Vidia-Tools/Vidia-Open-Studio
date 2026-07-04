@@ -1110,7 +1110,7 @@
     },
     "class_type": "easy int",
     "_meta": {
-      "title": "Int {steps}"
+      "title": "Int {steps} {forge_quality}"
     }
   },
   "1180": {

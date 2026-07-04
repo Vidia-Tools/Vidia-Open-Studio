@@ -5,6 +5,8 @@
 
     { "type": "slider", "param": "denoise", "range": [0, 1, 0.01], "default": 0.65, "label": "Creativity strength", "modes": ["hunyuan"], "definingFeature": true, "hint": "Adjust how much freedom the AI has to create. Higher values generate more creative but less predictable results, while lower values stay closer to your original prompt." },
 
+    { "type": "slider", "param": "forge_quality", "range": [1, 100, 3], "default": 50, "label": "Speed vs. Quality", "modes": ["forge"], "definingFeature": true, "hint": "Adjust the balance between generation speed and output quality. Higher values produce better quality but take longer. Upscaler highly encouraged for best quality." },
+
     { "type": "subject-checklist", "param": "subject", "label": "Subject", "modes": ["forge"], "definingFeature": true, "hint": "Choose the subject type of your video for best results. This affects how the AI analyzes your video." },
 
     { "type": "select", "param": "speed", "options": ["Quality", "Balanced", "Speed", "High Speed"], "default": "Quality", "label": "Speed Priority", "modes": ["evolve", "trace"], "optionParams": { "Quality": { "steps": 30, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors" }, "Balanced": { "steps": 12, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors" }, "Speed": { "steps": 8, "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors" }, "High Speed": { "steps": 4, "speed_lora": "Hyper-SDXL-4steps-CFG-lora.safetensors" } }, "hint": "Higher speed may reduce quality but will make generation time faster. It is recommended to run previews at a high speed to get the gist of the result, and full generations at full quality." },
