@@ -43,6 +43,7 @@ PARAM_INPUT_CANDIDATES = {
     "pusa_lora_low": ["lora_name", "lora"],
     "pusa_lora_high": ["lora_name", "lora"],
     "lora_strength": ["strength", "strength_model"],
+    "speed_lora_strength": ["strength_model", "strength"],
     "ipadapter_style_weight": ["weight_style", "weight"],
     "upscale_multiplier": ["value", "int"],
     "points_positive": ["points_store"],
@@ -88,6 +89,11 @@ def _inject_param(node, key, value):
     widgets = {k: v for k, v in inputs.items() if not isinstance(v, list)}
     if key in widgets:
         inputs[key] = value
+        return True
+    # 2026-07-04: speed_lora_strength must set both model+clip (Prod parity).
+    if key == "speed_lora_strength" and "strength_model" in widgets and "strength_clip" in widgets:
+        inputs["strength_model"] = value
+        inputs["strength_clip"] = value
         return True
     for candidate in PARAM_INPUT_CANDIDATES.get(key, []):
         if candidate in widgets:

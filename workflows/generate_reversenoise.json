@@ -80,7 +80,7 @@
     },
     "class_type": "LoraLoader",
     "_meta": {
-      "title": "Load SDXL Speed LoRA {speed_lora}"
+      "title": "Load SDXL Speed LoRA {speed_lora} {speed_lora_strength}"
     }
   },
   "147": {

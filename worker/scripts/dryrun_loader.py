@@ -37,6 +37,7 @@ DUMMY_PARAMS = {
     "pusa_lora_low": "pusa_low.safetensors",
     "pusa_lora_high": "pusa_high.safetensors",
     "lora_strength": 0.8,
+    "speed_lora_strength": 1,
     "ipadapter_style_weight": 1.2,
     "upscale_multiplier": 2,
     "points_positive": "{\"positive\":[],\"negative\":[]}",
