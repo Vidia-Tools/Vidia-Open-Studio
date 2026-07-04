@@ -135,8 +135,35 @@ def _output_file_from_history(history, prompt_id, output_node):
     return None
 
 
-def _run_stage(graph, progress, stage_relay, log_state):
-    """Queue one stage graph and wait for completion. Returns prompt_id history."""
+def _text_outputs_ready(text_outputs):
+    """Return (ready, missing_paths) for declared text output files.
+
+    A text-output stage (e.g. prompt_prep) succeeds when every file the loader
+    declared in info["text_outputs"] exists and is readable. We do not require
+    non-empty content because a legitimately empty enhancement result is still a
+    valid stage output; requiring content could stall the pipeline.
+    """
+    missing = []
+    for path in (text_outputs or {}).values():
+        if not os.path.exists(path) or not os.access(path, os.R_OK):
+            missing.append(path)
+    return (not missing, missing)
+
+
+def _run_stage(graph, info, progress, stage_relay, log_state):
+    """Queue one stage graph and wait for completion. Returns prompt_id history.
+
+    Stage-aware completion:
+      * text-output stages succeed when all declared info["text_outputs"] files
+        exist and are readable (Comfy history outputs are not required).
+      * normal [out] stages succeed on prompt-specific websocket completion
+        (executing null-node / executed for this prompt_id) and require the
+        declared output node's entry in Comfy history.
+    Queue-empty alone never marks a prompt complete.
+    """
+    text_outputs = info.get("text_outputs") or {}
+    is_text_stage = bool(text_outputs)
+
     queued = queue_workflow(graph)
     prompt_id = queued["prompt_id"]
     logger.info(f"Queued stage workflow with ID {prompt_id}")
@@ -170,27 +197,70 @@ def _run_stage(graph, progress, stage_relay, log_state):
             stage_relay.send_progress("error", {"type": "timeout_error", "message": msg})
             raise PipelineError(msg)
 
-        if progress and progress.is_workflow_complete(prompt_id):
-            try:
-                history = get_history(prompt_id)
-            except Exception:
-                time.sleep(1)
-                continue
-            if prompt_id in history and history[prompt_id].get("outputs"):
-                return prompt_id, history
-            time.sleep(1)
-            continue
+        # Explicit websocket execution_error for this prompt -> fail fast.
+        if progress and progress.failed_prompt(prompt_id):
+            err = progress.prompt_errors.get(prompt_id, {})
+            msg = f"Execution error for prompt {prompt_id}: {json.dumps(err)}"
+            progress.log_progress(msg, level="ERROR")
+            raise PipelineError(msg)
 
-        try:
-            history = get_history(prompt_id)
-            if prompt_id in history and history[prompt_id].get("error"):
-                raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
-            if not progress and prompt_id in history and history[prompt_id].get("outputs"):
+        if is_text_stage:
+            ready, missing = _text_outputs_ready(text_outputs)
+            if ready:
+                logger.info(f"Text outputs ready for prompt {prompt_id}: "
+                            f"{list(text_outputs)}")
+                try:
+                    history = get_history(prompt_id)
+                except Exception:
+                    history = {}
+                if prompt_id in history and history[prompt_id].get("error"):
+                    raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
                 return prompt_id, history
-        except PipelineError:
-            raise
-        except Exception:
-            pass
+            # No websocket: poll history for an explicit error while waiting.
+            if not progress:
+                try:
+                    history = get_history(prompt_id)
+                    if prompt_id in history and history[prompt_id].get("error"):
+                        raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
+                except PipelineError:
+                    raise
+                except Exception:
+                    pass
+            logger.throttled("text_wait", LOG_THROTTLE_SECONDS,
+                             f"Waiting for text outputs, missing: {missing}")
+        else:
+            if progress and progress.is_workflow_complete(prompt_id):
+                try:
+                    history = get_history(prompt_id)
+                except Exception:
+                    time.sleep(1)
+                    retries += 1
+                    continue
+                if prompt_id in history and history[prompt_id].get("error"):
+                    raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
+                if prompt_id in history and history[prompt_id].get("outputs"):
+                    return prompt_id, history
+                logger.throttled("complete_no_outputs", LOG_THROTTLE_SECONDS,
+                                 f"Prompt {prompt_id} marked complete but history has no outputs")
+                time.sleep(1)
+                retries += 1
+                continue
+
+            # No-progress path (WS disabled): poll history directly.
+            if not progress:
+                try:
+                    history = get_history(prompt_id)
+                    if prompt_id not in history:
+                        logger.throttled("history_missing", LOG_THROTTLE_SECONDS,
+                                         f"History missing prompt_id {prompt_id}")
+                    elif history[prompt_id].get("error"):
+                        raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
+                    elif history[prompt_id].get("outputs"):
+                        return prompt_id, history
+                except PipelineError:
+                    raise
+                except Exception:
+                    pass
 
         time.sleep(COMFY_POLLING_INTERVAL_MS / 1000)
         retries += 1
@@ -249,7 +319,7 @@ def run_pipeline(generation_id, user_id, params, relay, progress):
 
             stage_relay = StageRelay(relay, name, index + 1, total)
             stage_relay.send_progress("stage_start", {"status": "started"})
-            prompt_id, history = _run_stage(graph, progress, stage_relay, log_state)
+            prompt_id, history = _run_stage(graph, info, progress, stage_relay, log_state)
 
             stage_record = {"prompt_id": prompt_id, "params": {}}
 

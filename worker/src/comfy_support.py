@@ -199,6 +199,7 @@ class ProgressTracker:
         self.progress_log = []
         self.ws = None
         self.completed_prompts = set()
+        self.prompt_errors = {}
         self.queue_empty_time = None
         self.last_activity_time = time.time()
         self._last_reconnect_attempt = 0
@@ -246,11 +247,15 @@ class ProgressTracker:
         if prompt_id in self.completed_prompts:
             self.log_progress(f"Workflow complete: prompt {prompt_id} marked as completed")
             return True
-        if self.queue_empty_time and (time.time() - self.queue_empty_time) >= 3:
-            self.log_progress("Workflow complete: queue empty for 3+ seconds")
-            self.completed_prompts.add(prompt_id)
-            return True
+        # Queue-empty is only a diagnostic signal now; it must not mark a prompt
+        # complete by itself. Real completion comes from prompt-specific
+        # websocket events (executing null-node / executed) recorded in
+        # completed_prompts by monitor_progress.
         return False
+
+    def failed_prompt(self, prompt_id):
+        """True if an execution_error websocket event named this prompt_id."""
+        return prompt_id in self.prompt_errors
 
     def reset_for_stage(self, relay=None):
         """Reuse the same WS connection across pipeline stages."""
@@ -350,6 +355,9 @@ class ProgressTracker:
                 elif event_type == "execution_error":
                     error_data = data.get("data", {})
                     self.log_progress(f"Execution error: {json.dumps(error_data)}", level="ERROR")
+                    err_prompt_id = error_data.get("prompt_id")
+                    if err_prompt_id:
+                        self.prompt_errors[err_prompt_id] = error_data
                     if self.relay:
                         self.relay.send_progress("error", {
                             "type": "execution_error",
