@@ -36,6 +36,8 @@ PARAM_INPUT_CANDIDATES = {
     "forge_quality": ["value", "int"],
     "seed": ["seed", "noise_seed"],
     "denoise": ["denoise"],
+    "detailer_type": ["model_name"],
+    "detailer_denoise": ["denoise"],
     "cfg": ["cfg"],
     "speed_lora": ["lora_name", "lora"],
     "style_lora": ["lora_name", "lora"],

@@ -145,6 +145,11 @@ def _apply_runtime_defaults(params):
 
     params.setdefault("lora_keywords", "")
 
+    # Prod parity: detailer denoise of 0 is clamped to a near-zero floor so the
+    # SEGSDetailer still applies a minimal pass rather than skipping entirely.
+    if params.get("detailer_denoise") == 0:
+        params["detailer_denoise"] = 0.0001
+
 
 def _output_file_from_history(history, prompt_id, output_node):
     """Resolve the saved file path from a completed prompt's history outputs."""

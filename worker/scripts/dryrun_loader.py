@@ -29,6 +29,8 @@ DUMMY_PARAMS = {
     "forge_quality": 50,
     "cfg": 6.0,
     "denoise": 0.7,
+    "detailer_type": "bbox/face_yolov8m.pt",
+    "detailer_denoise": 0.18,
     "aspect": "16:9",
     "frame_divider": 2,
     "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors",

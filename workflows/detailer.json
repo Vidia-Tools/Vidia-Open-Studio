@@ -115,7 +115,7 @@
     },
     "class_type": "SEGSDetailerForAnimateDiff",
     "_meta": {
-      "title": "SEGSDetailer For Video (SEGS/pipe) {seed} {denoise}"
+      "title": "SEGSDetailer For Video (SEGS/pipe) {seed} {denoise} {detailer_denoise}"
     }
   },
   "13": {
@@ -124,7 +124,7 @@
     },
     "class_type": "UltralyticsDetectorProvider",
     "_meta": {
-      "title": "UltralyticsDetectorProvider"
+      "title": "UltralyticsDetectorProvider {detailer_type}"
     }
   },
   "22": {

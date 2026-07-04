@@ -1,4 +1,23 @@
 {
   "stage": "detailer",
-  "controls": []
+  "controls": [
+    {
+      "type": "select",
+      "param": "detailer_type",
+      "options": ["bbox/face_yolov8m.pt", "bbox/hand_yolov8s.pt", "segm/person_yolov8m-seg.pt"],
+      "default": "bbox/face_yolov8m.pt",
+      "label": "Detailer Type",
+      "feature": "detailer",
+      "hint": "Choose where the system should add more detail."
+    },
+    {
+      "type": "slider",
+      "param": "detailer_denoise",
+      "range": [0, 1, 0.01],
+      "default": 0.18,
+      "label": "Detailer Impact Amount",
+      "feature": "detailer",
+      "hint": "Controls the strength of the detailer effect. Lower values make subtle enhancements while higher values apply stronger details."
+    }
+  ]
 }
