@@ -130,12 +130,39 @@ def test_execution_error_raises():
     print("OK: websocket execution_error raises PipelineError")
 
 
+def test_runtime_defaults_disable_cloud_llm_without_key():
+    params = {"prompt": "hello"}
+    old_key = runner.OPENROUTER_API_KEY
+    try:
+        runner.OPENROUTER_API_KEY = ""
+        runner._apply_runtime_defaults(params)
+        assert params["use_cloud_llm"] is False
+        assert params["lora_keywords"] == ""
+        assert "openrouter_api_key" not in params
+
+        params_with_key = {"prompt": "hello"}
+        runner.OPENROUTER_API_KEY = "real-key"
+        runner._apply_runtime_defaults(params_with_key)
+        assert params_with_key["openrouter_api_key"] == "real-key"
+        assert params_with_key["use_cloud_llm"] is True
+
+        explicit = {"prompt": "hello", "use_cloud_llm": True, "openrouter_api_key": "OPENROUTER_API_KEY"}
+        runner.OPENROUTER_API_KEY = ""
+        runner._apply_runtime_defaults(explicit)
+        assert explicit["use_cloud_llm"] is False
+        assert "openrouter_api_key" not in explicit
+    finally:
+        runner.OPENROUTER_API_KEY = old_key
+    print("OK: runtime defaults disable cloud LLM unless a real key is available")
+
+
 def main():
     test_queue_empty_does_not_complete()
     test_text_outputs_ready_helper()
     test_text_stage_completes_on_file_not_history()
     test_normal_stage_requires_prompt_specific_completion()
     test_execution_error_raises()
+    test_runtime_defaults_disable_cloud_llm_without_key()
     print("\nAll stage-completion unit tests passed.")
 
 

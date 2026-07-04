@@ -31,6 +31,8 @@ COMFY_LOG_PATH = os.environ.get("COMFY_LOG_PATH", "/tmp/comfy.log")
 INACTIVITY_TIMEOUT = int(os.environ.get("COMFY_INACTIVITY_TIMEOUT", 900))
 # "runpod" (R2 upload output stage) or "local" (stock save to ComfyUI output dir)
 VIDIA_MODE = os.environ.get("VIDIA_MODE", "runpod")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
+OPENROUTER_PLACEHOLDERS = {"", "OPENROUTER_API_KEY", "dummy-key", "change-me"}
 
 
 class PipelineError(Exception):
@@ -117,6 +119,27 @@ def _save_state(state_path, state):
     os.makedirs(os.path.dirname(state_path), exist_ok=True)
     with open(state_path, "w") as f:
         json.dump(state, f)
+
+
+def _apply_runtime_defaults(params):
+    """Fill worker-only defaults that are not exposed as frontend controls."""
+    provided_key = str(params.get("openrouter_api_key", "")).strip()
+    env_key = OPENROUTER_API_KEY if OPENROUTER_API_KEY not in OPENROUTER_PLACEHOLDERS else ""
+
+    if provided_key in OPENROUTER_PLACEHOLDERS:
+        if env_key:
+            params["openrouter_api_key"] = env_key
+            provided_key = env_key
+        else:
+            params.pop("openrouter_api_key", None)
+            provided_key = ""
+
+    if not provided_key:
+        params["use_cloud_llm"] = False
+    elif "use_cloud_llm" not in params:
+        params["use_cloud_llm"] = True
+
+    params.setdefault("lora_keywords", "")
 
 
 def _output_file_from_history(history, prompt_id, output_node):
@@ -272,6 +295,7 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
 
 def run_pipeline(generation_id, user_id, params, relay, progress):
     """Execute all active stages for one generation. Returns result dict."""
+    _apply_runtime_defaults(params)
     manifest = load_manifest()
     stages = active_stages(manifest, params)
     total = len(stages)
