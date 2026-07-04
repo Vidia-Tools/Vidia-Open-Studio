@@ -149,6 +149,63 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
         throw new Error(MESSAGES.NOTIFICATION.ERROR.INSUFFICIENT_CREDITS);
     }
 
+    // Pre-submit validation (parity item P9): block invalid runs before they
+    // reach the worker. Applies to both hosted and local paths (runs before the
+    // branch below). Mirrors prod js/features/generation/lifecycle.js gates.
+    const pending = await getAllPendingFiles();
+    const hasPending = (fileType) => pending.some(f => f.fileType === fileType);
+
+    // a. Prompt
+    const mediumSubject = document.getElementById('mediumSubject');
+    if (!mediumSubject || !mediumSubject.value.trim()) {
+        showToastNotification('Please enter a prompt describing what you want to create.', 'warning');
+        return;
+    }
+
+    // b. Video
+    if (!store.getFile('in_video') && !hasPending('video')) {
+        showToastNotification('Please select a video file first.', 'warning');
+        return;
+    }
+
+    // c. Style dropdown
+    const styleSelect = document.getElementById('style');
+    if (!styleSelect || styleSelect.value === '') {
+        showToastNotification('Please select a style.', 'warning');
+        return;
+    }
+
+    // d. Forge Reconstruct style image
+    if (store.getMethod() === 'forge' && !store.getFile('in_style_ref') && !hasPending('style')) {
+        showToastNotification('A style image is required for Reconstruct mode.', 'warning');
+        return;
+    }
+
+    // e. Full Body Replacement
+    if (store.getFeatures().fullBodyReplace) {
+        // body image
+        if (!store.getFile('in_ref_image') && !hasPending('body')) {
+            showToastNotification('Body Replacement is enabled but no body image has been uploaded.', 'warning');
+            return;
+        }
+        // canvas points: points_positive is JSON {"positive":[{x,y}],"negative":[{x,y}]}
+        // positive = green, negative = red. Require >= 2 green and >= 1 red.
+        let greenCount = 0;
+        let redCount = 0;
+        const pointsRaw = store.getParam('points_positive');
+        if (pointsRaw) {
+            try {
+                const parsed = JSON.parse(pointsRaw);
+                greenCount = Array.isArray(parsed.positive) ? parsed.positive.length : 0;
+                redCount = Array.isArray(parsed.negative) ? parsed.negative.length : 0;
+            } catch (_) { /* leave counts at 0 */ }
+        }
+        if (greenCount < 2 || redCount < 1) {
+            showToastNotification('Body Replacement requires 2 green points and 1 red point to be placed on the canvas.', 'warning');
+            return;
+        }
+    }
+
     sendGAEvent('generation_attempted', {
         event_category: GA_EVENT_CATEGORIES.GENERATION_FUNNEL,
         event_label: `Generation Attempt - ${type}`,
