@@ -13,7 +13,8 @@ import time
 
 from comfy_support import (
     COMFY_POLLING_INTERVAL_MS, COMFY_POLLING_MAX_RETRIES,
-    LOG_THROTTLE_SECONDS, StageRelay, logger, get_history, queue_workflow,
+    LOG_THROTTLE_SECONDS, StageRelay, logger, get_history, get_queue,
+    queue_workflow,
 )
 from pipeline import loader
 
@@ -242,6 +243,31 @@ def _append_log_tail(message):
     return message
 
 
+def _stall_diagnostics(prompt_id):
+    """Enrich the stall-watchdog error with ComfyUI queue/history/log state.
+
+    The bare "No activity for over N minutes" message gives no clue what
+    ComfyUI was doing. Append the current /queue state, the /history status
+    summary for this prompt (if present), and the ComfyUI log tail so the
+    SUMMARY error string is diagnosable without SSH.
+    """
+    parts = []
+    try:
+        queue = get_queue()
+        parts.append(f"queue running={len(queue.get('queue_running', []))} "
+                     f"pending={len(queue.get('queue_pending', []))}")
+    except Exception as e:
+        parts.append(f"queue unavailable ({e})")
+    try:
+        history = get_history(prompt_id)
+        parts.append(_history_status_summary(history, prompt_id))
+    except Exception as e:
+        parts.append(f"history unavailable ({e})")
+    return _append_log_tail(
+        f"Generation stalled. No activity for over {INACTIVITY_TIMEOUT // 60} minutes. "
+        + "; ".join(parts))
+
+
 def _neutralize_cloud_branch(graph):
     """Make eager ImpactConditionalBranch evaluation harmless when cond is False.
 
@@ -311,7 +337,7 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
             log_state["last_check"] = now
 
         if progress and (time.time() - progress.last_activity_time > INACTIVITY_TIMEOUT):
-            msg = f"Generation stalled. No activity for over {INACTIVITY_TIMEOUT // 60} minutes."
+            msg = _stall_diagnostics(prompt_id)
             progress.log_progress(msg, level="ERROR")
             stage_relay.send_progress("error", {"type": "timeout_error", "message": msg})
             raise PipelineError(msg)
@@ -364,6 +390,25 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
             logger.throttled("text_wait", LOG_THROTTLE_SECONDS,
                              f"Waiting for text outputs, missing: {missing}")
         else:
+            # Poll /history for an explicit ComfyUI error every ~5s, mirroring
+            # the text-stage path. A normal [out] stage can fail fast (e.g. a
+            # missing model or a silent node failure) without emitting an
+            # execution_error WS event, so completion-waiting alone would hang.
+            now = time.time()
+            if now - last_history_poll >= 5:
+                last_history_poll = now
+                try:
+                    history = get_history(prompt_id)
+                    last_history_status = _history_status_summary(history, prompt_id)
+                    err = _extract_history_error(history, prompt_id)
+                    if err:
+                        raise PipelineError(_append_log_tail(
+                            f"ComfyUI stage error for prompt {prompt_id}: {err}"))
+                except PipelineError:
+                    raise
+                except Exception:
+                    pass
+
             if progress and progress.is_workflow_complete(prompt_id):
                 try:
                     history = get_history(prompt_id)

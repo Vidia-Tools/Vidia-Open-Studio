@@ -276,6 +276,12 @@ class ProgressTracker:
             return
         try:
             message = self.ws.recv()
+            # Any received frame (text, binary preview, ping) proves the
+            # ComfyUI websocket is alive. Update the stall timer before parsing
+            # so a slow-but-alive job streaming binary preview frames is not
+            # killed as "stalled". Previously binary/undecodable frames returned
+            # early without resetting the timer.
+            self.last_activity_time = time.time()
             logger.debug(f"WS RAW: {message}")
             try:
                 if isinstance(message, bytes):
@@ -290,8 +296,6 @@ class ProgressTracker:
             except (json.JSONDecodeError, TypeError, UnicodeDecodeError) as e:
                 logger.info(f"Failed to parse WebSocket message: {e}")
                 return
-
-            self.last_activity_time = time.time()
 
             if "type" in data:
                 event_type = data["type"]
@@ -467,6 +471,12 @@ def queue_workflow(workflow):
 def get_history(prompt_id):
     """Retrieve the history of a given prompt using its ID."""
     with urllib.request.urlopen(f"http://{COMFY_HOST}/history/{prompt_id}") as response:
+        return json.loads(response.read())
+
+
+def get_queue():
+    """Retrieve the current ComfyUI queue state (running + pending)."""
+    with urllib.request.urlopen(f"http://{COMFY_HOST}/queue") as response:
         return json.loads(response.read())
 
 

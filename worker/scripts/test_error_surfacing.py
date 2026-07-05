@@ -131,11 +131,88 @@ def test_neutralize_cloud_branch_cond_false():
     print("OK: _neutralize_cloud_branch rewires cond=False, leaves cond=True")
 
 
+def test_normal_stage_raises_on_history_error_status():
+    """Normal [out] stage (no text_outputs) must fail fast on a /history
+    status_str=error entry instead of hanging on completion-waiting."""
+    info = {"text_outputs": {}, "output_node": "9",
+            "inputs": {}, "params_resolved": [], "params_unresolved": []}
+    runner.queue_workflow = lambda graph: {"prompt_id": "p-nherr"}
+    runner.get_history = lambda pid: {
+        "p-nherr": {"status": {"status_str": "error", "completed": False,
+                               "messages": [["execution_error",
+                                             {"node_id": "106",
+                                              "node_type": "CheckpointLoaderSimple",
+                                              "exception_message": "model not found"}]]}}}
+    # No progress (WS off): the 5s /history poll in the normal branch fires
+    # immediately (last_history_poll starts at 0) and surfaces the error.
+    try:
+        runner._run_stage({}, info, None, _FakeRelay(), _log_state())
+        raise AssertionError("normal stage should raise on history error status")
+    except runner.PipelineError as e:
+        s = str(e)
+        assert "CheckpointLoaderSimple" in s or "model not found" in s or "status_str=error" in s
+    print("OK: normal stage raises PipelineError on /history error status")
+
+
+def test_stall_error_includes_comfy_log_tail():
+    """The stall-watchdog error must include the ComfyUI log tail so the
+    SUMMARY string shows what ComfyUI was actually doing."""
+    with tempfile.TemporaryDirectory() as d:
+        log_path = os.path.join(d, "comfy.log")
+        with open(log_path, "w") as f:
+            f.write("line A\nline B\nSTALL_MARKER_LINE\n")
+        old_log = runner.COMFY_LOG_PATH
+        old_to = runner.INACTIVITY_TIMEOUT
+        runner.COMFY_LOG_PATH = log_path
+        runner.INACTIVITY_TIMEOUT = 1
+        runner.queue_workflow = lambda graph: {"prompt_id": "p-stall"}
+        runner.get_queue = lambda: {"queue_running": [], "queue_pending": []}
+        runner.get_history = lambda pid: {}
+        progress = ProgressTracker(None)
+        progress.last_activity_time = 0  # force immediate stall trigger
+        try:
+            runner._run_stage({}, {"text_outputs": {}, "output_node": "9",
+                                   "inputs": {}, "params_resolved": [],
+                                   "params_unresolved": []},
+                              progress, _FakeRelay(), _log_state())
+            raise AssertionError("stall watchdog should have fired")
+        except runner.PipelineError as e:
+            s = str(e)
+            assert "stalled" in s
+            assert "STALL_MARKER_LINE" in s
+        finally:
+            runner.COMFY_LOG_PATH = old_log
+            runner.INACTIVITY_TIMEOUT = old_to
+    print("OK: stall watchdog error includes ComfyUI log tail")
+
+
+class _FakeWS:
+    def __init__(self, msg):
+        self._msg = msg
+
+    def recv(self):
+        return self._msg
+
+
+def test_ws_binary_message_counts_as_activity():
+    """A binary WS frame (preview data) must reset the stall timer so a
+    slow-but-alive job is not killed as 'stalled'."""
+    tracker = ProgressTracker(None)
+    tracker.ws = _FakeWS(b"\x89\x00\x01\x02binary-preview-frame")
+    tracker.last_activity_time = 0
+    tracker.monitor_progress()
+    assert tracker.last_activity_time > 0, "binary WS message did not reset stall timer"
+    print("OK: binary WS message resets stall timer")
+
+
 def main():
     test_text_stage_raises_on_tracker_execution_error()
     test_text_stage_raises_on_history_error_status()
     test_text_stage_timeout()
     test_neutralize_cloud_branch_cond_false()
+    test_normal_stage_raises_on_history_error_status()
+    test_stall_error_includes_comfy_log_tail()
+    test_ws_binary_message_counts_as_activity()
     print("\nAll error-surfacing unit tests passed.")
 
 
