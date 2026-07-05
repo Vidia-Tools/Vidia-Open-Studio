@@ -16,7 +16,7 @@ export function runpodRoutes(router) {
 	// Start a generation on RunPod - rate limited to prevent GPU abuse (10 per 10 min per IP)
 	const handleGenerate = async (request, env) => {
 		try {
-			const { params, generation_id, plan = 'basic' } = await request.json();
+			const { params, generation_id, plan = 'basic', type = 'full' } = await request.json();
 
 			// Edge validation: reject malformed params before any GPU spend (design section 3 / 10.5.2)
 			const validation = validateParams(params);
@@ -58,10 +58,13 @@ export function runpodRoutes(router) {
 
 			// Forward the params payload opaquely (design section 3). The backend never
 			// inspects or builds graphs; the handler assembles the pipeline from params.
+			// `type` (preview|full) rides alongside params so the worker can cap preview
+			// source-video frames per method (PREVIEW_FRAME_CAPS in runner.py).
 			const payload = {
 				client_id: generation_id,
 				user_id: userId,
-				params
+				params,
+				type
 			};
 
 			// Send to RunPod
