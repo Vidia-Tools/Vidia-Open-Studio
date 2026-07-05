@@ -404,6 +404,20 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
                     if err:
                         raise PipelineError(_append_log_tail(
                             f"ComfyUI stage error for prompt {prompt_id}: {err}"))
+                    # ComfyUI completed successfully but the prompt-specific WS
+                    # completion event (null-node/executed) was missed or never
+                    # emitted for this graph. Mark the prompt complete on the
+                    # tracker so the is_workflow_complete path below collects the
+                    # history outputs through the same code path as a WS-detected
+                    # completion. Without this, a successful stage hangs until
+                    # the stall watchdog fires (status success + outputs present).
+                    if progress:
+                        entry = history.get(prompt_id)
+                        if entry and entry.get("outputs"):
+                            status = entry.get("status", {})
+                            if status.get("completed") is True or \
+                                    status.get("status_str") == "success":
+                                progress.completed_prompts.add(prompt_id)
                 except PipelineError:
                     raise
                 except Exception:

@@ -156,11 +156,39 @@ def test_runtime_defaults_disable_cloud_llm_without_key():
     print("OK: runtime defaults disable cloud LLM unless a real key is available")
 
 
+def test_normal_stage_completes_on_history_success_without_ws():
+    """Smoking gun: ComfyUI completes (status success + outputs) but the
+    prompt-specific WS completion event (null-node/executed) is never emitted
+    for this graph. The 5s /history poll must mark the prompt complete on the
+    tracker so the existing output-collection path runs instead of hanging
+    until the stall watchdog fires."""
+    info = {"text_outputs": {}, "output_node": "1", "inputs": {},
+            "params_resolved": [], "params_unresolved": []}
+    runner.queue_workflow = lambda graph: {"prompt_id": "p-ok"}
+    runner.get_history = lambda pid: {
+        "p-ok": {
+            "status": {"status_str": "success", "completed": True},
+            "outputs": {"1": {"gifs": [{"filename": "x.mp4"}]}},
+        }
+    }
+    progress = ProgressTracker(None)
+    # No WS completion signal: completed_prompts stays empty until the history
+    # poll marks it complete.
+    assert "p-ok" not in progress.completed_prompts
+    pid, history = runner._run_stage({}, info, progress, _FakeRelay(), _log_state())
+    assert pid == "p-ok"
+    assert "p-ok" in history
+    assert "p-ok" in progress.completed_prompts, \
+        "history success+outputs must mark the prompt complete on the tracker"
+    print("OK: normal stage completes on history success without WS event")
+
+
 def main():
     test_queue_empty_does_not_complete()
     test_text_outputs_ready_helper()
     test_text_stage_completes_on_file_not_history()
     test_normal_stage_requires_prompt_specific_completion()
+    test_normal_stage_completes_on_history_success_without_ws()
     test_execution_error_raises()
     test_runtime_defaults_disable_cloud_llm_without_key()
     print("\nAll stage-completion unit tests passed.")
