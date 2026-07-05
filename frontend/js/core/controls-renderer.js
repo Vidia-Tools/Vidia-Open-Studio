@@ -12,6 +12,7 @@ import { getControlModule } from '../controls/registry.js';
 import { getCurrentModeName, MODE } from '../config/modes.js';
 import { insertLogo } from '../ui/logos.js';
 import * as store from './generation-store.js';
+import { updateEstimatedCost } from '../features/pricing.js';
 
 const logDebug = createLogger('Controls');
 
@@ -239,6 +240,7 @@ export async function renderControls({ controlsContainerId }) {
             for (const [k, v] of Object.entries(derived)) store.setParam(k, v);
           }
           applyVisibility();
+          updateEstimatedCost();
         });
       }
     }
@@ -262,5 +264,6 @@ export async function renderControls({ controlsContainerId }) {
   if (mode === 'forge') renderForgeSubmodeToggle(controlsContainerId);
 
   applyVisibility();
+  updateEstimatedCost();
   logDebug('Controls rendered', { mode, method: store.getMethod(), stages: STAGE_FILES.length, controls: rendered.length });
 }

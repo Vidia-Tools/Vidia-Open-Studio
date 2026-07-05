@@ -14,9 +14,9 @@ package-lock.json
 yarn-error.log
 yarn.lock
 
-# Build files
-dist/
-build/
+# Build artifacts (root-level output only; do not ignore source under js/)
+/dist/
+/build/
 *.min.js
 
 # Environment files
@@ -66,9 +66,9 @@ __pycache__/
 *$py.class
 .Python
 env/
-build/
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
