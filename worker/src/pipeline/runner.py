@@ -29,6 +29,11 @@ WORK_DIR = os.environ.get("VIDIA_WORK_DIR", "/tmp/vidia")
 COMFY_OUTPUT_DIR = os.environ.get("COMFY_OUTPUT_DIR", "/ComfyUI/output")
 COMFY_LOG_PATH = os.environ.get("COMFY_LOG_PATH", "/tmp/comfy.log")
 INACTIVITY_TIMEOUT = int(os.environ.get("COMFY_INACTIVITY_TIMEOUT", 900))
+# Hard cap on how long a text-output stage (e.g. prompt_prep) may wait for its
+# declared text output files. A stage that fails fast inside ComfyUI without
+# emitting an execution_error websocket event would otherwise hang the worker
+# forever on "Waiting for text outputs". See _run_stage.
+TEXT_STAGE_TIMEOUT = int(os.environ.get("VIDIA_TEXT_STAGE_TIMEOUT", 300))
 # "runpod" (R2 upload output stage) or "local" (stock save to ComfyUI output dir)
 VIDIA_MODE = os.environ.get("VIDIA_MODE", "runpod")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
@@ -182,6 +187,86 @@ def _text_outputs_ready(text_outputs):
     return (not missing, missing)
 
 
+def _extract_history_error(history, prompt_id):
+    """Return a human-readable error string from a ComfyUI history entry, or None.
+
+    ComfyUI /history/{prompt_id} records failures as status.status_str == 'error'
+    with status.messages containing ['execution_error', {node_id, node_type,
+    exception_message, ...}] entries. An older path used a top-level 'error' key.
+    """
+    entry = history.get(prompt_id)
+    if not entry:
+        return None
+    if entry.get("error"):
+        return f"history error: {entry['error']}"
+    status = entry.get("status", {})
+    if status.get("status_str") == "error":
+        parts = ["status_str=error"]
+        for m in status.get("messages", []):
+            if isinstance(m, list) and m and m[0] == "execution_error":
+                d = m[1] if len(m) > 1 else {}
+                parts.append(
+                    f"node_id={d.get('node_id')} node_type={d.get('node_type')} "
+                    f"exception={d.get('exception_message')}")
+        return "; ".join(parts)
+    return None
+
+
+def _history_status_summary(history, prompt_id):
+    """One-line summary of the last seen history status, for timeout diagnostics."""
+    entry = history.get(prompt_id)
+    if not entry:
+        return "no history entry"
+    status = entry.get("status", {})
+    return (f"status_str={status.get('status_str', 'unknown')} "
+            f"completed={status.get('completed')}")
+
+
+def _append_log_tail(message):
+    """Append the last ~50 lines of the ComfyUI log to an error message if available.
+
+    ComfyUI stdout/stderr is redirected to /tmp/comfy.log in serverless mode
+    (start.sh) and COMFY_LOG_PATH defaults to that path. Including the tail in a
+    raised PipelineError makes a silent stage failure diagnosable without SSH.
+    """
+    try:
+        if os.path.exists(COMFY_LOG_PATH):
+            with open(COMFY_LOG_PATH, "r") as f:
+                lines = f.readlines()
+            tail = "".join(lines[-50:])
+            if tail.strip():
+                return (f"{message}\n--- ComfyUI log tail "
+                        f"({COMFY_LOG_PATH}) ---\n{tail}")
+    except Exception:
+        pass
+    return message
+
+
+def _neutralize_cloud_branch(graph):
+    """Make eager ImpactConditionalBranch evaluation harmless when cond is False.
+
+    Impact Pack's ImpactConditionalBranch is documented as lazy, but if the
+    installed version evaluates both branches eagerly the unselected (tt_value)
+    subtree still executes. For the prompt_prep cloud-LLM branch this means
+    AV_LLMChat (node 21) runs with a placeholder OPENROUTER_API_KEY and errors
+    immediately, surfacing as a silent stage failure. When cond was injected False
+    we point tt_value at the same source as ff_value so both branches resolve to
+    the selected (local) path and the unselected subtree becomes a no-op duplicate.
+
+    Scope chosen: GENERIC. Any ImpactConditionalBranch whose cond widget is False
+    after param injection gets tt_value = ff_value. No hardcoded node ids; the
+    loader's {use_cloud_llm} (and sibling cond-toggle) title tags drive injection,
+    and this function only acts on the resulting cond value.
+    """
+    for node in graph.values():
+        if node.get("class_type") != "ImpactConditionalBranch":
+            continue
+        inputs = node.get("inputs", {})
+        if inputs.get("cond") is False:
+            inputs["tt_value"] = inputs.get("ff_value")
+    return graph
+
+
 def _run_stage(graph, info, progress, stage_relay, log_state):
     """Queue one stage graph and wait for completion. Returns prompt_id history.
 
@@ -204,6 +289,8 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
 
     retries = 0
     start_time = time.time()
+    last_history_poll = 0.0
+    last_history_status = "no history yet"
     while retries < COMFY_POLLING_MAX_RETRIES:
         if progress:
             progress.process_all_messages()
@@ -248,16 +335,32 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
                 if prompt_id in history and history[prompt_id].get("error"):
                     raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
                 return prompt_id, history
-            # No websocket: poll history for an explicit error while waiting.
-            if not progress:
+            # Poll /history for an explicit ComfyUI error every ~5s, regardless
+            # of whether the websocket is connected. A stage can fail fast (e.g.
+            # a missing model or an eager-evaluated false branch) without ever
+            # emitting an execution_error WS event, so the file-existence wait
+            # alone would hang forever. This surfaces the failing node
+            # id/type/exception so the worker fails fast instead of hanging.
+            now = time.time()
+            if now - last_history_poll >= 5:
+                last_history_poll = now
                 try:
                     history = get_history(prompt_id)
-                    if prompt_id in history and history[prompt_id].get("error"):
-                        raise PipelineError(f"Execution error: {history[prompt_id]['error']}")
+                    last_history_status = _history_status_summary(history, prompt_id)
+                    err = _extract_history_error(history, prompt_id)
+                    if err:
+                        raise PipelineError(_append_log_tail(
+                            f"ComfyUI stage error for prompt {prompt_id}: {err}"))
                 except PipelineError:
                     raise
                 except Exception:
                     pass
+            # Overall text-stage timeout: never wait longer than this for text
+            # outputs that may never be produced.
+            if time.time() - start_time > TEXT_STAGE_TIMEOUT:
+                raise PipelineError(_append_log_tail(
+                    f"text outputs never produced after {TEXT_STAGE_TIMEOUT}s; "
+                    f"last history status: {last_history_status}"))
             logger.throttled("text_wait", LOG_THROTTLE_SECONDS,
                              f"Waiting for text outputs, missing: {missing}")
         else:
@@ -364,6 +467,7 @@ def run_pipeline(generation_id, user_id, params, relay, progress, run_type="full
                 stage["path"], name, generation_id, params, file_paths,
                 prev_output=prev_output, text_output_dir=text_dir,
                 final=stage["final"], frame_cap=stage_frame_cap)
+            _neutralize_cloud_branch(graph)
 
             stage_relay = StageRelay(relay, name, index + 1, total)
             stage_relay.send_progress("stage_start", {"status": "started"})
