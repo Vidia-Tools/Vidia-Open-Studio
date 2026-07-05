@@ -1,3 +1,8 @@
+// Contributor modes come from modes.json (Build Mode writes there; a rebuild
+// is required for changes to appear). Built-in modes below take priority and
+// are left untouched, so existing modes render byte-identical.
+import contributorModes from './modes.json';
+
 export const DEFAULT_MODE = 'forge';
 // Mode Definitions
 export const MODE = {
@@ -26,6 +31,16 @@ export const MODE = {
         }
     }
 };
+
+// Merge contributor modes from modes.json. A modes.json entry whose key is
+// already a built-in is skipped, so built-in mode objects (and their
+// subModes) are never replaced. New keys get { title, description } mapped
+// from the entry's label/description, the property names MODE consumers use.
+for (const entry of contributorModes) {
+    if (entry && entry.key && !MODE[entry.key]) {
+        MODE[entry.key] = { title: entry.label, description: entry.description };
+    }
+}
 
 /**
  * Get the current mode name as a string
