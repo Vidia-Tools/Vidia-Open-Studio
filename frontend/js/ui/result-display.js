@@ -200,7 +200,7 @@ function createDownloadButton(videoUrl) {
     downloadButton.href = videoUrl;
     downloadButton.download = 'vidia.mp4';
     downloadButton.className = 'result-button download-button';
-    downloadButtonInnerHTML = `
+    downloadButton.innerHTML = `
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
