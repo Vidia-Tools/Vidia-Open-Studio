@@ -205,6 +205,70 @@ def test_ws_binary_message_counts_as_activity():
     print("OK: binary WS message resets stall timer")
 
 
+def test_expected_export_url_construction_and_skip():
+    """_expected_export_url builds the URL from S3_PUBLIC_URL_PREFIX + gen id,
+    and returns None (skip) when the prefix is unset."""
+    import types
+    sys.modules.setdefault("runpod", types.ModuleType("runpod"))
+    sys.modules["runpod"].serverless = types.SimpleNamespace(start=lambda c: None)
+    from rp_handler import _expected_export_url
+
+    old = os.environ.pop("S3_PUBLIC_URL_PREFIX", None)
+    try:
+        assert _expected_export_url("gen-123") is None, \
+            "must return None when S3_PUBLIC_URL_PREFIX unset"
+    finally:
+        if old is not None:
+            os.environ["S3_PUBLIC_URL_PREFIX"] = old
+
+    os.environ["S3_PUBLIC_URL_PREFIX"] = "https://exports.vidia.tools"
+    try:
+        url = _expected_export_url("gen-456")
+        assert url == "https://exports.vidia.tools/gen-456.mp4", f"got {url}"
+    finally:
+        os.environ.pop("S3_PUBLIC_URL_PREFIX", None)
+
+    os.environ["S3_PUBLIC_URL_PREFIX"] = "https://exports.vidia.tools/"
+    try:
+        url = _expected_export_url("gen-789")
+        assert url == "https://exports.vidia.tools/gen-789.mp4", \
+            f"trailing slash must be stripped, got {url}"
+    finally:
+        os.environ.pop("S3_PUBLIC_URL_PREFIX", None)
+    print("OK: _expected_export_url constructs URL, strips trailing slash, skips when unset")
+
+
+def test_fallback_skips_when_prefix_unset():
+    """_fallback_notify_video_ready must not attempt any network call when
+    S3_PUBLIC_URL_PREFIX is unset."""
+    import types
+    sys.modules.setdefault("runpod", types.ModuleType("runpod"))
+    sys.modules["runpod"].serverless = types.SimpleNamespace(start=lambda c: None)
+    import rp_handler
+    from rp_handler import _fallback_notify_video_ready
+
+    class _Relay:
+        video_ready_url = "https://backend.test/api/runpod/videoReady"
+        callback_secret = "secret"
+
+    called = {"head": False, "post": False}
+    rp_handler.requests.head = lambda *a, **k: called.__setitem__("head", True) or \
+        types.SimpleNamespace(status_code=200)
+    rp_handler.requests.post = lambda *a, **k: called.__setitem__("post", True) or \
+        types.SimpleNamespace(status_code=200, text="ok")
+    old = os.environ.pop("S3_PUBLIC_URL_PREFIX", None)
+    try:
+        _fallback_notify_video_ready("gen-skip", _Relay())
+        assert called["head"] is False, "must not HEAD when prefix unset"
+        assert called["post"] is False, "must not POST when prefix unset"
+    finally:
+        import requests as _real_requests
+        rp_handler.requests = _real_requests
+        if old is not None:
+            os.environ["S3_PUBLIC_URL_PREFIX"] = old
+    print("OK: _fallback_notify_video_ready skips all network when prefix unset")
+
+
 def main():
     test_text_stage_raises_on_tracker_execution_error()
     test_text_stage_raises_on_history_error_status()
@@ -213,6 +277,8 @@ def main():
     test_normal_stage_raises_on_history_error_status()
     test_stall_error_includes_comfy_log_tail()
     test_ws_binary_message_counts_as_activity()
+    test_expected_export_url_construction_and_skip()
+    test_fallback_skips_when_prefix_unset()
     print("\nAll error-surfacing unit tests passed.")
 
 

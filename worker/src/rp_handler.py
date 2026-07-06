@@ -3,9 +3,11 @@
 generation to the pipeline runner (src/pipeline/runner.py)."""
 
 import json
+import os
 import threading
 import time
 
+import requests
 import runpod
 
 from comfy_support import (
@@ -15,6 +17,79 @@ from comfy_support import (
     logger, validate_input,
 )
 from pipeline import runner
+
+
+COMFY_LOG_PATH = os.environ.get("COMFY_LOG_PATH", "/tmp/comfy.log")
+_NODE_LOG_NEEDLES = (
+    "Notifying backend",
+    "Successfully notified backend",
+    "Backend notification failed",
+    "Failed to notify backend",
+    "[VidiaNode]",
+)
+
+
+def _expected_export_url(generation_id):
+    """Build the expected public export URL for a generation, or None if
+    S3_PUBLIC_URL_PREFIX is unset (fallback disabled)."""
+    prefix = os.environ.get("S3_PUBLIC_URL_PREFIX", "").rstrip("/")
+    if not prefix:
+        return None
+    return f"{prefix}/{generation_id}.mp4"
+
+
+def _fallback_notify_video_ready(generation_id, relay):
+    """Handler-side fallback: HEAD the expected export URL and POST videoReady
+    to the backend if the file is reachable. Logs to stdout so RunPod logs show
+    the result. Safe alongside the node's own callback (backend dedupes)."""
+    video_url = _expected_export_url(generation_id)
+    if video_url is None:
+        print("[FALLBACK] S3_PUBLIC_URL_PREFIX unset, skipping fallback videoReady")
+        return
+    try:
+        head = requests.head(video_url, timeout=10)
+        if head.status_code != 200:
+            print(f"[FALLBACK] HEAD {video_url} -> {head.status_code}, skipping")
+            return
+    except Exception as e:
+        print(f"[FALLBACK] HEAD {video_url} failed: {e}, skipping")
+        return
+    url = relay.video_ready_url
+    secret = relay.callback_secret
+    if not url or not secret:
+        print("[FALLBACK] backend URL or callback secret missing, skipping")
+        return
+    try:
+        resp = requests.post(
+            url,
+            json={"generation_id": generation_id, "videoUrl": video_url},
+            headers={"Content-Type": "application/json",
+                     "X-Callback-Secret": secret},
+            timeout=10)
+        print(f"[FALLBACK] POST {url} -> {resp.status_code} {resp.text[:500]}")
+    except Exception as e:
+        print(f"[FALLBACK] POST {url} failed: {e}")
+
+
+def _surface_node_callback_logs():
+    """Print VidiaNode callback log lines from the comfy.log tail to stdout so
+    RunPod logs show what the node's videoReady callback actually did."""
+    try:
+        if not os.path.exists(COMFY_LOG_PATH):
+            print("[NODELOG] comfy.log not found, no node callback logs to surface")
+            return
+        with open(COMFY_LOG_PATH, "r") as f:
+            lines = f.readlines()[-200:]
+        matched = [ln.rstrip() for ln in lines
+                   if any(n in ln for n in _NODE_LOG_NEEDLES)]
+        if matched:
+            print("[NODELOG] VidiaNode callback log lines from comfy.log tail:")
+            for ln in matched:
+                print(f"  {ln}")
+        else:
+            print("[NODELOG] no VidiaNode callback lines found in comfy.log tail")
+    except Exception as e:
+        print(f"[NODELOG] error surfacing node logs: {e}")
 
 
 def handler(job):
@@ -82,6 +157,8 @@ def handler(job):
                        "durations": {"total_s": int(time.time() - start_time)},
                        "stages": result.get("stages")}
             print("[SUMMARY]", json.dumps(summary, separators=(",", ":")))
+            _fallback_notify_video_ready(generation_id, relay)
+            _surface_node_callback_logs()
             return {"output": {"message": result, "status": "success",
                                "refresh_worker": REFRESH_WORKER}}
         except runner.PipelineError as e:

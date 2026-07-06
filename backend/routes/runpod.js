@@ -215,50 +215,61 @@ export function runpodRoutes(router) {
 			const vhmId = env.VIDEO_HISTORY_MANAGER.idFromName('default');
 			const videoHistoryManager = env.VIDEO_HISTORY_MANAGER.get(vhmId);
 
-			await videoHistoryManager.fetch(new Request('http://internal/store', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					userId,
-					videoUrl,
-					title: `Video ${new Date().toISOString()}`,
-					generation_id
-				})
-			}));
+			// Idempotency: if a video already exists for this generation_id
+			// (duplicate callback from pod/node), skip the store and email but
+			// still send the WS videoReady event and return success.
+			const existingResponse = await videoHistoryManager.fetch(
+				`http://internal/byGeneration?generation_id=${encodeURIComponent(generation_id)}`);
+			const existingData = await existingResponse.json();
 
-			console.log(`[VideoReady] Stored video in history for user ${userId}`);
-
-			// Send email notification (non-blocking on failure)
-			try {
-				const userAuthId = env.USER_AUTH.idFromName('user-auth-instance');
-				const userAuth = env.USER_AUTH.get(userAuthId);
-
-				const userResponse = await userAuth.fetch(new Request('http://internal/admin/users', {
+			if (existingData.success && existingData.video) {
+				console.log(`[VideoReady] Duplicate callback for generation_id: ${generation_id}, skipping store + email`);
+			} else {
+				await videoHistoryManager.fetch(new Request('http://internal/store', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ action: 'get-user', userId })
+					body: JSON.stringify({
+						userId,
+						videoUrl,
+						title: `Video ${new Date().toISOString()}`,
+						generation_id
+					})
 				}));
 
-				const userData = await userResponse.json();
+				console.log(`[VideoReady] Stored video in history for user ${userId}`);
 
-				if (userData.success && userData.user) {
-					const userEmail = userData.user.email;
-					const userName = userData.user.name || null;
-					const templateData = getVideoReadyEmailTemplate(userName, videoUrl, env);
+				// Send email notification (non-blocking on failure)
+				try {
+					const userAuthId = env.USER_AUTH.idFromName('user-auth-instance');
+					const userAuth = env.USER_AUTH.get(userAuthId);
 
-					console.log(`[VideoReady] Sending notification to: ${userEmail}`);
-					const emailResult = await sendEmail(env, userEmail, templateData);
+					const userResponse = await userAuth.fetch(new Request('http://internal/admin/users', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ action: 'get-user', userId })
+					}));
 
-					if (emailResult.success) {
-						console.log(`[VideoReady] Successfully sent notification to ${userEmail}`);
+					const userData = await userResponse.json();
+
+					if (userData.success && userData.user) {
+						const userEmail = userData.user.email;
+						const userName = userData.user.name || null;
+						const templateData = getVideoReadyEmailTemplate(userName, videoUrl, env);
+
+						console.log(`[VideoReady] Sending notification to: ${userEmail}`);
+						const emailResult = await sendEmail(env, userEmail, templateData);
+
+						if (emailResult.success) {
+							console.log(`[VideoReady] Successfully sent notification to ${userEmail}`);
+						} else {
+							console.error(`[VideoReady] Failed to send email: ${emailResult.message}`);
+						}
 					} else {
-						console.error(`[VideoReady] Failed to send email: ${emailResult.message}`);
+						console.error('[VideoReady] Failed to get user data for email notification');
 					}
-				} else {
-					console.error('[VideoReady] Failed to get user data for email notification');
+				} catch (emailError) {
+					console.error('[VideoReady] Email sending error:', emailError);
 				}
-			} catch (emailError) {
-				console.error('[VideoReady] Email sending error:', emailError);
 			}
 
 			// Send videoReady event via WebSocket
