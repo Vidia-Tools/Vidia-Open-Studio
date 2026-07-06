@@ -1,5 +1,8 @@
+import { createLogger } from './utils/logger.js';
+
 const SESSION_KEY = "vidiaUserSession";
 const MODE_KEY = "vidia_mode";
+const logDebug = createLogger('Session');
 
 /**
  * Set user session data and fire auth state change event
@@ -29,7 +32,7 @@ export function setSession(userData) {
   }
   
   // Log session update for debugging
-  console.log('Session updated:', userData ? {
+  logDebug('Session updated:', userData ? {
     token: userData.token ? 'present' : 'missing',
     user: userData.user ? userData.user.email : 'missing',
     mode: userData.mode

@@ -32,7 +32,7 @@ export function authRoutes(router) {
 
 		if (data.success) {
 			const userMode = data.mode || 'trace';
-			const magicLink = `${env.APP_BASE_URL}/dashboard.html?mode=${userMode}&token=${data.token}`;
+			const magicLink = `${env.APP_BASE_URL}/dashboard?mode=${userMode}&token=${data.token}`;
 
 			try {
 				const templateData = getMagicLinkEmailTemplate(magicLink, env);

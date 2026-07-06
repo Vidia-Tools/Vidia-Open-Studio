@@ -4,7 +4,23 @@ import { DEBUG_MODE } from './config/index.js';
 import { getSession } from './session.js';
 import { getCurrentMode } from './core/state.js';
 
-// GA Measurement ID is G-6QRTYX74EX, configured in index.html where gtag is loaded.
+const GA_MEASUREMENT_ID = import.meta.env?.VITE_GA_MEASUREMENT_ID || '';
+
+/**
+ * Loads gtag.js and configures GA4. No-op when VITE_GA_MEASUREMENT_ID is unset,
+ * so forks without a GA property send no analytics.
+ */
+export function initAnalytics() {
+    if (!GA_MEASUREMENT_ID) return;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_MEASUREMENT_ID);
+}
 
 export const GA_EVENT_CATEGORIES = Object.freeze({
     USER_LIFECYCLE: 'User Lifecycle',
