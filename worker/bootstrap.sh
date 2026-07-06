@@ -17,7 +17,7 @@ if [ -n "${VIDIA_DOCKER_DEPLOY_KEY:-}" ] && [ -f "$VIDIA_DOCKER_DEPLOY_KEY" ]; t
     mkdir -p /root/.ssh && chmod 700 /root/.ssh
     cp "$VIDIA_DOCKER_DEPLOY_KEY" /root/.ssh/vidia_docker_deploy_key
     chmod 600 /root/.ssh/vidia_docker_deploy_key
-    export GIT_SSH_COMMAND="ssh -i /root/.ssh/vidia_docker_deploy_key -o StrictHostKeyChecking=no"
+    export GIT_SSH_COMMAND="ssh -i /root/.ssh/vidia_docker_deploy_key -o StrictHostKeyChecking=accept-new"
     log "Docker deploy key loaded from $VIDIA_DOCKER_DEPLOY_KEY"
 fi
 

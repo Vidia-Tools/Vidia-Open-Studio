@@ -2,6 +2,9 @@
 
 Usage notes only. Full project documentation lives in the root README.
 
+Note: `vendor/vidia-node/` is a static mirror of the live Nodes repo; see
+`vendor/vidia-node/README-MIRROR.md` before editing anything there.
+
 The worker runs the pipeline engine (`src/pipeline/`) against a ComfyUI
 instance. `VIDIA_MODE` selects the wrapper:
 

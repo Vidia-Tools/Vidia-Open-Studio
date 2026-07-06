@@ -23,12 +23,16 @@ fi
 VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia/Vidia-Open-Studio.git}"
 VIDIA_DOCKER_REPO_REF="${VIDIA_DOCKER_REPO_REF:-main}"
 
+# Seed Codeberg's SSH host key before any git operation (updater.sh is the
+# first boot script). accept-new below tolerates duplicate entries.
+mkdir -p ~/.ssh && ssh-keyscan codeberg.org >> ~/.ssh/known_hosts 2>/dev/null
+
 # Optional SSH deploy key for private forks (path on the persistent volume).
 if [ -n "${VIDIA_DOCKER_DEPLOY_KEY:-}" ] && [ -f "$VIDIA_DOCKER_DEPLOY_KEY" ]; then
     mkdir -p /root/.ssh && chmod 700 /root/.ssh
     cp "$VIDIA_DOCKER_DEPLOY_KEY" /root/.ssh/vidia_docker_deploy_key
     chmod 600 /root/.ssh/vidia_docker_deploy_key
-    export GIT_SSH_COMMAND="ssh -i /root/.ssh/vidia_docker_deploy_key -o StrictHostKeyChecking=no"
+    export GIT_SSH_COMMAND="ssh -i /root/.ssh/vidia_docker_deploy_key -o StrictHostKeyChecking=accept-new"
     log "Docker deploy key loaded from $VIDIA_DOCKER_DEPLOY_KEY"
 fi
 

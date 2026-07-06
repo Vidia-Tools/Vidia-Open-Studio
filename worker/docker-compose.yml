@@ -5,17 +5,25 @@ services:
   worker:
     build: .
     image: vidia-open-studio-worker
-    env_file:
-      - ../.env
     environment:
       VIDIA_MODE: local
       DEPLOYMENT_MODE: serverless
+      # Only the vars the local container actually consumes are passed through
+      # from ../.env (no blanket env_file: keeps hosted-only secrets like
+      # RUNPOD_API_KEY / JWT_SECRET / S3 keys out of the local container).
       # The image entrypoint is updater.sh (updater -> bootstrap -> start). The
-      # self-update env vars (VIDIA_DOCKER_REPO_URL, VIDIA_DOCKER_REPO_REF,
-      # VIDIA_NODE_REPO_URL, VIDIA_NODE_REPO_REF, *_DEPLOY_KEY, COMFY_VERSION)
-      # are read from ../.env via env_file above; set them there to point at a
-      # fork. If unset the scripts default to the public codeberg repos on main
-      # and fall back to the image-baked scripts when a clone fails.
+      # self-update env vars below let you point the boot chain at a fork; if
+      # unset the scripts default to the public codeberg repos on main and fall
+      # back to the image-baked scripts when a clone fails.
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      APP_SERVER_PORT: ${APP_SERVER_PORT:-8189}
+      VIDIA_DOCKER_REPO_URL: ${VIDIA_DOCKER_REPO_URL:-}
+      VIDIA_DOCKER_REPO_REF: ${VIDIA_DOCKER_REPO_REF:-}
+      VIDIA_NODE_REPO_URL: ${VIDIA_NODE_REPO_URL:-}
+      VIDIA_NODE_REPO_REF: ${VIDIA_NODE_REPO_REF:-}
+      VIDIA_DOCKER_DEPLOY_KEY: ${VIDIA_DOCKER_DEPLOY_KEY:-}
+      VIDIA_NODE_DEPLOY_KEY: ${VIDIA_NODE_DEPLOY_KEY:-}
+      COMFY_VERSION: ${COMFY_VERSION:-}
     ports:
       - "8189:8189"   # app server (POST /generate, GET /progress)
       - "8188:8188"   # ComfyUI
