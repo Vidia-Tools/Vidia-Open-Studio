@@ -1,6 +1,7 @@
 // Import dependencies
 import { createLogger } from '../utils/logger.js';
 import { sendGAEvent, GA_EVENT_CATEGORIES } from '../analytics.js';
+import { getSession } from '../session.js';
 
 const logDebug = createLogger('Uploads');
 import { MESSAGES } from '../config/helper-messages.js';
@@ -56,6 +57,7 @@ export async function getBucketLocation(base64, mimeType, name, clientId = 'anon
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getSession()?.token || ''}`,
             },
             body: JSON.stringify({
                 base64File: base64,

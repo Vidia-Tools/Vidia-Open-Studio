@@ -1,6 +1,7 @@
 // Import dependencies
 import { createLogger } from '../utils/logger.js';
 import { getBase64, getBucketLocation } from './uploads.js';
+import { getSession } from '../session.js';
 
 const logDebug = createLogger('S3Uploader');
 
@@ -107,6 +108,7 @@ async function getPresignedUrl(fileName, contentType, generationId, isImport) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getSession()?.token || ''}`,
             },
             body: JSON.stringify({
                 fileName,
