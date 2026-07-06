@@ -152,7 +152,7 @@ def _notify_backend(generation_id, video_url, logger):
     try:
         response = requests.post(
             video_ready_url,
-            json={'generationID': generation_id, 'videoUrl': video_url},
+            json={'generation_id': generation_id, 'videoUrl': video_url},
             headers={
                 'Content-Type': 'application/json',
                 'X-Callback-Secret': RUNPOD_CALLBACK_SECRET,
