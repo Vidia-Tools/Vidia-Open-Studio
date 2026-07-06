@@ -87,7 +87,13 @@ export function displayResult(videoUrl, resolvedSeed = null) {
         
         // Handle video error
         videoElement.addEventListener('error', () => {
-            loadingIndicator.innerHTML = `Error loading video. <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">Open directly</a>`;
+            loadingIndicator.textContent = 'Error loading video. ';
+            const directLink = document.createElement('a');
+            directLink.href = videoUrl;
+            directLink.target = '_blank';
+            directLink.rel = 'noopener noreferrer';
+            directLink.textContent = 'Open directly';
+            loadingIndicator.appendChild(directLink);
             loadingIndicator.style.color = '#ff4444';
             logDebug('Video load error');
             

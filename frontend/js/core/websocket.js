@@ -50,7 +50,8 @@ class WebSocketManager {
         // Heartbeat tracking for job cancellation detection
         this.lastHeartbeatAt = 0;
         this.heartbeatWatchdog = null;
-        this.heartbeatTimeout = 10000; // 10 seconds without heartbeat = failure
+        // 2026-07-06: raised from 10s; 10s fired falsely during long sampling gaps
+        this.heartbeatTimeout = 60000;
 
         // Banner state guards (avoid duplicate updates)
         this.bannerSetActive = false;
@@ -126,6 +127,12 @@ class WebSocketManager {
     }
     
     handleConnectionFailure() {
+        // Post-completion or idle: no retries, no banners
+        if (state.getWorkflowCompleted() || !state.getIsGenerating()) {
+            this.setConnectionState(CONNECTION_STATES.DISCONNECTED);
+            return;
+        }
+
         this.reconnectAttempts++;
         
         if (this.reconnectAttempts <= this.maxReconnectAttempts) {
@@ -290,9 +297,12 @@ class WebSocketManager {
             if (reconnectData.videoUrl) {
                 state.setRunDetails({ videoUrl: reconnectData.videoUrl, generation_id: this.connectedClientId });
             }
-            // Only mark as completed for local dev mode
             if (!RUNPOD_MODE) {
                 state.setWorkflowCompleted(true);
+            } else if (reconnectData.videoUrl) {
+                // Completed video must render after a reload via lifecycle's existing wait path
+                state.setWorkflowCompleted(true);
+                state.setIsGenerating(false);
             }
         } else if (reconnectData.status === 'failed') {
             logDebug('Reconnected to a failed job.');
@@ -403,14 +413,16 @@ class WebSocketManager {
             this.startHeartbeatWatchdog();
         }
         // On first liveness, set persistent estimate banner
-        if (RUNPOD_MODE && !this.bannerSetActive) {
+        if (RUNPOD_MODE && !this.bannerSetActive && !state.getWorkflowCompleted()) {
             updateNotification(MESSAGES.NOTIFICATION.GENERATION_TIME, true, false, 0);
             this.bannerSetActive = true;
         }
         // Hide startup loader once we have liveness/progress
         try { hideHeaderStartupProgress(); } catch (_) {}
         // Resume full animation after reconnect
-        try { startAnimation('full', getAnimationElements()); } catch (_) {}
+        if (!state.getWorkflowCompleted()) {
+            try { startAnimation('full', getAnimationElements()); } catch (_) {}
+        }
         
         try { setProgressBarState('active'); } catch (_) {}
         // Per-stage progress (plan 7): the worker StageRelay rides stage fields on
@@ -515,6 +527,11 @@ class WebSocketManager {
             if (event.wasClean && event.code === 1000) {
                 this.setConnectionState(CONNECTION_STATES.DISCONNECTED);
             } else {
+                // Post-completion pod shutdown: keep the displayed result, no reconnect UI
+                if (state.getWorkflowCompleted() || !state.getIsGenerating()) {
+                    this.setConnectionState(CONNECTION_STATES.DISCONNECTED);
+                    return;
+                }
                 // Handle unexpected disconnection
                 this.setConnectionState(CONNECTION_STATES.RECONNECTING);
                 try { setProgressBarState('reconnecting'); } catch (_) {}
@@ -566,7 +583,7 @@ class WebSocketManager {
         }
 
         // On first liveness, set persistent estimate banner
-        if (RUNPOD_MODE && !this.bannerSetActive) {
+        if (RUNPOD_MODE && !this.bannerSetActive && !state.getWorkflowCompleted()) {
             updateNotification(MESSAGES.NOTIFICATION.GENERATION_TIME, true, false, 0);
             this.bannerSetActive = true;
         }
@@ -574,7 +591,9 @@ class WebSocketManager {
         // Hide startup loader on heartbeat liveness
         try { hideHeaderStartupProgress(); } catch (_) {}
         // Resume full animation after reconnect
-        try { startAnimation('full', getAnimationElements()); } catch (_) {}
+        if (!state.getWorkflowCompleted()) {
+            try { startAnimation('full', getAnimationElements()); } catch (_) {}
+        }
         
         logDebug('Heartbeat received, timestamp updated');
     }
@@ -598,8 +617,8 @@ class WebSocketManager {
                     // Clear generating state
                     state.setIsGenerating(false);
                     
-                    // Show error notification
-                    showErrorNotification('Connection to worker lost. Generation canceled or failed.');
+                    // Use same persistent banner as handleWorkflowError (:478)
+                    updateNotification('Connection to worker lost. Generation canceled or failed.', true, true, 0);
                     // Stop waves on watchdog failure
                     try { stopAnimation(getAnimationElements()); } catch (_) {}
                     
