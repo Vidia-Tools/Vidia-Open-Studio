@@ -111,6 +111,19 @@ def main():
             if info["output_node"] is None:
                 failures.append(f"{filename}: no terminal [out] node")
 
+            # Verify filename_prefix: final stage must use bare generation_id (the
+            # VidiaVideoSaver passes it as generationID to the backend callback);
+            # intermediate stages keep the {genID}_{stageName} suffix for local
+            # file uniqueness.
+            if info["output_node"] is not None:
+                out_node = graph[info["output_node"]]
+                fp = out_node.get("inputs", {}).get("filename_prefix")
+                if fp is not None:
+                    expected = "dryrunGenID" if final else f"dryrunGenID_{stage_name}"
+                    if fp != expected:
+                        failures.append(
+                            f"{filename}: filename_prefix={fp!r} expected {expected!r}")
+
         outs = "/".join(info["text_outputs"]) if text_stage else info["output_node"]
         print(f"OK   {filename}: {len(graph)} nodes, inputs={sorted(info['inputs'])}, "
               f"out={outs}, params={len(info['params_resolved'])}")

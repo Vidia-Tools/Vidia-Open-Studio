@@ -170,7 +170,11 @@ def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
                     f"({info['output_node']}, {node_id})")
             info["output_node"] = node_id
             if "filename_prefix" in inputs:
-                inputs["filename_prefix"] = prefix
+                # 2026-07-06: final stage uses bare generation_id so the
+                # VidiaVideoSaver callback sends the correct generationID to
+                # the backend videoReady route (job lookup key). Intermediate
+                # stages keep the _{stageName} suffix for local file uniqueness.
+                inputs["filename_prefix"] = generation_id if final else prefix
             if not final and node.get("class_type") == "VHS_VideoCombine":
                 inputs["format"] = INTERMEDIATE_FORMAT
                 if "crf" in inputs:
