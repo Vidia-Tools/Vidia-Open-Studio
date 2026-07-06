@@ -338,7 +338,9 @@ elif [ "$DEPLOYMENT_MODE" = "serverless" ]; then
     VIDIA_MODE="${VIDIA_MODE:-runpod}"
     if [ "$VIDIA_MODE" = "local" ]; then
         log "ComfyUI is ready. Launching local app server (VIDIA_MODE=local)."
-        cd /src && exec python3 /src/app_server.py --comfy "http://127.0.0.1:8188" --port "${APP_SERVER_PORT:-8189}"
+        # --host 0.0.0.0 required inside the container for Docker port mapping;
+        # bare-metal default is loopback (see app_server.py --host).
+        cd /src && exec python3 /src/app_server.py --comfy "http://127.0.0.1:8188" --port "${APP_SERVER_PORT:-8189}" --host 0.0.0.0
     else
         log "ComfyUI is ready. Launching serverless handler."
         cd /src && exec python3 /src/rp_handler.py

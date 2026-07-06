@@ -34,6 +34,9 @@ def _parse_args():
                         help="ComfyUI base URL (default http://127.0.0.1:8188)")
     parser.add_argument("--port", type=int, default=int(os.environ.get("APP_SERVER_PORT", 8189)),
                         help="Port for this app server (default 8189)")
+    parser.add_argument("--host", default="127.0.0.1",
+                        help="Bind address (default 127.0.0.1; use 0.0.0.0 to "
+                             "expose on all interfaces)")
     return parser.parse_args()
 
 
@@ -273,8 +276,8 @@ def main():
     check_server(f"http://{COMFY_HOST}",
                  COMFY_API_AVAILABLE_MAX_RETRIES,
                  COMFY_API_AVAILABLE_INTERVAL_MS)
-    server = ThreadingHTTPServer(("0.0.0.0", ARGS.port), AppHandler)
-    logger.info(f"Vidia Open Studio local server on :{ARGS.port} "
+    server = ThreadingHTTPServer((ARGS.host, ARGS.port), AppHandler)
+    logger.info(f"Vidia Open Studio local server on {ARGS.host}:{ARGS.port} "
                 f"(ComfyUI at {COMFY_HOST})")
     server.serve_forever()
 

@@ -61,9 +61,17 @@ def write_config(category, data, name=None):
     """The single config writer. All Build Mode writes funnel through here."""
     target = _safe_path(category, name)
     os.makedirs(os.path.dirname(target), exist_ok=True)
-    with open(target, "w") as f:
-        json.dump(data, f, indent=2)
-        f.write("\n")
+    # Write to a temp file then atomically replace so a crash mid-write
+    # cannot corrupt the existing config.
+    fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(target), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+        os.replace(tmp_path, target)
+    except BaseException:
+        os.unlink(tmp_path)
+        raise
     return target
 
 

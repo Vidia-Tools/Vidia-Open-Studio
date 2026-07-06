@@ -30,6 +30,11 @@ cd worker/src
 VIDIA_MODE=local python app_server.py --comfy http://127.0.0.1:8188 --port 8189
 ```
 
+The server binds to `127.0.0.1` by default. Pass `--host 0.0.0.0` to expose it
+on all interfaces (Docker does this internally for port mapping). Warning: the
+unauthenticated Build Mode endpoints (`/build/*`) write config files into the
+repo, so only expose the server on networks you trust.
+
 ## Local API
 
 ```bash
