@@ -1,7 +1,6 @@
 /**
  * Video history routes - store, retrieve, and admin cleanup of video records
  */
-import jwt from 'jsonwebtoken';
 import { jsonResponse } from '../utils/response.js';
 import { sendEmail, getVideoReadyEmailTemplate } from '../utils/email.js';
 import { withAuth } from '../middleware/auth.js';
@@ -9,23 +8,12 @@ import { withAdmin } from '../middleware/admin.js';
 
 export function videosRoutes(router) {
 	// Store a video for a user
-	router.post('/api/videos/store', async (request, env) => {
+	router.post('/api/videos/store', withAuth, async (request, env) => {
 		const vhmId = env.VIDEO_HISTORY_MANAGER.idFromName('default');
 		const videoHistoryManager = env.VIDEO_HISTORY_MANAGER.get(vhmId);
 
-		// Get user ID from auth token
-		const authHeader = request.headers.get('Authorization') || '';
-		const token = authHeader.replace('Bearer ', '');
-
 		try {
-			let userId = null;
-			if (token) {
-				const decoded = jwt.verify(token, env.JWT_SECRET);
-				userId = decoded.userId;
-			}
-
 			const {
-				userId: requestUserId,
 				videoUrl,
 				title,
 				generation_id = null,
@@ -33,7 +21,7 @@ export function videosRoutes(router) {
 				sendNotification = false
 			} = await request.json();
 
-			const finalUserId = userId || requestUserId;
+			const finalUserId = request.user.userId;
 			if (!finalUserId) {
 				return jsonResponse({ success: false, message: 'userId is required' }, 400);
 			}
@@ -105,7 +93,7 @@ export function videosRoutes(router) {
 	});
 
 	// Get videos for a user
-	router.get('/api/videos/user/:userId', async (request, env) => {
+	router.get('/api/videos/user/:userId', withAuth, async (request, env) => {
 		const vhmId = env.VIDEO_HISTORY_MANAGER.idFromName('default');
 		const videoHistoryManager = env.VIDEO_HISTORY_MANAGER.get(vhmId);
 
@@ -113,6 +101,10 @@ export function videosRoutes(router) {
 			const userId = request.params.userId;
 			if (!userId) {
 				return jsonResponse({ success: false, message: 'userId is required' }, 400);
+			}
+
+			if (userId !== request.user.userId && request.user.email !== env.ADMIN_EMAIL) {
+				return jsonResponse({ success: false, message: 'Forbidden' }, 403);
 			}
 
 			const response = await videoHistoryManager.fetch(
@@ -136,7 +128,7 @@ export function videosRoutes(router) {
 	});
 
 	// Get video by generation_id
-	router.get('/api/videos/byGeneration', async (request, env) => {
+	router.get('/api/videos/byGeneration', withAuth, async (request, env) => {
 		const vhmId = env.VIDEO_HISTORY_MANAGER.idFromName('default');
 		const videoHistoryManager = env.VIDEO_HISTORY_MANAGER.get(vhmId);
 
@@ -158,6 +150,12 @@ export function videosRoutes(router) {
 			}
 
 			const data = await response.json();
+
+			// VHM generation mapping stores the owning userId; enforce ownership
+			if (data.video && data.video.userId !== request.user.userId && request.user.email !== env.ADMIN_EMAIL) {
+				return jsonResponse({ success: false, message: 'Forbidden' }, 403);
+			}
+
 			return jsonResponse(data);
 		} catch (error) {
 			console.error('Error getting video by generation_id:', error);

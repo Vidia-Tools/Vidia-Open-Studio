@@ -84,18 +84,15 @@ export class UserAuth {
 	 * @returns {Response} JSON response
 	 */
 	async generateMagicLink({ email, settingsId, turnstileToken, mode }) {
-		// Verify Turnstile token
-		if (turnstileToken) {
-			const isValid = await this.verifyTurnstile(turnstileToken);
-			if (!isValid) {
-				return new Response(JSON.stringify({ 
-					success: false, 
-					message: "Security check failed" 
-				}), { 
-					status: 400,
-					headers: corsHeaders 
-				});
-			}
+		// Verify Turnstile token (mandatory: missing token is a failed check)
+		if (!turnstileToken || !(await this.verifyTurnstile(turnstileToken))) {
+			return new Response(JSON.stringify({ 
+				success: false, 
+				message: "Security check failed" 
+			}), { 
+				status: 400,
+				headers: corsHeaders 
+			});
 		}
 		
 		// Generate token with expiry (30 minutes)

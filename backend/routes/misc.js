@@ -6,6 +6,9 @@
 import jwt from 'jsonwebtoken';
 import { jsonResponse, corsHeaders } from '../utils/response.js';
 import { isDisposableEmail, addToMailerLite } from '../utils/email.js';
+import { withAuth } from '../middleware/auth.js';
+import { withAdmin } from '../middleware/admin.js';
+import { withRateLimit } from '../middleware/rate-limit.js';
 
 export function miscRoutes(router) {
 	// Health check
@@ -86,8 +89,10 @@ export function miscRoutes(router) {
 	// Logging - forward to LogManager DO
 	// The /logging/* alias (without /api/ prefix) is needed because the RunPod handler
 	// and some internal callers use the non-prefixed path
-	router.all('/api/logging/*', forwardToLogManager);
-	router.all('/logging/*', forwardToLogManager);
+	// Log reads are admin-only; the specific GET must be registered before the wildcard
+	router.get('/api/logging/logs', withAuth, withAdmin, forwardToLogManager);
+	router.all('/api/logging/*', withRateLimit(60, 60), forwardToLogManager);
+	router.all('/logging/*', withRateLimit(60, 60), forwardToLogManager);
 }
 
 // Forward to LogManager DO, rewriting /logging/* to /api/logging/* if needed

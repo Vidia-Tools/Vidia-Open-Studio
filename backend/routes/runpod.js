@@ -8,7 +8,7 @@ import { withCallbackSecret } from '../middleware/callback-secret.js';
 import { withAuth } from '../middleware/auth.js';
 import { withRateLimit } from '../middleware/rate-limit.js';
 import { validateParams } from '../utils/validate-params.js';
-import { runEndpointAsync, runEndpointSync, runEndpointAsyncWithResults, pollAsyncRunStatus } from '../services/runpod.js';
+import { runEndpointAsync, pollAsyncRunStatus } from '../services/runpod.js';
 
 export function runpodRoutes(router) {
 	// --- Generation ---
@@ -315,26 +315,6 @@ export function runpodRoutes(router) {
 	});
 
 	// --- Direct RunPod API calls ---
-
-	// All client-facing GPU routes require auth + rate limiting (closes bible G2:
-	// previously unauthenticated paths that let anyone start paid GPU jobs).
-	router.post('/api/runpod/runAsync', withAuth, withRateLimit(10, 600), async (request, env) => {
-		const { plan, payload, userId } = await request.json();
-		const res = await runEndpointAsync(plan, payload, userId, env);
-		return jsonResponse({ success: true, res });
-	});
-
-	router.post('/api/runpod/runSync', withAuth, withRateLimit(10, 600), async (request, env) => {
-		const { plan, payload } = await request.json();
-		const result = await runEndpointSync(plan, payload, env);
-		return jsonResponse({ success: true, result });
-	});
-
-	router.post('/api/runpod/runAsyncWithResults', withAuth, withRateLimit(10, 600), async (request, env) => {
-		const { plan, payload, userId } = await request.json();
-		const results = await runEndpointAsyncWithResults(plan, payload, userId, env);
-		return jsonResponse({ success: true, results });
-	});
 
 	router.post('/api/runpod/pollAsyncRunStatus', withAuth, withRateLimit(30, 600), async (request, env) => {
 		const { plan, generation_id } = await request.json();
