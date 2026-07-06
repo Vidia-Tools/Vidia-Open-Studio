@@ -2,9 +2,14 @@ export class VideoHistoryManager {
 	constructor(state) {
 		this.state = state;
 		
-		// Schedule daily cleanup alarm (24 hours)
-		const now = Date.now();
-		this.state.storage.setAlarm(now + 24 * 60 * 60 * 1000);
+		// Schedule daily cleanup alarm (24 hours) only if none is pending,
+		// so DO wakes don't perpetually postpone the cleanup
+		state.blockConcurrencyWhile(async () => {
+			const existing = await state.storage.getAlarm();
+			if (existing === null) {
+				await state.storage.setAlarm(Date.now() + 24 * 60 * 60 * 1000);
+			}
+		});
 	}
 	
 	// Alarm handler - runs when the alarm fires

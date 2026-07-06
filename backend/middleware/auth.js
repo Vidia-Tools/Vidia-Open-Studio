@@ -23,7 +23,7 @@ export function withAuth(request, env) {
 	}
 
 	try {
-		const decoded = jwt.verify(token, env.JWT_SECRET);
+		const decoded = jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] });
 		// Attach decoded token payload so downstream handlers can use it
 		request.user = decoded;
 	} catch (error) {

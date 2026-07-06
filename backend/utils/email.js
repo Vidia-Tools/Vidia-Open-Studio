@@ -90,8 +90,10 @@ export async function isDisposableEmail(email, env) {
     const domain = email.split('@')[1]?.toLowerCase();
     if (!domain) return false;
     
-    const isDisposable = await env.DISPOSABLE_EMAIL_DOMAINS.get(domain);
-    return isDisposable === 'true';
+    const blocklistJson = await env.DISPOSABLE_EMAIL_DOMAINS.get('__blocklist__');
+    if (!blocklistJson) return false;
+    const blocklist = new Set(JSON.parse(blocklistJson));
+    return blocklist.has(domain);
   } catch (error) {
     console.error('[EMAIL] Error checking disposable email:', error);
     // Fail open - if check fails, allow the email through

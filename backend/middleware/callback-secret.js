@@ -16,7 +16,16 @@ export function withCallbackSecret(request, env) {
 		console.error('[Security] RUNPOD_CALLBACK_SECRET not configured');
 		return jsonResponse({ success: false, message: 'Server misconfiguration' }, 500);
 	}
-	if (secret !== env.RUNPOD_CALLBACK_SECRET) {
+	// Constant-time comparison to avoid timing attacks
+	const expected = env.RUNPOD_CALLBACK_SECRET;
+	if (typeof secret !== 'string' || secret.length !== expected.length) {
+		return jsonResponse({ success: false, message: 'Invalid callback secret' }, 401);
+	}
+	let mismatch = 0;
+	for (let i = 0; i < expected.length; i++) {
+		mismatch |= secret.charCodeAt(i) ^ expected.charCodeAt(i);
+	}
+	if (mismatch !== 0) {
 		return jsonResponse({ success: false, message: 'Invalid callback secret' }, 401);
 	}
 }

@@ -69,13 +69,10 @@ export default {
 
 			console.log(`Updating ${domains.length} disposable email domains in KV`);
 
-			let updated = 0;
-			for (const domain of domains) {
-				await env.DISPOSABLE_EMAIL_DOMAINS.put(domain.toLowerCase().trim(), 'true');
-				updated++;
-			}
+			const domainsArray = domains.map(d => d.toLowerCase().trim());
+			await env.DISPOSABLE_EMAIL_DOMAINS.put('__blocklist__', JSON.stringify(domainsArray));
 
-			console.log(`Successfully updated ${updated} disposable email domains`);
+			console.log(`Successfully updated ${domainsArray.length} disposable email domains`);
 		} catch (error) {
 			console.error('Failed to update disposable email domains:', error);
 		}
@@ -95,7 +92,6 @@ export default {
 				{
 					success: false,
 					error: 'Server error',
-					details: error.message,
 				},
 				500
 			);
