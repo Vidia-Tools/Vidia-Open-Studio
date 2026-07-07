@@ -50,3 +50,12 @@ three components. Backend secrets go in via `wrangler secret put` (or
 See [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) for deferred items and current
 limitations (best-effort rate limiting, decorative payments, local-only
 Build Mode, and others).
+
+## License
+
+Vidia Open Studio is licensed under the
+[Functional Source License, Version 1.1, Apache 2.0 Future License](LICENSE.md)
+(FSL-1.1-Apache-2.0). You are free to use, modify, and self-host it for any
+Permitted Purpose. Each release automatically converts to Apache 2.0 two
+years after its publication. For commercial licensing inquiries, contact the
+maintainer.
