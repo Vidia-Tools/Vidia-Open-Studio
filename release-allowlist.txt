@@ -21,7 +21,9 @@
 # --- Root metadata, docs, scripts ---
 .gitignore
 .env.example
+README.md
 DEPLOY.md
+KNOWN_ISSUES.md
 setup.sh
 release-allowlist.txt
 scripts/release-check.mjs
