@@ -9,3 +9,7 @@ __pycache__/
 .DS_Store
 *.log
 /tmp/
+
+.dev.vars*
+!.dev.vars.example
+!.env.example
