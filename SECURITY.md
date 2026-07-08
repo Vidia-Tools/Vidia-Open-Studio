@@ -4,7 +4,7 @@
 
 Please report vulnerabilities privately via GitHub Security Advisories:
 open a private report at
-https://github.com/Fredthearboro/Vidia-Open-Studio/security/advisories/new
+https://github.com/federicobuilds/Vidia-Open-Studio/security/advisories/new
 
 Do not open public issues for security bugs.
 

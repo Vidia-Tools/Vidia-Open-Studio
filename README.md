@@ -92,3 +92,13 @@ Vidia Open Studio is licensed under the
 Permitted Purpose. Each release automatically converts to Apache 2.0 two
 years after its publication. For commercial licensing inquiries, contact the
 maintainer.
+
+## Links
+
+- GitHub (development, issues, pull requests): https://github.com/federicobuilds/Vidia-Open-Studio
+- Codeberg (read-only functional mirror; the GPU worker pulls from here at boot): https://codeberg.org/Vidia/Vidia-Open-Studio
+- Custom node pack: https://github.com/federicobuilds/Vidia-Open-Studio-Nodes
+- Worker container image on DockerHub: https://hub.docker.com/r/federicobuilds/vidia-open-studio
+
+Contributions go through GitHub only. Codeberg is a downstream mirror that
+stays in sync automatically; do not open pull requests or commit against it.

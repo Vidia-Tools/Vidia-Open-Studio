@@ -3,7 +3,7 @@
   "custom_nodes": [
     { "name": "vidia-open-studio-node", "repo_url": "https://codeberg.org/Vidia/Vidia-Open-Studio-Nodes.git", "commit": "main", "note": "cloned at runtime by start.sh (VIDIA_NODE_REPO_URL / VIDIA_NODE_REPO_REF); no vendor/ directory" },
     { "name": "ComfyUI-Allor", "repo_url": "https://github.com/Nourepide/ComfyUI-Allor", "commit": "af9caec" },
-    { "name": "ComfyUI-LivePortraitKJ_none-fix", "repo_url": "https://github.com/Fredthearboro/ComfyUI-LivePortraitKJ_none-fix", "commit": "7d59912" },
+    { "name": "ComfyUI-LivePortraitKJ_none-fix", "repo_url": "https://github.com/federicobuilds/ComfyUI-LivePortraitKJ_none-fix", "commit": "7d59912" },
     { "name": "ComfyUI-Manager", "repo_url": "https://github.com/Comfy-Org/ComfyUI-Manager", "commit": "4a1c06b" },
     { "name": "ComfyUI-segment-anything-2", "repo_url": "https://github.com/kijai/ComfyUI-segment-anything-2", "commit": "0c35fff" },
     { "name": "ComfyUI_Searge_LLM", "repo_url": "https://github.com/SeargeDP/ComfyUI_Searge_LLM", "commit": "241d4c8" },

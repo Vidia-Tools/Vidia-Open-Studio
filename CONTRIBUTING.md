@@ -18,6 +18,10 @@ Thanks for your interest in contributing.
 
 ## Branches and pull requests
 
+All contributions go through GitHub. The Codeberg repository is a read-only
+downstream mirror that the GPU worker clones at boot; it stays in sync
+automatically, so do not open pull requests or push commits there.
+
 1. Fork the repo on GitHub and create a branch from `main`.
 2. Make your changes and test them (local mode is the quickest way).
 3. Open a pull request against `main`. Fill in the PR template, including

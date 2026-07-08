@@ -126,12 +126,13 @@ deferred to v1.1 (see plan 10.4).
 
 Local Build Mode edits the working tree. To ship those edits to a RunPod
 serverless endpoint you rebuild and push the image, because the container
-filesystem is immutable per release. The image is hosted on **DockerHub** (it is
-too large for a git repo); any registry works via the `IMAGE` env var:
+filesystem is immutable per release. The public image is on **DockerHub** at
+[`federicobuilds/vidia-open-studio`](https://hub.docker.com/r/federicobuilds/vidia-open-studio)
+(it is too large for a git repo); any registry works via the `IMAGE` env var:
 
 ```bash
 # one-command deploy: build + push the worker image
-IMAGE=<dockerhub-user>/vidia-worker:<tag> ./worker/deploy.sh
+IMAGE=federicobuilds/vidia-open-studio:<tag> ./worker/deploy.sh
 ```
 
 `deploy.sh` runs `docker build` on `worker/` and `docker push`. After the push,
