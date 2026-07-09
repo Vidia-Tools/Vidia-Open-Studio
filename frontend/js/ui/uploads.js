@@ -194,6 +194,14 @@ export async function handleFileUpload(event, { uploadArea, spinner, uploadIcon,
         checkmarkIcon.style.display = 'none';
         uploadArea.setAttribute('data-filename', processedFile.name);
         
+        // Replace any previous preview so re-uploading swaps the video
+        // instead of stacking a second player in the upload area.
+        const oldPreview = uploadArea.querySelector('.input-video-preview');
+        if (oldPreview) {
+            URL.revokeObjectURL(oldPreview.src);
+            oldPreview.remove();
+        }
+
         // Create and display video preview
         const videoPreview = document.createElement('video');
         videoPreview.className = 'input-video-preview';
