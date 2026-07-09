@@ -150,6 +150,11 @@ export class VidiaApp {
         });
         if (goBackButton) goBackButton.addEventListener('click', (e) => {
             e.preventDefault();
+            // The dashboard scrolls inside an overflow container, not the
+            // window, so window.scrollTo is a no-op there. Scrolling the
+            // topmost element into view works for both scroll models.
+            const top = document.querySelector('.mode-back') || document.body;
+            top.scrollIntoView({ behavior: 'smooth', block: 'start' });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
