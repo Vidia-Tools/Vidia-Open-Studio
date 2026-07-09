@@ -992,7 +992,7 @@
                 `;
                 
                 // Fetch session logs
-                const response = await fetch(`${window.APP_CONFIG.BACKEND_URL}/api/admin/terminal-generation-logs?generationID=${generationID}`, {
+                const response = await fetch(`${window.APP_CONFIG.BACKEND_URL}/api/admin/terminal-generation-logs?generation_id=${generationID}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${userData.token}`,
