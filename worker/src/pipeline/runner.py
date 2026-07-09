@@ -44,6 +44,20 @@ OPENROUTER_PLACEHOLDERS = {"", "OPENROUTER_API_KEY", "dummy-key", "change-me"}
 # Full generation leaves the load node untouched (cap = 0).
 PREVIEW_FRAME_CAPS = {"evolve": 16, "trace": 8, "forge": 120, "hunyuan": 120}
 
+# Per-method scheduler contracts (Prod parity: controls/generate.json per-mode
+# scheduler selects). ComfyUI drops the whole output branch at validation when a
+# node receives a scheduler outside its enum ("Output will be ignored"), so an
+# out-of-contract value must be coerced to the method's default rather than
+# passed through. Extend this map when adding a generate method.
+SCHEDULER_CONTRACTS = {
+    "hunyuan": {
+        "valid": {"FlowMatchDiscreteScheduler", "SDE-DPMSolverMultistepScheduler",
+                  "DPMSolverMultistepScheduler", "SASolverScheduler",
+                  "UniPCMultistepScheduler"},
+        "default": "DPMSolverMultistepScheduler",
+    },
+}
+
 
 class PipelineError(Exception):
     def __init__(self, message, stage=None):
@@ -150,6 +164,17 @@ def _apply_runtime_defaults(params):
         params["use_cloud_llm"] = True
 
     params.setdefault("lora_keywords", "")
+
+    # Coerce the scheduler to the generate method's contract (see
+    # SCHEDULER_CONTRACTS). A stale cross-mode value ("sgm_uniform" from forge
+    # in a hunyuan run) makes ComfyUI silently drop the video output branch.
+    contract = SCHEDULER_CONTRACTS.get(params.get("method"))
+    if contract:
+        scheduler = params.get("scheduler")
+        if scheduler not in contract["valid"]:
+            logger.info(f"[PARAMS] scheduler '{scheduler}' invalid for method "
+                        f"'{params.get('method')}', using '{contract['default']}'")
+            params["scheduler"] = contract["default"]
 
     # Prod parity: detailer denoise of 0 is clamped to a near-zero floor so the
     # SEGSDetailer still applies a minimal pass rather than skipping entirely.

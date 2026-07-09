@@ -194,6 +194,19 @@ export function applyVisibility() {
     if (Array.isArray(control.modes) && !control.modes.includes(mode)) visible = false;
     if (control.feature && !features[control.feature]) visible = false;
     el.style.display = visible ? '' : 'none';
+    // Mode-scoped controls can share a param key across modes (e.g. the forge
+    // and hunyuan `scheduler` selects). Defaults are seeded once at render
+    // time under the initial method, so on a mode change the now-active
+    // control must rewrite its value into the store or the stale mode's
+    // value leaks into the request (hunyuan got forge's 'sgm_uniform' and
+    // ComfyUI dropped the video output at validation).
+    if (visible && Array.isArray(control.modes) && !getControlModule(control.type).selfManaged) {
+      const value = readValue(control, el);
+      writeStore(control, value);
+      if (control.optionParams && control.optionParams[value]) {
+        for (const [k, v] of Object.entries(control.optionParams[value])) store.setParam(k, v);
+      }
+    }
   }
 }
 
