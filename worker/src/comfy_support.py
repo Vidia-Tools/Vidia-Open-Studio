@@ -167,6 +167,10 @@ class WebSocketProgressRelay:
         return ok
 
     def send_terminal_logs(self, log_content, user_id=None):
+        # Backend rejects empty terminalOutput with 400 "Missing required
+        # fields"; an empty tail chunk at job end is normal, not an error.
+        if not log_content or not log_content.strip():
+            return False
         ok = self._post(self.terminal_logs_url, {
             "generation_id": self.generation_id,
             "userId": user_id or self.generation_id,
