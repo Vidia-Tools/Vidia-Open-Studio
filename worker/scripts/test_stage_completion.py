@@ -183,6 +183,26 @@ def test_normal_stage_completes_on_history_success_without_ws():
     print("OK: normal stage completes on history success without WS event")
 
 
+def test_node_errors_fail_fast():
+    """ComfyUI /prompt validation errors must fail the stage immediately with
+    the real node error (e.g. the hunyuan 'sgm_uniform' scheduler rejection)
+    instead of running to completion and reporting 'no output file found'."""
+    info = {"text_outputs": {}, "output_node": "1", "inputs": {},
+            "params_resolved": [], "params_unresolved": []}
+    runner.queue_workflow = lambda graph: {
+        "prompt_id": "p-x",
+        "node_errors": {"1059": {"class_type": "HyVideoSampler", "errors": [
+            {"message": "Value not in list",
+             "details": "scheduler: 'sgm_uniform' not in [...]"}]}},
+    }
+    try:
+        runner._run_stage({}, info, None, _FakeRelay(), _log_state())
+        raise AssertionError("node_errors should raise PipelineError")
+    except runner.PipelineError as e:
+        assert "HyVideoSampler" in str(e) and "sgm_uniform" in str(e)
+    print("OK: queue-time node_errors fail fast with the real cause")
+
+
 def main():
     test_queue_empty_does_not_complete()
     test_text_outputs_ready_helper()
@@ -190,6 +210,7 @@ def main():
     test_normal_stage_requires_prompt_specific_completion()
     test_normal_stage_completes_on_history_success_without_ws()
     test_execution_error_raises()
+    test_node_errors_fail_fast()
     test_runtime_defaults_disable_cloud_llm_without_key()
     print("\nAll stage-completion unit tests passed.")
 

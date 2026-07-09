@@ -145,6 +145,22 @@ def _save_state(state_path, state):
         json.dump(state, f)
 
 
+def _format_node_errors(node_errors):
+    """Flatten ComfyUI /prompt node_errors into one human-readable line.
+
+    Shape (per ComfyUI): {node_id: {class_type, errors: [{message, details}]}}.
+    """
+    parts = []
+    for node_id, err in node_errors.items():
+        class_type = err.get("class_type", "?")
+        for e in err.get("errors", []):
+            msg = e.get("message", "unknown error")
+            details = e.get("details", "")
+            parts.append(f"{class_type} (node {node_id}): {msg}"
+                         + (f" [{details}]" if details else ""))
+    return "; ".join(parts) or json.dumps(node_errors)[:300]
+
+
 def _apply_runtime_defaults(params):
     """Fill worker-only defaults that are not exposed as frontend controls."""
     provided_key = str(params.get("openrouter_api_key", "")).strip()
@@ -333,6 +349,17 @@ def _run_stage(graph, info, progress, stage_relay, log_state):
     is_text_stage = bool(text_outputs)
 
     queued = queue_workflow(graph)
+    # ComfyUI validates the graph at queue time. When a node input is invalid
+    # it drops that output branch ("Output will be ignored") but still queues
+    # the rest, so the stage would run to completion with no usable output and
+    # surface only as a generic "no output file found". Fail fast with the
+    # exact node errors instead so users and logs see the real cause.
+    node_errors = queued.get("node_errors") or {}
+    if node_errors:
+        raise PipelineError(
+            f"ComfyUI rejected the workflow: {_format_node_errors(node_errors)}")
+    if "prompt_id" not in queued:
+        raise PipelineError(f"ComfyUI refused the workflow: {json.dumps(queued)[:500]}")
     prompt_id = queued["prompt_id"]
     logger.info(f"Queued stage workflow with ID {prompt_id}")
     if progress:

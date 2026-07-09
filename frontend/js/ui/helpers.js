@@ -20,7 +20,9 @@ export function handleFatalError(errorData) {
     if (typeof errorData === 'string') {
         userMessage = errorData;
     } else if (errorData && typeof errorData === 'object') {
-        userMessage = errorData.message || userMessage;
+        // Worker pipeline errors arrive as {error, stage, generation_id}
+        // (rp_handler.py relay), UI-originated ones as {message, code}.
+        userMessage = errorData.message || errorData.error || userMessage;
         errorCode = errorData.code;
         errorSource = errorData.source;
         
@@ -38,6 +40,13 @@ export function handleFatalError(errorData) {
         } else if (errorCode === 'storage_error' || errorCode === 'email_error') {
             userMessage = "Result processing failed. We'll retry automatically. You'll receive an email when it's ready.";
         }
+
+        // Append the failing pipeline step and generation id so users can
+        // copy an actionable report instead of "it didn't work".
+        const detailParts = [];
+        if (errorData.stage) detailParts.push(`step: ${errorData.stage}`);
+        if (errorData.generation_id) detailParts.push(`ID: ${errorData.generation_id}`);
+        if (detailParts.length) userMessage += ` (${detailParts.join(', ')})`;
     }
     
     // Show persistent error toast and static notification
