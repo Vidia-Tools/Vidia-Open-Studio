@@ -86,9 +86,9 @@ a rebuild). See the self-update vars in `../.env.example`:
 
 | Env var | Default | Purpose |
 |---------|---------|---------|
-| `VIDIA_DOCKER_REPO_URL` | `https://codeberg.org/Vidia/Vidia-Open-Studio.git` | monorepo for boot scripts + src |
+| `VIDIA_DOCKER_REPO_URL` | `https://codeberg.org/Vidia-Tools/Vidia-Open-Studio.git` | monorepo for boot scripts + src |
 | `VIDIA_DOCKER_REPO_REF` | `main` | ref updater/bootstrap checkout |
-| `VIDIA_NODE_REPO_URL` | `https://codeberg.org/Vidia/Vidia-Open-Studio-Nodes.git` | vidia-open-studio-node repo |
+| `VIDIA_NODE_REPO_URL` | `https://codeberg.org/Vidia-Tools/Vidia-Open-Studio-Nodes.git` | vidia-open-studio-node repo |
 | `VIDIA_NODE_REPO_REF` | `main` | ref start.sh checks out |
 | `VIDIA_DOCKER_DEPLOY_KEY` | (unset) | optional SSH key path on the volume for private forks |
 | `VIDIA_NODE_DEPLOY_KEY` | (unset) | optional SSH key path for private node forks |

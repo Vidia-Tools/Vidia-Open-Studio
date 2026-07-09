@@ -10,7 +10,7 @@ log() {
 
 log "Bootstrap started"
 
-VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia/Vidia-Open-Studio.git}"
+VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia-Tools/Vidia-Open-Studio.git}"
 VIDIA_DOCKER_REPO_REF="${VIDIA_DOCKER_REPO_REF:-main}"
 
 if [ -n "${VIDIA_DOCKER_DEPLOY_KEY:-}" ] && [ -f "$VIDIA_DOCKER_DEPLOY_KEY" ]; then

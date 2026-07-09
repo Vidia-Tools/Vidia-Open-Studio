@@ -20,7 +20,7 @@ if ! getent hosts codeberg.org >/dev/null 2>&1; then
     printf "nameserver 8.8.8.8\nnameserver 1.1.1.1\n" > /etc/resolv.conf
 fi
 
-VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia/Vidia-Open-Studio.git}"
+VIDIA_DOCKER_REPO_URL="${VIDIA_DOCKER_REPO_URL:-https://codeberg.org/Vidia-Tools/Vidia-Open-Studio.git}"
 VIDIA_DOCKER_REPO_REF="${VIDIA_DOCKER_REPO_REF:-main}"
 
 # Seed Codeberg's SSH host key before any git operation (updater.sh is the

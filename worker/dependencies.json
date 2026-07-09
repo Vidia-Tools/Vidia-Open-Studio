@@ -1,7 +1,7 @@
 {
   "_comment": "Pinned custom nodes + model inventory (plan 8.2). Node pins from the live pod map (2026-06-12). Models mirror the /workspace/models network-volume layout; url TODO entries and used_by lists to be filled by Federico. fetch_models.py consumes this file.",
   "custom_nodes": [
-    { "name": "vidia-open-studio-node", "repo_url": "https://codeberg.org/Vidia/Vidia-Open-Studio-Nodes.git", "commit": "main", "note": "cloned at runtime by start.sh (VIDIA_NODE_REPO_URL / VIDIA_NODE_REPO_REF); no vendor/ directory" },
+    { "name": "vidia-open-studio-node", "repo_url": "https://codeberg.org/Vidia-Tools/Vidia-Open-Studio-Nodes.git", "commit": "main", "note": "cloned at runtime by start.sh (VIDIA_NODE_REPO_URL / VIDIA_NODE_REPO_REF); no vendor/ directory" },
     { "name": "ComfyUI-Allor", "repo_url": "https://github.com/Nourepide/ComfyUI-Allor", "commit": "af9caec" },
     { "name": "ComfyUI-LivePortraitKJ_none-fix", "repo_url": "https://github.com/federicobuilds/ComfyUI-LivePortraitKJ_none-fix", "commit": "7d59912" },
     { "name": "ComfyUI-Manager", "repo_url": "https://github.com/Comfy-Org/ComfyUI-Manager", "commit": "4a1c06b" },

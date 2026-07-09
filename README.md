@@ -95,9 +95,9 @@ maintainer.
 
 ## Links
 
-- GitHub (development, issues, pull requests): https://github.com/federicobuilds/Vidia-Open-Studio
-- Codeberg (read-only functional mirror; the GPU worker pulls from here at boot): https://codeberg.org/Vidia/Vidia-Open-Studio
-- Custom node pack: https://github.com/federicobuilds/Vidia-Open-Studio-Nodes
+- GitHub (development, issues, pull requests): https://github.com/Vidia-Tools/Vidia-Open-Studio
+- Codeberg (read-only functional mirror; the GPU worker pulls from here at boot): https://codeberg.org/Vidia-Tools/Vidia-Open-Studio
+- Custom node pack: https://github.com/Vidia-Tools/Vidia-Open-Studio-Nodes
 - Worker container image on DockerHub: https://hub.docker.com/r/federicobuilds/vidia-open-studio
 
 Contributions go through GitHub only. Codeberg is a downstream mirror that

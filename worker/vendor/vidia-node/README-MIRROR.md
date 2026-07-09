@@ -1,6 +1,6 @@
 # Vendored mirror of Vidia-Open-Studio-Nodes
 
-This directory is a static mirror of https://codeberg.org/Vidia/Vidia-Open-Studio-Nodes
+This directory is a static mirror of https://codeberg.org/Vidia-Tools/Vidia-Open-Studio-Nodes
 
 - Hosted RunPod pods do NOT use this copy: `worker/src/start.sh` clones the
   live Nodes repo at boot (see the vidia-open-studio-node install section).

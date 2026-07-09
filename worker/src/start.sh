@@ -134,7 +134,7 @@ fi
 # --- Install vidia-open-studio-node at runtime (self-update model) ---
 # Env-configurable URL/ref so self-hosters can point at their own fork. If the
 # clone fails, fall back to a node left on the volume from a previous boot.
-VIDIA_NODE_REPO_URL="${VIDIA_NODE_REPO_URL:-https://codeberg.org/Vidia/Vidia-Open-Studio-Nodes.git}"
+VIDIA_NODE_REPO_URL="${VIDIA_NODE_REPO_URL:-https://codeberg.org/Vidia-Tools/Vidia-Open-Studio-Nodes.git}"
 VIDIA_NODE_REPO_REF="${VIDIA_NODE_REPO_REF:-main}"
 VIDIA_NODE_PATH="$BASE_PATH/nodes/vidia-open-studio-node"
 

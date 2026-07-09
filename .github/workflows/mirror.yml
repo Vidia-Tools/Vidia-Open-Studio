@@ -3,7 +3,7 @@ name: Mirror to Codeberg
 # Pushes every commit on main to the Codeberg mirror that the GPU worker clones
 # at boot. GitHub is the source of truth; Codeberg is downstream and read-only.
 # Requires repo secret CODEBERG_SSH_KEY: a private SSH key whose public half is
-# added as a write deploy key on codeberg.org/Vidia/Vidia-Open-Studio.
+# added as a write deploy key on codeberg.org/Vidia-Tools/Vidia-Open-Studio.
 
 on:
   push:
@@ -27,4 +27,4 @@ jobs:
           echo "$CODEBERG_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan codeberg.org >> ~/.ssh/known_hosts 2>/dev/null
-          git push --force git@codeberg.org:Vidia/Vidia-Open-Studio.git HEAD:main
+          git push --force git@codeberg.org:Vidia-Tools/Vidia-Open-Studio.git HEAD:main
