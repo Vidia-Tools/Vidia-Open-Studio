@@ -7,7 +7,7 @@ const logDebug = createLogger('Uploads');
 import { MESSAGES } from '../config/helper-messages.js';
 import * as state from '../core/state.js';
 import { validateFile, needsConversion } from './fileValidator.js';
-import { storeFile, isPendingFilePlaceholder, clearFile, getFileIdFromPlaceholder } from './localFileStorage.js';
+import { storeFile, isPendingFilePlaceholder, clearFile, getFileIdFromPlaceholder, clearFilesByType } from './localFileStorage.js';
 import { processFile } from './fileConverter.js';
 import { showToastNotification } from './helpers.js';
 
@@ -184,6 +184,9 @@ export async function handleFileUpload(event, { uploadArea, spinner, uploadIcon,
             inputName: "video"
         };
         
+        // Re-uploads must replace the stored slot, not accumulate entries
+        // that would all be uploaded at generation time.
+        await clearFilesByType('video');
         const storageResult = await storeFile('video', processedFile, nodeInfo);
         if (!storageResult.success) {
             throw new Error(`Failed to store file: ${storageResult.error}`);
@@ -345,6 +348,7 @@ export async function handleStyleUpload(event, { styleUploadArea, stylePreview, 
             inputName: "image"
         };
         
+        await clearFilesByType('style');
         const storageResult = await storeFile('style', processedFile, nodeInfo);
         if (!storageResult.success) {
             throw new Error(`Failed to store file: ${storageResult.error}`);
@@ -483,6 +487,7 @@ export async function handleFaceUpload(event, { faceUploadArea, facePreview, upl
             inputName: "image"
         };
         
+        await clearFilesByType('face');
         const storageResult = await storeFile('face', processedFile, nodeInfo);
         if (!storageResult.success) {
             throw new Error(`Failed to store file: ${storageResult.error}`);
@@ -621,6 +626,7 @@ export async function handleBodyUpload(event, { bodyUploadArea, bodyPreview, upl
             inputName: "image"
         };
         
+        await clearFilesByType('body');
         const storageResult = await storeFile('body', processedFile, nodeInfo);
         if (!storageResult.success) {
             throw new Error(`Failed to store file: ${storageResult.error}`);
