@@ -150,6 +150,7 @@ export function setStageProgress({ stageName, stageIndex, stageTotal } = {}) {
     }
     progressState.currentStage = { stageName, stageIndex, stageTotal };
     renderStageText();
+    renderStageRail();
     logDebug('Stage progress', { stageName, stageIndex, stageTotal });
 }
 
@@ -174,6 +175,38 @@ function renderStageText() {
     updateHelperTextDisplay();
 }
 
+/**
+ * Render the segment rail deterministically from stage metadata so the bar
+ * always fills left to right. Overall progress is
+ * (completed stages + within-stage percent) / total stages, mapped across the
+ * fixed segments. Kept monotonic so late events never move the bar backwards.
+ * @returns {boolean} true when stage metadata drove the rail
+ */
+function renderStageRail() {
+    const { stageIndex, stageTotal } = progressState.currentStage || {};
+    if (!stageIndex || !stageTotal || !progressState.loadingProgress) return false;
+    const segments = progressState.loadingProgress.querySelectorAll('.progress-segment');
+    if (!segments.length) return false;
+
+    const pct = Math.min(Math.max(progressState.stagePercent || 0, 0), 100);
+    let overall = ((stageIndex - 1) + pct / 100) / stageTotal;
+    overall = Math.max(overall, progressState.overallProgress || 0);
+    progressState.overallProgress = overall;
+
+    segments.forEach((seg, i) => {
+        const fill = seg.querySelector('.segment-fill');
+        if (!fill) return;
+        const segStart = i / segments.length;
+        const segEnd = (i + 1) / segments.length;
+        const frac = Math.max(0, Math.min(1, (overall - segStart) / (segEnd - segStart)));
+        fill.style.width = `${frac * 100}%`;
+        fill.classList.toggle('completed', frac >= 1);
+        fill.classList.toggle('active', frac > 0 && frac < 1);
+        if (frac > 0) fill.classList.remove('idle');
+    });
+    return true;
+}
+
 // Handle node progress updates from state
 function handleNodeUpdate(event) {
     if (!progressState.isInitialized) {
@@ -185,6 +218,7 @@ function handleNodeUpdate(event) {
     if (event.type === 'reset') {
         progressState.currentStage = null;
         progressState.stagePercent = null;
+        progressState.overallProgress = 0;
         resetProgress({
             activeNodes: progressState.activeNodes,
             loadingProgress: progressState.loadingProgress,
@@ -245,6 +279,12 @@ export function updateNodeProgress(nodeId, value, max, { activeNodes, loadingPro
     if (max > 0) {
         progressState.stagePercent = (value / max) * 100;
         renderStageText();
+    }
+    // When stage metadata exists (hosted modular pipeline), the rail is
+    // rendered from stage progress; node-arrival segment mapping filled
+    // segments out of visual order because each stage brings new node ids.
+    if (renderStageRail()) {
+        return;
     }
     // Synthesize a nodeId if we don't have one (getting null from server)
     const effectiveNodeId = nodeId || `synthetic-node-${progressState.nextSegmentIndex}`;
@@ -595,5 +635,4 @@ export function hideHeaderStartupProgress() {
         if (headerProgressFill) headerProgressFill.style.width = '0%';
     }
 }
-
 
