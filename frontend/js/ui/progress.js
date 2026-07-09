@@ -142,9 +142,29 @@ function prettyStage(stageName) {
  */
 export function setStageProgress({ stageName, stageIndex, stageTotal } = {}) {
     ensureOverlay();
+    // Retain the active stage so per-step progress events (which carry no
+    // stage metadata of their own once rendered) can refresh the same label
+    // with a live percent instead of overwriting it.
+    if (progressState.currentStage?.stageName !== stageName) {
+        progressState.stagePercent = null;
+    }
+    progressState.currentStage = { stageName, stageIndex, stageTotal };
+    renderStageText();
+    logDebug('Stage progress', { stageName, stageIndex, stageTotal });
+}
+
+/**
+ * Render the stage overlay text from the retained stage + latest within-stage
+ * percent, e.g. "Generating frames (2/5) - 43%".
+ * @returns {void}
+ */
+function renderStageText() {
+    const { stageName, stageIndex, stageTotal } = progressState.currentStage || {};
     const label = stageName ? prettyStage(stageName) : 'Working';
     const counter = (stageIndex != null && stageTotal != null) ? ` (${stageIndex}/${stageTotal})` : '';
-    const text = `${label}${counter}`;
+    const pct = progressState.stagePercent;
+    const pctText = (pct != null && pct > 0 && pct < 100) ? ` - ${Math.round(pct)}%` : '';
+    const text = `${label}${counter}${pctText}`;
 
     if (progressState.overlayEl) {
         progressState.overlayEl.textContent = text;
@@ -152,7 +172,6 @@ export function setStageProgress({ stageName, stageIndex, stageTotal } = {}) {
     }
     state.setCurrentHelperText(text);
     updateHelperTextDisplay();
-    logDebug('Stage progress', { stageName, stageIndex, stageTotal });
 }
 
 // Handle node progress updates from state
@@ -164,6 +183,8 @@ function handleNodeUpdate(event) {
     
     // Handle reset event
     if (event.type === 'reset') {
+        progressState.currentStage = null;
+        progressState.stagePercent = null;
         resetProgress({
             activeNodes: progressState.activeNodes,
             loadingProgress: progressState.loadingProgress,
@@ -219,6 +240,11 @@ export function updateNodeProgress(nodeId, value, max, { activeNodes, loadingPro
     // Any incoming progress implies the bar is active
     if (progressState.currentBarState !== 'active') {
         setProgressBarState('active');
+    }
+    // Live within-stage percent shown next to the stage label.
+    if (max > 0) {
+        progressState.stagePercent = (value / max) * 100;
+        renderStageText();
     }
     // Synthesize a nodeId if we don't have one (getting null from server)
     const effectiveNodeId = nodeId || `synthetic-node-${progressState.nextSegmentIndex}`;
