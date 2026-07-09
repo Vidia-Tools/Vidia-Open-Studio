@@ -12,13 +12,13 @@ account_id = "cb5a472009030142b598cddb8e98f733"
 
 [vars]
 # Comma-separated list of allowed browser origins for CORS.
-ALLOWED_ORIGINS = "https://vidia-open-studio.pages.dev,https://vidia-open-studio-test.pages.dev,http://localhost:5173"
+ALLOWED_ORIGINS = "https://app.vidia.tools,https://vidia-open-studio.pages.dev,https://vidia-open-studio-test.pages.dev,http://localhost:5173"
 
 # Admin account email (grants access to /api/admin/* routes).
 ADMIN_EMAIL = "admin@vidia.tools"
 
 # Base URL of the deployed frontend (used in magic-link + email templates).
-APP_BASE_URL = "https://vidia-open-studio.pages.dev"
+APP_BASE_URL = "https://app.vidia.tools"
 
 # Sender identity for outgoing email (Resend).
 EMAIL_FROM = "Vidia <noreply@accounts.vidia.tools>"
@@ -41,7 +41,7 @@ RUNPOD_PRO_ENDPOINT_ID = "pa7spb8nax9idw"
 # have wired up Stripe (STRIPE_* secrets + STRIPE_PRICE_ID + CHECKOUT_RETURN_URL).
 VIDIA_PAYMENTS_ENABLED = "false"
 STRIPE_PRICE_ID = "price_test"
-CHECKOUT_RETURN_URL = "https://vidia-open-studio.pages.dev"
+CHECKOUT_RETURN_URL = "https://app.vidia.tools"
 
 # Cron trigger: monthly refresh of the disposable email domain blocklist.
 [triggers]
