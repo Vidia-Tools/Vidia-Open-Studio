@@ -60,6 +60,28 @@
     rgba(159, 106, 230, 0.05) 0%,
     rgba(255, 183, 50, 0.05) 100%
   );
+
+  /* Motion tokens: use these for all new transitions/animations so timing
+     stays consistent across the app. ease-out for entrances, in-out for
+     movement and state changes. */
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --motion-slow: 400ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-move: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+/* Accessibility: users who ask for reduced motion get instant transitions
+   everywhere without needing per-component opt-outs. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 [data-theme="light"] {
