@@ -777,6 +777,24 @@ header {
   animation: vidiaFadeUp var(--motion-base) var(--ease-enter);
 }
 
+/* Keyboard accessibility: consistent visible focus ring on all interactive
+   elements without affecting mouse users. */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Tactile press feedback on buttons */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Percent counter should not jitter as digits change */
+.loading-bar .progress-overlay {
+  font-variant-numeric: tabular-nums;
+}
+
 .loading-bar.progress--active .progress-segment {
   animation: none;
 }

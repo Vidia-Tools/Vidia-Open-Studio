@@ -81,10 +81,15 @@ export function initializeProgressTracking() {
 
 function ensureOverlay() {
     if (!progressState.loadingProgress) return;
+    // Screen readers announce the bar as a progressbar with a live value.
+    progressState.loadingProgress.setAttribute('role', 'progressbar');
+    progressState.loadingProgress.setAttribute('aria-valuemin', '0');
+    progressState.loadingProgress.setAttribute('aria-valuemax', '100');
     if (!progressState.overlayEl) {
         const el = document.createElement('div');
         el.className = 'progress-overlay';
         el.style.display = 'none';
+        el.setAttribute('aria-live', 'polite');
         progressState.loadingProgress.appendChild(el);
         progressState.overlayEl = el;
     }
@@ -192,18 +197,7 @@ function renderStageRail() {
     let overall = ((stageIndex - 1) + pct / 100) / stageTotal;
     overall = Math.max(overall, progressState.overallProgress || 0);
     progressState.overallProgress = overall;
-
-    segments.forEach((seg, i) => {
-        const fill = seg.querySelector('.segment-fill');
-        if (!fill) return;
-        const segStart = i / segments.length;
-        const segEnd = (i + 1) / segments.length;
-        const frac = Math.max(0, Math.min(1, (overall - segStart) / (segEnd - segStart)));
-        fill.style.width = `${frac * 100}%`;
-        fill.classList.toggle('completed', frac >= 1);
-        fill.classList.toggle('active', frac > 0 && frac < 1);
-        if (frac > 0) fill.classList.remove('idle');
-    });
+    progressState.loadingProgress.setAttribute('aria-valuenow', String(Math.round(overall * 100)));
     return true;
 }
 
