@@ -151,7 +151,7 @@ export function getMagicLinkEmailTemplate(magicLink, env) {
     subject: 'Your Vidia Magic Link',
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <img src="${env.APP_BASE_URL}/assets/triangles-logo.png" alt="Vidia Logo" style="max-width: 100px; margin-bottom: 20px;">
+      <img src="${env.APP_BASE_URL}/assets/triangles-logo.png?v=2" alt="Vidia Logo" style="max-width: 100px; margin-bottom: 20px;">
       <h2>Continue your video generation</h2>
       <p>Don't wait: Click the button below to sign in and view your video.</p>
       <a href="${safeLink}" style="display: inline-block; background-color: #A971FB; color: white; text-decoration: none; padding: 12px 24px; border-radius: 4px; margin: 20px 0;">Continue to Vidia</a>
@@ -175,7 +175,7 @@ export function getVideoReadyEmailTemplate(name, videoUrl, env) {
     subject: 'Your Vidia is Ready!',
     html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <img src="${env.APP_BASE_URL}/assets/triangles-logo.png" alt="Vidia Logo" style="max-width: 100px; margin-bottom: 20px;">
+      <img src="${env.APP_BASE_URL}/assets/triangles-logo.png?v=2" alt="Vidia Logo" style="max-width: 100px; margin-bottom: 20px;">
       <h2>Your Vidia is ready!</h2>
       <p>Hi there,</p>
       <p>Good news! Your Vidia has been processed and is ready to view.</p>
