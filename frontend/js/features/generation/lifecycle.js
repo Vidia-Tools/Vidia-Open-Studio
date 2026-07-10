@@ -223,7 +223,11 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
     try { setProgressBarState('starting'); } catch (_) {}
     updateNotification(MESSAGES.NOTIFICATION.GENERATION_TIME, true, false, 0);
     openGenericModal('This could take a while...', 'We will send you an email when your content is ready!', { isHtml: false });
-    startAnimation(type, animationElements());
+    // 2026-07-09: `type` here is the generation type (forge/evolve/...), which
+    // animations.js never handled, so no animation played at start. The run
+    // begins with input uploads, so use the 'upload' wave state; the websocket
+    // later switches to 'connecting'/'full'.
+    startAnimation('upload', animationElements());
 
     try {
         // Local mode: complete directly from the blocking POST /generate

@@ -650,12 +650,6 @@ header {
   margin: 0 1px;  /* Add small gap between segments */
 }
 
-/* Animation for new progress segments */
-.progress-segment.new-segment {
-  width: 0;
-  opacity: 0;
-}
-
 .segment-fill {
   position: absolute;
   top: 0;
@@ -753,10 +747,11 @@ header {
   animation: none;
 }
 
-/* Active segment gets a soft glow pulse so the live position reads clearly */
+/* Active segment gets a visible pulse. 2026-07-09: box-shadow was clipped by
+   the segment's overflow:hidden, so pulse brightness/opacity instead. */
 @keyframes vidiaActiveGlow {
-  0%, 100% { box-shadow: 0 0 3px rgba(169, 113, 251, 0.4); }
-  50% { box-shadow: 0 0 9px rgba(169, 113, 251, 0.8); }
+  0%, 100% { filter: brightness(1); opacity: 0.85; }
+  50% { filter: brightness(1.45); opacity: 1; }
 }
 
 .loading-bar.progress--active .segment-fill.active {
@@ -788,6 +783,12 @@ header {
 /* Tactile press feedback on buttons */
 button:active {
   transform: scale(0.98);
+}
+
+/* Touch feedback class added by mobile.js on touchstart */
+.touch-active {
+  transform: scale(0.97);
+  opacity: 0.85;
 }
 
 /* Percent counter should not jitter as digits change */
