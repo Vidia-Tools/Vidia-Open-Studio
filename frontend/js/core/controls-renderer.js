@@ -193,7 +193,14 @@ export function applyVisibility() {
     let visible = true;
     if (Array.isArray(control.modes) && !control.modes.includes(mode)) visible = false;
     if (control.feature && !features[control.feature]) visible = false;
+    const wasHidden = el.style.display === 'none';
     el.style.display = visible ? '' : 'none';
+    if (visible && wasHidden) {
+      // Replay the entrance animation when a control appears on mode switch.
+      el.classList.remove('control-enter');
+      void el.offsetWidth;
+      el.classList.add('control-enter');
+    }
     // Mode-scoped controls can share a param key across modes (e.g. the forge
     // and hunyuan `scheduler` selects). Defaults are seeded once at render
     // time under the initial method, so on a mode change the now-active
