@@ -198,6 +198,18 @@ function renderStageRail() {
     overall = Math.max(overall, progressState.overallProgress || 0);
     progressState.overallProgress = overall;
     progressState.loadingProgress.setAttribute('aria-valuenow', String(Math.round(overall * 100)));
+
+    segments.forEach((seg, i) => {
+        const fill = seg.querySelector('.segment-fill');
+        if (!fill) return;
+        const segStart = i / segments.length;
+        const segEnd = (i + 1) / segments.length;
+        const frac = Math.max(0, Math.min(1, (overall - segStart) / (segEnd - segStart)));
+        fill.style.width = `${frac * 100}%`;
+        fill.classList.toggle('completed', frac >= 1);
+        fill.classList.toggle('active', frac > 0 && frac < 1);
+        if (frac > 0) fill.classList.remove('idle');
+    });
     return true;
 }
 
