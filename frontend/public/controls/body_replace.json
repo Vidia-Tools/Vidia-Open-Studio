@@ -1,6 +1,6 @@
 {
   "stage": "body_replace",
   "controls": [
-    { "type": "slider", "param": "forge_quality", "range": [1, 100, 1], "default": 50, "label": "Body Replacement Quality", "modes": ["evolve", "trace", "inspire"], "feature": "fullBodyReplace", "hint": "Adjust the balance between speed and quality for the body replacement pass. Higher values produce better quality but take longer. In Forge modes the main Speed vs. Quality slider controls this." }
+    { "type": "slider", "param": "body_quality", "range": [1, 100, 1], "default": 50, "label": "Body Replacement Quality", "feature": "fullBodyReplace", "hint": "Adjust the balance between speed and quality for the body replacement pass. Higher values produce better quality but take longer." }
   ]
 }

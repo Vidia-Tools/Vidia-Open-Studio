@@ -35,6 +35,7 @@ PARAM_INPUT_CANDIDATES = {
     "replacement_mode": ["value"],
     "steps": ["steps", "value", "int"],
     "forge_quality": ["value", "int"],
+    "body_quality": ["value", "int"],
     "seed": ["seed", "noise_seed"],
     "denoise": ["denoise"],
     "detailer_type": ["model_name"],

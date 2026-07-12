@@ -468,7 +468,7 @@
     },
     "class_type": "easy int",
     "_meta": {
-      "title": "Quality {forge_quality}"
+      "title": "Quality {body_quality}"
     }
   },
   "82": {

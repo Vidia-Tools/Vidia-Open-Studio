@@ -27,6 +27,7 @@ DUMMY_PARAMS = {
     "seed": 12345,
     "steps": 20,
     "forge_quality": 50,
+    "body_quality": 50,
     "cfg": 6.0,
     "denoise": 0.7,
     "detailer_type": "bbox/face_yolov8m.pt",
