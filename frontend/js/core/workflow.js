@@ -33,11 +33,22 @@ export function buildParams(generationId) {
   const controlValues = store.getParams();
   const features = store.getFeatures();
   const files = store.getFiles();
+  const uiOnly = store.getUiOnlyParams();
 
-  const params = { ...SCALAR_DEFAULTS, ...controlValues, method, features, files };
+  // uiOnly params are seeded into the store so showWhen children can key on
+  // them, but they must not ride in the request payload (they have no workflow
+  // {param} tag and would surface as orphans / unknown keys to the handler).
+  const filtered = {};
+  for (const [k, v] of Object.entries(controlValues)) {
+    if (uiOnly.has(k)) continue;
+    filtered[k] = v;
+  }
+
+  const params = { ...SCALAR_DEFAULTS, ...filtered, method, features, files };
 
   logDebug('Built params payload', { generation_id, method,
-    paramKeys: Object.keys(controlValues), features, fileSlots: Object.keys(files) });
+    paramKeys: Object.keys(filtered), features, fileSlots: Object.keys(files),
+    uiOnly: [...uiOnly] });
 
   return { generation_id, user_id, params };
 }

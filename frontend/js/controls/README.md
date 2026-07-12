@@ -93,6 +93,48 @@ main controls. All other controls render in the main panel in manifest order.
   so the glowing control only shows for that mode (e.g. Evolve's "Change amount").
   Forge's Reconstruct/Inspire submode toggle is rendered as Forge's defining
   feature automatically by the renderer.
+- `showWhen` (`{ "param": "<param>", "equals": <value> }`): see
+  [Conditional visibility (showWhen)](#conditional-visibility-showwhen) below.
+- `uiOnly` (true): see [UI-only params (uiOnly)](#ui-only-params-uionly) below.
+
+## Conditional visibility (showWhen)
+
+A control with `showWhen` is hidden unless the referenced store param's current
+value equals `equals` (in addition to the `modes`/`feature` checks). When a
+showWhen control is hidden, the renderer resets its store param (and its
+feature, for feature toggles) to the control's `default`, so disabling a parent
+zeroes its children rather than leaking stale values into the request.
+`applyVisibility()` re-runs after every control change (the input listener
+already calls it), so toggling a parent immediately shows/hides its children.
+
+```json
+{ "type": "toggle", "param": "use_anchor", "default": false, "label": "Use Anchor",
+  "modes": ["envision"] },
+{ "type": "image-upload", "param": "anchor_image", "slot": "in_anchor",
+  "fileType": "style", "label": "Anchor Image", "modes": ["envision"],
+  "showWhen": { "param": "use_anchor", "equals": true } }
+```
+
+A showWhen control renders with an extra `os-subcontrol` class that indents it
+under its parent. Toggle sub-controls additionally get `os-subcontrol-toggle`,
+which swaps the full iOS switch for a compact checkbox matching the app's
+existing checkbox look (see [`toggle.css`](./toggle.css)). Non-showWhen toggles
+keep the standard iOS switch.
+
+## UI-only params (uiOnly)
+
+A control with `uiOnly: true` seeds the generation store normally (so showWhen
+children can key on it) but its param is **excluded from the request payload**:
+`buildParams()` ([`js/core/workflow.js`](../core/workflow.js)) filters out any
+param the renderer registered via `store.markUiOnly(param)`. Use it for parent
+toggles that only gate UI visibility and have no worker `{param}` tag. The
+coverage gate ([`controls/verify_coverage.mjs`](../../../controls/verify_coverage.mjs))
+skips `uiOnly` controls so they do not surface as orphans.
+
+```json
+{ "type": "toggle", "param": "control_guide", "uiOnly": true, "default": true,
+  "label": "Control Guidance", "modes": ["envision"] }
+```
 
 ## Helpers (hints + helper text)
 
@@ -141,6 +183,15 @@ conflict in one place: the `FEATURE_CONFLICTS` array in
 generation store features and anchors its warning under a manifest control via
 `document.getElementById('ctl_<param>')`. Warnings re-evaluate on every control
 change (delegated on `#osControls`).
+
+Each rule declares a `severity`:
+
+- `'caution'`: soft yellow advisory. Non-blocking.
+- `'warning'`: red advisory. Non-blocking.
+- `'error'`: red AND blocks generation. `lifecycle.js` calls
+  `getActiveErrors()` pre-submit and aborts the run (toast + return) if any
+  error rule is firing, so future error rules block automatically with no extra
+  wiring. Error banners render with a `feature-warning-error` class marker.
 
 ## Composite ("self-managed") control types
 

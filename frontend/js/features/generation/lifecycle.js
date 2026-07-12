@@ -35,6 +35,7 @@ import { getAllPendingFiles } from '../../ui/localFileStorage.js';
 import { openGenericModal, closeGenericModal } from '../../ui/genericModal.js';
 import { uploadPendingFiles } from './workflow-prep.js';
 import { setButtonsDisabled } from './ui-updates.js';
+import { getActiveErrors } from '../../ui/feature-warnings.js';
 
 const logDebug = createLogger('Generation:Lifecycle');
 
@@ -189,6 +190,15 @@ export async function handleGeneration(type, { cost = 0 } = {}) {
             showToastNotification('Body Replacement is enabled but no body image has been uploaded.', 'warning');
             return;
         }
+    }
+
+    // f. Hard feature-warning errors (severity 'error'). These block the run
+    // before it reaches the worker. Loops over all active errors so future
+    // error rules block automatically with no extra wiring here.
+    const activeErrors = getActiveErrors();
+    if (activeErrors.length > 0) {
+        showToastNotification(activeErrors[0].message, 'warning');
+        return;
     }
 
     sendGAEvent('generation_attempted', {

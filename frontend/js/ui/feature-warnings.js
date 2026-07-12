@@ -13,7 +13,12 @@ import * as store from '../core/generation-store.js';
  * - id: unique id
  * - features: [{ id, getState, containerQuery? }] (getState reads the store)
  * - condition(states): true when the warning should show
- * - message / severity ('warning' red | 'caution' yellow)
+ * - message / severity
+ *   - 'caution': soft yellow advisory (non-blocking)
+ *   - 'warning': red advisory (non-blocking)
+ *   - 'error':   red AND blocks generation (lifecycle.js calls getActiveErrors()
+ *     pre-submit and aborts the run if any fire; future error rules block
+ *     automatically with no extra wiring)
  */
 const FEATURE_CONFLICTS = [
     {
@@ -54,6 +59,79 @@ const FEATURE_CONFLICTS = [
         condition: (states) => states.bodyReplacement && states.subjectBiped && states.forgeReconstruct,
         message: 'When "Person or Biped" subject type is selected with Body Replacement, results may not match expectations since it uses OpenPose. For best results with Body Replacement, try using the "General" subject type.',
         severity: 'caution'
+    },
+    {
+        // Envision: Body Replacement discards the replaced body's appearance
+        // when Pose is the only active guidance, because pose extraction keeps
+        // only the skeleton. Anchor under the fullBodyReplace control.
+        id: 'envision-body-pose-only',
+        features: [
+            {
+                id: 'fullBodyReplace',
+                getState: () => !!store.getFeatures().fullBodyReplace,
+                containerQuery: () => document.getElementById('ctl_fullBodyReplace')?.closest('.advanced-setting'),
+            },
+            {
+                id: 'envisionMethod',
+                getState: () => store.getMethod() === 'envision',
+            },
+            {
+                id: 'controlGuide',
+                getState: () => store.getParam('control_guide') === true,
+            },
+            {
+                id: 'usePose',
+                getState: () => store.getParam('use_pose') === true,
+            },
+            {
+                id: 'useDepth',
+                getState: () => store.getParam('use_depth') === true,
+            },
+            {
+                id: 'useCanny',
+                getState: () => store.getParam('use_canny') === true,
+            },
+        ],
+        condition: (states) =>
+            states.envisionMethod && states.fullBodyReplace && states.controlGuide
+            && states.usePose && !states.useDepth && !states.useCanny,
+        message: 'Body Replacement has no visible effect with Pose-only guidance: pose extraction keeps only the skeleton, so the replaced body\'s appearance is discarded. Add Depth or Edge guidance, or turn off Control Guidance to use the raw video.',
+        severity: 'warning'
+    },
+    {
+        // Envision: Control Guidance toggle is on but no control type is
+        // selected. This is a hard error: the worker would run with no
+        // guidance signal, wasting a credit. Anchor under the Control
+        // Guidance parent toggle (ctl_control_guide).
+        id: 'envision-control-none-selected',
+        features: [
+            {
+                id: 'envisionMethod',
+                getState: () => store.getMethod() === 'envision',
+            },
+            {
+                id: 'controlGuide',
+                getState: () => store.getParam('control_guide') === true,
+                containerQuery: () => document.getElementById('ctl_control_guide')?.closest('.advanced-setting'),
+            },
+            {
+                id: 'usePose',
+                getState: () => store.getParam('use_pose') === true,
+            },
+            {
+                id: 'useDepth',
+                getState: () => store.getParam('use_depth') === true,
+            },
+            {
+                id: 'useCanny',
+                getState: () => store.getParam('use_canny') === true,
+            },
+        ],
+        condition: (states) =>
+            states.envisionMethod && states.controlGuide
+            && !states.usePose && !states.useDepth && !states.useCanny,
+        message: 'Control Guidance is on but no control is selected. Check at least one control, or turn off Control Guidance to use your raw video.',
+        severity: 'error'
     }
 ];
 
@@ -68,6 +146,14 @@ function getThemeAwareColors(severity) {
     
     if (isDarkMode) {
         // Dark mode colors
+        if (severity === 'error') {
+            return {
+                bg: '#3A1617',
+                border: '#ff4136',
+                icon: '#ff4136',
+                text: '#f8f8f8'
+            }; // Dark red, same family as warning but uses prod error red
+        }
         return severity === 'warning'
             ? { 
                 bg: '#3A1617', 
@@ -83,6 +169,14 @@ function getThemeAwareColors(severity) {
               }; // Dark amber tones for cautions
     } else {
         // Light mode colors
+        if (severity === 'error') {
+            return {
+                bg: '#FFEBE6',
+                border: '#ff4136',
+                icon: '#ff4136',
+                text: '#222222'
+            }; // Prod error red (#ff4136 from style.css .toast-notification.error)
+        }
         return severity === 'warning'
             ? { 
                 bg: '#FFEBE6', 
@@ -196,6 +290,26 @@ export function updateWarnings() {
 }
 
 /**
+ * Return all currently-firing error-severity rules (severity === 'error').
+ * lifecycle.js calls this pre-submit and blocks the run if any are active,
+ * so future error rules block generation automatically with no extra wiring.
+ * @returns {Array<{id: string, message: string}>} Firing error rules
+ */
+export function getActiveErrors() {
+    return FEATURE_CONFLICTS
+        .filter(conflict => conflict.severity === 'error')
+        .map(conflict => {
+            const states = {};
+            conflict.features.forEach(feature => {
+                const element = feature.elementId ? document.getElementById(feature.elementId) : null;
+                states[feature.id] = feature.getState(element);
+            });
+            return { id: conflict.id, message: conflict.message, firing: conflict.condition(states) };
+        })
+        .filter(rule => rule.firing);
+}
+
+/**
  * Generate a stable container identifier string 
  * @param {HTMLElement} container - The container element
  * @returns {string} A stable identifier string
@@ -301,7 +415,7 @@ function updateWarning(warningType, targetContainer, shouldShow, message, severi
     // Create a warning wrapper with inline styles
     const warningWrapper = document.createElement('div');
     warningWrapper.id = warningId;
-    warningWrapper.className = 'feature-warning'; // Add a class for easier selection
+    warningWrapper.className = 'feature-warning' + (severity === 'error' ? ' feature-warning-error' : ''); // Add a class for easier selection + red variant marker for errors
     
     // Add data attributes for easier identification and removal
     warningWrapper.setAttribute('data-feature-warning', 'true');

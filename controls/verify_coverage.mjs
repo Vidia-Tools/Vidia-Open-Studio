@@ -58,6 +58,7 @@ function main() {
 
   for (const c of controls) {
     if (COMPOSITE.has(c.type)) continue;          // self-managed; writes its own params/slots
+    if (c.uiOnly) continue;                       // UI-only: seeds store for showWhen, never sent
     if (!SIMPLE.has(c.type)) continue;            // unknown type, skip
     if (features.has(c.param)) continue;          // feature-gate toggle
     if (c.optionParams) continue;                 // derived select (T1.5)

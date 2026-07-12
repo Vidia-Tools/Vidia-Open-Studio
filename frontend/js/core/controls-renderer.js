@@ -60,6 +60,9 @@ function seedDefault(c) {
   // `denoise` and clobbering each other).
   const mode = store.getMethod();
   if (Array.isArray(c.modes) && !c.modes.includes(mode)) return;
+  // uiOnly params seed into the store (so showWhen children can key on them)
+  // but are filtered out of the request payload by buildParams().
+  if (c.uiOnly) store.markUiOnly(c.param);
   if (c.feature || isFeatureToggle(c)) {
     if (isFeatureToggle(c)) store.setFeature(c.param, !!c.default);
   }
@@ -89,7 +92,10 @@ export function controlHtml(c) {
   // The .defining-feature glow must sit on the .advanced-setting element so its
   // border-radius + overflow:hidden clip the animated sweep (prod parity).
   const settingCls = c.definingFeature ? 'advanced-setting defining-feature' : 'advanced-setting';
-  return `<div class="${settingCls}"><div class="advanced-setting-label">${c.label}${hintIcon}${badge}</div><div class="advanced-setting-control">${mod.control(c, id)}</div>${hint}</div>`;
+  // showWhen sub-controls render indented; toggles among them get a compact
+  // checkbox look (os-subcontrol-toggle) instead of the full iOS switch.
+  const subCls = c.showWhen ? ` os-subcontrol${c.type === 'toggle' ? ' os-subcontrol-toggle' : ''}` : '';
+  return `<div class="${settingCls}${subCls}"><div class="advanced-setting-label">${c.label}${hintIcon}${badge}</div><div class="advanced-setting-control">${mod.control(c, id)}</div>${hint}</div>`;
 }
 
 function readValue(c, el) {
@@ -168,7 +174,7 @@ function renderAdvancedDropdown(containerId) {
   if (header) header.addEventListener('click', () => dropdown.classList.toggle('expanded'));
 }
 
-// Apply modes[]/feature visibility against current mode + feature toggles.
+// Apply modes[]/feature/showWhen visibility against current mode + store.
 export function applyVisibility() {
   const mode = store.getMethod();
   const features = store.getFeatures();
@@ -176,6 +182,14 @@ export function applyVisibility() {
     let visible = true;
     if (Array.isArray(control.modes) && !control.modes.includes(mode)) visible = false;
     if (control.feature && !features[control.feature]) visible = false;
+    // showWhen: hide when the referenced store param's current value does not
+    // match `equals`. Hidden sub-controls reset their param (and feature, for
+    // feature toggles) to the control's default so disabling a parent zeroes
+    // its children rather than leaking stale values into the request.
+    if (visible && control.showWhen) {
+      const cur = isFeatureToggle(control) ? features[control.showWhen.param] : store.getParam(control.showWhen.param);
+      if (cur !== control.showWhen.equals) visible = false;
+    }
     const wasHidden = el.style.display === 'none';
     el.style.display = visible ? '' : 'none';
     if (visible && wasHidden) {
@@ -183,6 +197,12 @@ export function applyVisibility() {
       el.classList.remove('control-enter');
       void el.offsetWidth;
       el.classList.add('control-enter');
+    }
+    // showWhen hidden -> reset this control's store value (and feature) to its
+    // default so children of a disabled parent do not ride in the payload.
+    if (!visible && control.showWhen && !getControlModule(control.type).selfManaged) {
+      if (isFeatureToggle(control)) store.setFeature(control.param, !!control.default);
+      else store.setParam(control.param, control.default);
     }
     // Mode-scoped controls can share a param key across modes (e.g. the forge
     // and inspire `scheduler` selects). Defaults are seeded once at render
