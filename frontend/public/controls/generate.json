@@ -11,15 +11,15 @@
 
     { "type": "slider", "param": "creativity", "range": [0, 100, 1], "default": 50, "label": "Creativity", "modes": ["envision"], "definingFeature": true, "hint": "Lower values stick closer to your reference, while higher values reimagine the scene more freely." },
 
-    { "type": "toggle", "param": "control_guide", "uiOnly": true, "default": true, "label": "Control Guidance", "modes": ["envision"], "hint": "On: guide generation with extracted control signals below. Off: your raw video guides generation directly." },
+    { "type": "toggle", "param": "control_guide", "uiOnly": true, "default": true, "label": "Control Guidance", "modes": ["envision"], "definingFeature": true, "hint": "On: guide generation with extracted control signals below. Off: your raw video guides generation directly." },
     { "type": "toggle", "param": "use_pose", "default": true, "label": "Pose Control", "modes": ["envision"], "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the pose structure of your reference." },
     { "type": "toggle", "param": "use_depth", "default": false, "label": "Depth Control", "modes": ["envision"], "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the depth map of your reference." },
     { "type": "toggle", "param": "use_canny", "default": false, "label": "Edge Control", "modes": ["envision"], "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the edge outlines of your reference." },
 
-    { "type": "toggle", "param": "use_anchor", "default": false, "label": "Use Anchor", "modes": ["envision"], "hint": "Enable an anchor image that sets the starting frame and identity anchor for the generated video." },
+    { "type": "toggle", "param": "use_anchor", "default": false, "label": "Use Anchor", "modes": ["envision"], "definingFeature": true, "hint": "Enable an anchor image that sets the starting frame and identity anchor for the generated video." },
     { "type": "image-upload", "param": "anchor_image", "slot": "in_anchor", "fileType": "style", "label": "Anchor Image", "modes": ["envision"], "showWhen": { "param": "use_anchor", "equals": true }, "hint": "Upload an image to set the starting frame and identity anchor for the generated video." },
 
-    { "type": "toggle", "param": "use_end_frame", "default": false, "label": "End Frame", "modes": ["envision"], "hint": "Enable an end frame image that the generated video should reach by its final frame." },
+    { "type": "toggle", "param": "use_end_frame", "default": false, "label": "End Frame", "modes": ["envision"], "definingFeature": true, "hint": "Enable an end frame image that the generated video should reach by its final frame." },
     { "type": "image-upload", "param": "end_anchor_image", "slot": "in_end_anchor", "fileType": "style", "label": "End Frame Image", "modes": ["envision"], "showWhen": { "param": "use_end_frame", "equals": true }, "hint": "Upload an image the generated video should arrive at by its final frame." },
     { "type": "slider", "param": "end_frame_strength", "range": [0, 1, 0.01], "default": 0.5, "label": "End Frame Strength", "modes": ["envision"], "showWhen": { "param": "use_end_frame", "equals": true }, "hint": "How strongly the end frame image pulls the final frames toward it. 1.0 locks the last frame exactly." },
 
@@ -27,12 +27,12 @@
 
     { "type": "image-upload", "param": "style_ref", "slot": "in_style_ref", "fileType": "style", "strengthParam": "ipadapter_style_weight", "range": [0, 2, 0.01], "default": 1.2, "label": "Style Transfer", "modes": ["forge", "evolve", "trace", "inspire"], "hint": "Upload an image to transfer its style. Adjust strength to control the intensity." },
 
+    { "type": "toggle", "param": "fullBodyReplace", "default": false, "label": "Full Body Replacement", "hint": "Replaces the subject of the video with a character of your choosing. The subject is detected automatically. <b>WARNING: increases processing time significantly.</b>" },
+    { "type": "image-upload", "param": "body_image", "slot": "in_ref_image", "fileType": "body", "feature": "fullBodyReplace", "label": "Body Replacement Image", "hint": "Upload a full-body image of the character you want to use for replacement." },
+
     { "type": "image-upload", "param": "face_image", "slot": "in_face_image", "fileType": "face", "enablesFeature": "faceSwap", "label": "Face Swap", "hint": "Upload a face image to replace all faces in the video with your uploaded face. Adjust strength as needed." },
 
     { "type": "toggle", "param": "liveportrait", "default": false, "label": "Face Expression Transfer", "hint": "Transfers facial expressions from the original video to the new video." },
-
-    { "type": "toggle", "param": "fullBodyReplace", "default": false, "label": "Full Body Replacement", "badge": "Experimental", "hint": "Replaces the subject of the video with a character of your choosing. The subject is detected automatically. <b>WARNING: increases processing time significantly.</b>" },
-    { "type": "image-upload", "param": "body_image", "slot": "in_ref_image", "fileType": "body", "feature": "fullBodyReplace", "label": "Body Replacement Image", "hint": "Upload a full-body image of the character you want to use for replacement." },
 
     { "type": "lora-gallery", "param": "effects_lora", "label": "Effects", "modes": ["forge", "evolve", "trace", "inspire"], "hint": "Choose a card to apply special effects. Adjust strength to control the intensity." },
 
