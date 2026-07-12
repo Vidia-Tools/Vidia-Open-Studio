@@ -132,6 +132,52 @@ const FEATURE_CONFLICTS = [
             && !states.usePose && !states.useDepth && !states.useCanny,
         message: 'Control Guidance is on but no control is selected. Check at least one control, or turn off Control Guidance to use your raw video.',
         severity: 'error'
+    },
+    {
+        // Envision: Use Anchor is on but no anchor image was uploaded. The
+        // anchor branch would run on the workflow's stale baked image, so
+        // block the run until an image is provided or the toggle is off.
+        id: 'envision-anchor-missing-image',
+        features: [
+            {
+                id: 'envisionMethod',
+                getState: () => store.getMethod() === 'envision',
+            },
+            {
+                id: 'useAnchor',
+                getState: () => store.getParam('use_anchor') === true,
+                containerQuery: () => document.getElementById('ctl_use_anchor')?.closest('.advanced-setting'),
+            },
+            {
+                id: 'anchorFile',
+                getState: () => !!store.getFile('in_anchor'),
+            },
+        ],
+        condition: (states) => states.envisionMethod && states.useAnchor && !states.anchorFile,
+        message: 'Use Anchor is on but no anchor image is uploaded. Upload an anchor image, or turn off Use Anchor.',
+        severity: 'error'
+    },
+    {
+        // Envision: End Frame is on but no end frame image was uploaded.
+        id: 'envision-end-frame-missing-image',
+        features: [
+            {
+                id: 'envisionMethod',
+                getState: () => store.getMethod() === 'envision',
+            },
+            {
+                id: 'useEndFrame',
+                getState: () => store.getParam('use_end_frame') === true,
+                containerQuery: () => document.getElementById('ctl_use_end_frame')?.closest('.advanced-setting'),
+            },
+            {
+                id: 'endFrameFile',
+                getState: () => !!store.getFile('in_end_anchor'),
+            },
+        ],
+        condition: (states) => states.envisionMethod && states.useEndFrame && !states.endFrameFile,
+        message: 'End Frame is on but no end frame image is uploaded. Upload an end frame image, or turn off End Frame.',
+        severity: 'error'
     }
 ];
 
