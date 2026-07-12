@@ -39,3 +39,19 @@
   border-color: var(--primary-color);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
 }
+
+/* Pronounced entrance for showWhen sub-controls: springy slide-out from the
+   parent with a slight overshoot, staggered per sibling via --os-sub-delay
+   (set by applyVisibility). Overrides the generic .control-enter fade-up. */
+.advanced-setting.os-subcontrol.control-enter {
+  animation: osSubPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--os-sub-delay, 0s);
+}
+@keyframes osSubPop {
+  0%   { opacity: 0; transform: translateX(-16px) translateY(-8px) scale(0.92); }
+  55%  { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .advanced-setting.os-subcontrol.control-enter { animation: none; }
+}

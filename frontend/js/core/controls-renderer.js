@@ -178,6 +178,7 @@ function renderAdvancedDropdown(containerId) {
 export function applyVisibility() {
   const mode = store.getMethod();
   const features = store.getFeatures();
+  let subEnterIndex = 0;   // staggers the osSubPop entrance of sub-controls
   for (const { el, control } of rendered) {
     let visible = true;
     if (Array.isArray(control.modes) && !control.modes.includes(mode)) visible = false;
@@ -194,6 +195,11 @@ export function applyVisibility() {
     el.style.display = visible ? '' : 'none';
     if (visible && wasHidden) {
       // Replay the entrance animation when a control appears on mode switch.
+      // showWhen sub-controls get the pronounced osSubPop with a per-sibling
+      // stagger (toggle.css) instead of the generic fade-up.
+      if (control.showWhen) {
+        el.style.setProperty('--os-sub-delay', `${subEnterIndex++ * 70}ms`);
+      }
       el.classList.remove('control-enter');
       void el.offsetWidth;
       el.classList.add('control-enter');
