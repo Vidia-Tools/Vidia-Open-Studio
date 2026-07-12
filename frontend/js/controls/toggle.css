@@ -40,18 +40,36 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
 }
 
-/* Pronounced entrance for showWhen sub-controls: springy slide-out from the
-   parent with a slight overshoot, staggered per sibling via --os-sub-delay
-   (set by applyVisibility). Overrides the generic .control-enter fade-up. */
+/* Pronounced entrance for sub-controls (showWhen and feature-gated children):
+   springy slide-out from the parent with overshoot and an unfolding
+   max-height, staggered per sibling via --os-sub-delay (set by
+   applyVisibility). Overrides the generic .control-enter fade-up. */
 .advanced-setting.os-subcontrol.control-enter {
-  animation: osSubPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: top left;
+  animation: osSubPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: var(--os-sub-delay, 0s);
+  overflow: hidden;
 }
 @keyframes osSubPop {
-  0%   { opacity: 0; transform: translateX(-16px) translateY(-8px) scale(0.92); }
-  55%  { opacity: 1; }
-  100% { opacity: 1; transform: none; }
+  0%   { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0;
+         transform: translateX(-28px) scale(0.85); filter: blur(3px); }
+  40%  { opacity: 1; max-height: 400px; filter: blur(0); }
+  100% { opacity: 1; max-height: 400px; transform: none; filter: none; }
+}
+/* Smooth exit: fold back toward the parent, then applyVisibility hides on
+   animationend. */
+.advanced-setting.os-subcontrol.control-exit {
+  transform-origin: top left;
+  animation: osSubFold 0.3s cubic-bezier(0.4, 0, 0.7, 0.2) both;
+  overflow: hidden;
+  pointer-events: none;
+}
+@keyframes osSubFold {
+  0%   { opacity: 1; max-height: 400px; transform: none; }
+  100% { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0;
+         transform: translateX(-22px) scale(0.88); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .advanced-setting.os-subcontrol.control-enter { animation: none; }
+  .advanced-setting.os-subcontrol.control-enter,
+  .advanced-setting.os-subcontrol.control-exit { animation-duration: 0.01s; }
 }

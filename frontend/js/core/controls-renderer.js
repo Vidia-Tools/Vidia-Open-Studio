@@ -92,9 +92,12 @@ export function controlHtml(c) {
   // The .defining-feature glow must sit on the .advanced-setting element so its
   // border-radius + overflow:hidden clip the animated sweep (prod parity).
   const settingCls = c.definingFeature ? 'advanced-setting defining-feature' : 'advanced-setting';
-  // showWhen sub-controls render indented; toggles among them get a compact
-  // checkbox look (os-subcontrol-toggle) instead of the full iOS switch.
-  const subCls = c.showWhen ? ` os-subcontrol${c.type === 'toggle' ? ' os-subcontrol-toggle' : ''}` : '';
+  // Sub-controls (showWhen children and feature-gated children) render
+  // indented; showWhen toggles get a compact checkbox look
+  // (os-subcontrol-toggle) instead of the full iOS switch.
+  const subCls = (c.showWhen || c.feature)
+    ? ` os-subcontrol${c.showWhen && c.type === 'toggle' ? ' os-subcontrol-toggle' : ''}`
+    : '';
   return `<div class="${settingCls}${subCls}"><div class="advanced-setting-label">${c.label}${hintIcon}${badge}</div><div class="advanced-setting-control">${mod.control(c, id)}</div>${hint}</div>`;
 }
 
@@ -191,18 +194,33 @@ export function applyVisibility() {
       const cur = isFeatureToggle(control) ? features[control.showWhen.param] : store.getParam(control.showWhen.param);
       if (cur !== control.showWhen.equals) visible = false;
     }
-    const wasHidden = el.style.display === 'none';
-    el.style.display = visible ? '' : 'none';
-    if (visible && wasHidden) {
-      // Replay the entrance animation when a control appears on mode switch.
-      // showWhen sub-controls get the pronounced osSubPop with a per-sibling
-      // stagger (toggle.css) instead of the generic fade-up.
-      if (control.showWhen) {
-        el.style.setProperty('--os-sub-delay', `${subEnterIndex++ * 70}ms`);
+    const isSub = !!(control.showWhen || control.feature);
+    const wasHidden = el.style.display === 'none' || el.classList.contains('control-exit');
+    if (visible) {
+      el.classList.remove('control-exit');
+      el.style.display = '';
+      if (wasHidden) {
+        // Replay the entrance animation when a control appears. Sub-controls
+        // get the pronounced osSubPop with a per-sibling stagger (toggle.css)
+        // instead of the generic fade-up.
+        if (isSub) el.style.setProperty('--os-sub-delay', `${subEnterIndex++ * 70}ms`);
+        el.classList.remove('control-enter');
+        void el.offsetWidth;
+        el.classList.add('control-enter');
       }
+    } else if (isSub && !wasHidden) {
+      // Smooth exit for sub-controls: play osSubExit, then hide on animation
+      // end (or immediately if the element re-shows before it finishes).
       el.classList.remove('control-enter');
-      void el.offsetWidth;
-      el.classList.add('control-enter');
+      el.classList.add('control-exit');
+      el.addEventListener('animationend', () => {
+        if (el.classList.contains('control-exit')) {
+          el.classList.remove('control-exit');
+          el.style.display = 'none';
+        }
+      }, { once: true });
+    } else if (!isSub) {
+      el.style.display = 'none';
     }
     // showWhen hidden -> reset this control's store value (and feature) to its
     // default so children of a disabled parent do not ride in the payload.
