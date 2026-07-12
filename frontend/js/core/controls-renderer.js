@@ -209,16 +209,19 @@ export function applyVisibility() {
         el.classList.add('control-enter');
       }
     } else if (isSub && !wasHidden) {
-      // Smooth exit for sub-controls: play osSubExit, then hide on animation
-      // end (or immediately if the element re-shows before it finishes).
+      // Smooth exit for sub-controls: play osSubFold, then hide when it ends.
+      // The timeout fallback guarantees display:none even if the animation
+      // never fires (e.g. stylesheet failed to load).
       el.classList.remove('control-enter');
       el.classList.add('control-exit');
-      el.addEventListener('animationend', () => {
+      const finishExit = () => {
         if (el.classList.contains('control-exit')) {
           el.classList.remove('control-exit');
           el.style.display = 'none';
         }
-      }, { once: true });
+      };
+      el.addEventListener('animationend', finishExit, { once: true });
+      setTimeout(finishExit, 500);
     } else if (!isSub) {
       el.style.display = 'none';
     }
