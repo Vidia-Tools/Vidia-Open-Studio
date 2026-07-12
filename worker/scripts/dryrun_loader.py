@@ -33,6 +33,7 @@ DUMMY_PARAMS = {
     "detailer_denoise": 0.18,
     "aspect": "16:9",
     "frame_divider": 2,
+    "replacement_mode": False,
     "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors",
     "style_lora": "style.safetensors",
     "effects_lora": "effects.safetensors",
@@ -55,6 +56,14 @@ DUMMY_PARAMS = {
     "model_temperature": False,
     "sampler_name": "multistep/dpmpp_2m",
     "scheduler": "sgm_uniform",
+    "creativity": 0.5,
+    "use_pose": False,
+    "use_depth": False,
+    "use_canny": False,
+    "use_anchor": False,
+    "use_end_frame": False,
+    "end_frame_strength": 0.5,
+    "sound": False,
 }
 
 DUMMY_FILES = {
@@ -63,6 +72,8 @@ DUMMY_FILES = {
     "in_face_image": "/tmp/dummy/in_face_image.png",
     "in_style_ref": "/tmp/dummy/in_style_ref.png",
     "in_face_video": "/tmp/dummy/in_face_video.mp4",
+    "in_anchor": "/tmp/dummy/in_anchor.png",
+    "in_end_anchor": "/tmp/dummy/in_end_anchor.png",
 }
 
 # (filename, has_in_prev, text_stage, final)
@@ -73,6 +84,7 @@ FLOWS = [
     ("generate_animatediff.json", True, False, False),
     ("generate_reversenoise.json", True, False, False),
     ("generate_hunyuan.json", True, False, False),
+    ("generate_ltx.json", True, False, False),
     ("detailer.json", True, False, False),
     ("faceswap.json", True, False, False),
     ("liveportrait.json", True, False, False),

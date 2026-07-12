@@ -158,7 +158,7 @@ the renderer can find and mount it.
   `store.setFile(slot, url)`.
 - **lora-gallery** (`js/controls/lora-gallery.js`): prod's Effects picker. Mode
   aware via `store.getMethod()`: `forge`->`effects_lora`, `evolve`/`trace`->
-  `style_lora`, `hunyuan`->`lora_strength` only. Writes `lora_strength` +
+  `style_lora`, `inspire`->`lora_strength` only. Writes `lora_strength` +
   `lora_keywords` and the mode's lora_name param. Creates the gallery drawer in
   `document.body`.
 - **canvas-points** (`js/controls/canvas-points.js`): prod's Full Body

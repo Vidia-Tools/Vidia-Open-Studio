@@ -19,25 +19,22 @@ const logDebug = createLogger('Controls');
 // Base paths (URLs only). Local mode / hosted v1.1 can override via VITE.
 const CONTROLS_BASE = import.meta.env?.VITE_CONTROLS_BASE || '/controls';
 
-// Prod Forge submode toggle markup (parity-locked classes in style.css). The
-// toggle picks the worker generate method: Reconstruct -> 'forge', Inspire ->
-// 'hunyuan' (prod Forge/Inspire runs the Hunyuan model; see lora-data.js).
+// Prod Forge submode select (parity-locked classes in style.css). The
+// select picks the worker generate method: Envision -> 'envision',
+// Reconstruct -> 'forge', Inspire -> 'inspire'.
 const FORGE_MODE_HTML = `
   <div class="advanced-setting-label">
     Forge Mode
     <span class="hint-icon">?</span>
   </div>
   <div class="advanced-setting-control">
-    <div class="mode-toggle-container">
-      <input type="checkbox" id="forgeModeToggle" class="mode-toggle-checkbox">
-      <label for="forgeModeToggle" class="mode-toggle">
-        <span class="mode-toggle-option">Reconstruct</span>
-        <span class="mode-toggle-option">Inspire</span>
-        <span class="mode-toggle-slider"></span>
-      </label>
-    </div>
+    <select id="forgeModeSelect" class="advanced-select">
+      <option value="envision">Envision</option>
+      <option value="forge">Reconstruct</option>
+      <option value="inspire">Inspire</option>
+    </select>
   </div>
-  <div class="setting-hint">Choose how Forge processes your video: "Reconstruct" takes the core of your video and builds upon it, while "Inspire" creates a new video only inspired by your input.</div>
+  <div class="setting-hint">Choose how Forge processes your video: "Envision" generates a new video from your prompt and references, "Reconstruct" takes the core of your video and builds upon it, while "Inspire" creates a new video only inspired by your input.</div>
 `;
 
 // Stage controls files to load (mirrors the pipeline manifest stage names).
@@ -59,7 +56,7 @@ async function loadJson(url) {
 function seedDefault(c) {
   if (getControlModule(c.type).selfManaged) return;  // composite controls seed themselves
   // Mode-aware: a control scoped to other modes does not seed (avoids the
-  // evolve "Change amount" and hunyuan "Creativity strength" both writing
+  // evolve "Change amount" and inspire "Creativity strength" both writing
   // `denoise` and clobbering each other).
   const mode = store.getMethod();
   if (Array.isArray(c.modes) && !c.modes.includes(mode)) return;
@@ -123,21 +120,9 @@ function updateModeHeader(mode) {
 }
 
 /**
- * Mirror prod's Forge submode text colouring on the toggle.
- * @param {HTMLElement} container - The forge toggle container.
- * @param {boolean} isInspire - Whether Inspire is selected.
- * @returns {void}
- */
-function updateForgeToggleColors(container, isInspire) {
-  const options = container.querySelectorAll('.mode-toggle-option');
-  if (options.length < 2) return;
-  options[0].style.color = isInspire ? 'var(--text-color)' : 'white';
-  options[1].style.color = isInspire ? 'white' : 'var(--text-color)';
-}
-
-/**
- * Render the Forge Reconstruct/Inspire submode toggle and wire it to the
- * generation method. Reconstruct -> 'forge', Inspire -> 'hunyuan'.
+ * Render the Forge Envision/Reconstruct/Inspire submode select and wire it to
+ * the generation method. Envision -> 'envision', Reconstruct -> 'forge',
+ * Inspire -> 'inspire'.
  * @param {string} containerId - Controls container id to prepend into.
  * @returns {void}
  */
@@ -148,16 +133,14 @@ function renderForgeSubmodeToggle(containerId) {
     position: 'prepend',
   });
   if (!container) return;
-  const toggle = container.querySelector('#forgeModeToggle');
-  if (!toggle) return;
+  const select = container.querySelector('#forgeModeSelect');
+  if (!select) return;
   const sync = () => {
-    const isInspire = toggle.checked;
-    store.setMethod(isInspire ? 'hunyuan' : 'forge');
-    updateForgeToggleColors(container, isInspire);
+    store.setMethod(select.value);
     applyVisibility();
-    logDebug('Forge submode changed', { submode: isInspire ? 'inspire' : 'reconstruct', method: store.getMethod() });
+    logDebug('Forge submode changed', { method: store.getMethod() });
   };
-  toggle.addEventListener('change', sync);
+  select.addEventListener('change', sync);
   sync();
 }
 
@@ -202,10 +185,10 @@ export function applyVisibility() {
       el.classList.add('control-enter');
     }
     // Mode-scoped controls can share a param key across modes (e.g. the forge
-    // and hunyuan `scheduler` selects). Defaults are seeded once at render
+    // and inspire `scheduler` selects). Defaults are seeded once at render
     // time under the initial method, so on a mode change the now-active
     // control must rewrite its value into the store or the stale mode's
-    // value leaks into the request (hunyuan got forge's 'sgm_uniform' and
+    // value leaks into the request (inspire got forge's 'sgm_uniform' and
     // ComfyUI dropped the video output at validation).
     if (visible && Array.isArray(control.modes) && !getControlModule(control.type).selfManaged) {
       const value = readValue(control, el);
@@ -226,9 +209,9 @@ export async function renderControls({ controlsContainerId }) {
 
   const mode = getCurrentModeName();
   updateModeHeader(mode);
-  // Forge defaults to the Reconstruct submode (method 'forge'); evolve/trace
+  // Forge defaults to the Envision submode (method 'envision'); evolve/trace
   // map their mode key directly to the worker method.
-  store.setMethod(mode === 'forge' ? 'forge' : mode);
+  store.setMethod(mode === 'forge' ? 'envision' : mode);
 
   // Controls per stage. Controls flagged group:"advanced" are routed into the
   // collapsible Advanced Controls dropdown (created once, after main controls).

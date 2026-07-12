@@ -60,7 +60,7 @@ class Logger:
 logger = Logger(DEBUG)
 
 
-VALID_METHODS = ("forge", "evolve", "trace", "hunyuan")
+VALID_METHODS = ("forge", "evolve", "trace", "inspire", "envision")
 
 
 def validate_input(job_input):

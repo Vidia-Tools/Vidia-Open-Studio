@@ -6,7 +6,7 @@
 // js/features/effects-modules/lora-data.js, lora-ui.js, lora-workflow.js.
 // Mode-aware via the generation store method (set by the Forge submode toggle):
 //   forge    -> Reconstruct (WAN effects loras)   -> param effects_lora
-//   hunyuan  -> Inspire     (Hunyuan loras)        -> param lora_strength only*
+//   inspire  -> Inspire     (Hunyuan loras)        -> param lora_strength only*
 //   evolve   -> SDXL loras                          -> param style_lora
 //   trace    -> SDXL loras                          -> param style_lora
 // *Inspire: the hunyuan workflow exposes only a {lora_strength} tag (no
@@ -65,7 +65,7 @@ const forgeReconstructLoraOptions = [
  */
 function currentConfig() {
   const method = store.getMethod();
-  if (method === 'hunyuan') return { options: forgeInspireLoraOptions, nameParam: null };
+  if (method === 'inspire') return { options: forgeInspireLoraOptions, nameParam: null };
   if (method === 'forge') return { options: forgeReconstructLoraOptions, nameParam: 'effects_lora' };
   return { options: loraOptions, nameParam: 'style_lora' };
 }

@@ -32,6 +32,7 @@ PARAM_INPUT_CANDIDATES = {
     "prompt": ["string", "value", "text"],
     "negative_prompt": ["string", "value", "text"],
     "frame_divider": ["int", "value"],
+    "replacement_mode": ["value"],
     "steps": ["steps", "value", "int"],
     "forge_quality": ["value", "int"],
     "seed": ["seed", "noise_seed"],
@@ -63,6 +64,15 @@ PARAM_INPUT_CANDIDATES = {
     "model_temperature": ["cond"],
     "sampler_name": ["sampler_name", "sampler"],
     "scheduler": ["scheduler"],
+    # Envision (generate_ltx) widget inputs: easy int / PrimitiveBoolean / easy float.
+    "creativity": ["value", "int"],
+    "use_pose": ["value"],
+    "use_depth": ["value"],
+    "use_canny": ["value"],
+    "use_anchor": ["value"],
+    "use_end_frame": ["value"],
+    "sound": ["value"],
+    "end_frame_strength": ["value", "float"],
 }
 
 # 2026-06-12: intermediates are re-encoded once per stage; near-lossless h264

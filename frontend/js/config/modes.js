@@ -18,10 +18,15 @@ export const MODE = {
         title: "Forge",
         description: "Create a new video, built on your chosen foundation",
         subModes: {
+            envision: {
+                title: "Envision",
+                description: "Generate a new video from your prompt and reference inputs",
+                isDefault: true
+            },
             reconstruct: {
                 title: "Reconstruct",
                 description: "Takes the core of the video and builds a new video using that information",
-                isDefault: true
+                isDefault: false
             },
             inspire: {
                 title: "Inspire",

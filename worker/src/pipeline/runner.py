@@ -42,7 +42,7 @@ OPENROUTER_PLACEHOLDERS = {"", "OPENROUTER_API_KEY", "dummy-key", "change-me"}
 
 # Preview frame caps per method (Prod parity: lifecycle.js frame_load_cap values).
 # Full generation leaves the load node untouched (cap = 0).
-PREVIEW_FRAME_CAPS = {"evolve": 16, "trace": 8, "forge": 120, "hunyuan": 120}
+PREVIEW_FRAME_CAPS = {"evolve": 16, "trace": 8, "forge": 120, "inspire": 120}
 
 # Per-method scheduler contracts (Prod parity: controls/generate.json per-mode
 # scheduler selects). ComfyUI drops the whole output branch at validation when a
@@ -50,7 +50,7 @@ PREVIEW_FRAME_CAPS = {"evolve": 16, "trace": 8, "forge": 120, "hunyuan": 120}
 # out-of-contract value must be coerced to the method's default rather than
 # passed through. Extend this map when adding a generate method.
 SCHEDULER_CONTRACTS = {
-    "hunyuan": {
+    "inspire": {
         "valid": {"FlowMatchDiscreteScheduler", "SDE-DPMSolverMultistepScheduler",
                   "DPMSolverMultistepScheduler", "SASolverScheduler",
                   "UniPCMultistepScheduler"},
@@ -183,7 +183,7 @@ def _apply_runtime_defaults(params):
 
     # Coerce the scheduler to the generate method's contract (see
     # SCHEDULER_CONTRACTS). A stale cross-mode value ("sgm_uniform" from forge
-    # in a hunyuan run) makes ComfyUI silently drop the video output branch.
+    # in an inspire run) makes ComfyUI silently drop the video output branch.
     contract = SCHEDULER_CONTRACTS.get(params.get("method"))
     if contract:
         scheduler = params.get("scheduler")

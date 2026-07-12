@@ -1,366 +1,450 @@
 {
   "1": {
     "inputs": {
-      "model": "sam2_hiera_base_plus.safetensors",
-      "segmentor": "video",
-      "device": "cuda",
-      "precision": "bf16"
+      "text": "anime woman shooting gun",
+      "clip": [
+        "4",
+        0
+      ]
     },
-    "class_type": "DownloadAndLoadSAM2Model",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "(Down)Load SAM2Model"
+      "title": "Positive {prompt}"
     }
   },
   "2": {
     "inputs": {
-      "keep_model_loaded": true,
-      "individual_objects": false,
-      "sam2_model": [
-        "1",
+      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走 ",
+      "clip": [
+        "4",
         0
-      ],
-      "image": [
-        "13",
-        0
-      ],
-      "coordinates_positive": [
-        "12",
-        0
-      ],
-      "coordinates_negative": [
-        "12",
-        1
-      ],
-      "mask": [
-        "12",
-        3
       ]
     },
-    "class_type": "Sam2Segmentation",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Sam2Segmentation"
+      "title": "Negative {negative_prompt}"
+    }
+  },
+  "3": {
+    "inputs": {
+      "unet_name": "wan2.1_14B_SCAIL_2_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "4": {
+    "inputs": {
+      "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "wan",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
     }
   },
   "5": {
     "inputs": {
-      "model_name": "MAT_Places512_G_fp16.safetensors"
+      "vae_name": "wan_2.1_vae.safetensors"
     },
-    "class_type": "INPAINT_LoadInpaintModel",
+    "class_type": "VAELoader",
     "_meta": {
-      "title": "Load Inpaint Model"
+      "title": "Load VAE"
     }
   },
   "6": {
     "inputs": {
-      "seed": 381652180757105,
-      "inpaint_model": [
-        "5",
-        0
-      ],
-      "image": [
-        "13",
-        0
-      ],
-      "mask": [
-        "10",
+      "shift": 5,
+      "model": [
+        "23",
         0
       ]
     },
-    "class_type": "INPAINT_InpaintWithModel",
+    "class_type": "ModelSamplingSD3",
     "_meta": {
-      "title": "Inpaint (using Model)"
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "7": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "8",
+        0
+      ],
+      "image": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "8": {
+    "inputs": {
+      "clip_name": "clip_vision_h.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "9": {
+    "inputs": {
+      "image": "",
+      "keep_alpha_channel": false,
+      "output_mode": false
+    },
+    "class_type": "LoadImageFromUrl",
+    "_meta": {
+      "title": "Replacement [in_ref_image]"
     }
   },
   "10": {
     "inputs": {
-      "expand": 30,
-      "tapered_corners": true,
-      "mask": [
-        "2",
+      "lora_name": "Wan21_I2V_14B_lightx2v_cfg_step_distill_lora_rank64.safetensors",
+      "strength_model": [
+        "84",
+        0
+      ],
+      "model": [
+        "3",
         0
       ]
     },
-    "class_type": "GrowMask",
+    "class_type": "LoraLoaderModelOnly",
     "_meta": {
-      "title": "Grow Mask"
+      "title": "Load LoRA"
     }
   },
   "11": {
     "inputs": {
-      "frame_rate": [
-        "16",
+      "resize_type": "scale total pixels",
+      "resize_type.megapixels": 0.9,
+      "scale_method": "nearest-exact",
+      "input": [
+        "9",
         0
-      ],
-      "loop_count": 0,
-      "filename_prefix": "AnimateDiff",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "6",
-        0
-      ],
-      "audio": [
-        "13",
-        2
       ]
     },
-    "class_type": "VHS_VideoCombine",
+    "class_type": "ResizeImageMaskNode",
     "_meta": {
-      "title": "PREVIEW CLEANPLATE"
+      "title": "Resize Image/Mask"
     }
   },
   "12": {
     "inputs": {
-      "points_store": "{\"positive\":[{\"x\":856.9645657593518,\"y\":465.64398887920305},{\"x\":838.0095275337326,\"y\":234.40784406915813},{\"x\":927.3095711081472,\"y\":581.3032987142751},{\"x\":704.9931412312627,\"y\":831.398821375067},{\"x\":954.8443859376081,\"y\":860.235799684075}],\"negative\":[{\"x\":472.9480611825136,\"y\":868.3792612819097},{\"x\":1167.8562661435565,\"y\":372.89438979723786},{\"x\":1920,\"y\":800.9066554838762}]}",
-      "coordinates": "[{\"x\":856.9645657593518,\"y\":465.64398887920305},{\"x\":838.0095275337326,\"y\":234.40784406915813},{\"x\":927.3095711081472,\"y\":581.3032987142751},{\"x\":704.9931412312627,\"y\":831.398821375067},{\"x\":954.8443859376081,\"y\":860.235799684075}]",
-      "neg_coordinates": "[{\"x\":472.9480611825136,\"y\":868.3792612819097},{\"x\":1167.8562661435565,\"y\":372.89438979723786},{\"x\":1920,\"y\":800.9066554838762}]",
-      "bbox_store": "[{}]",
-      "bboxes": "[{}]",
-      "bbox_format": "xyxy",
-      "width": 1920,
-      "height": 1080,
-      "normalize": false,
-      "Reset canvas": null,
-      "bg_image": [
-        "13",
+      "resize_type": "scale to multiple",
+      "resize_type.multiple": 32,
+      "scale_method": "nearest-exact",
+      "input": [
+        "11",
         0
       ]
     },
-    "class_type": "PointsEditor",
+    "class_type": "ResizeImageMaskNode",
     "_meta": {
-      "title": "Points Editor {points_positive}"
+      "title": "Resize Image/Mask"
     }
   },
   "13": {
     "inputs": {
-      "video": "input.mp4",
+      "image": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "14": {
+    "inputs": {
+      "object_indices": "",
+      "sort_by": "area",
+      "replacement_mode": [
+        "26",
+        0
+      ],
+      "driving_track_data": [
+        "17",
+        0
+      ],
+      "ref_track_data": [
+        "20",
+        0
+      ]
+    },
+    "class_type": "SCAIL2ColoredMask",
+    "_meta": {
+      "title": "Create SCAIL-2 Colored Mask"
+    }
+  },
+  "15": {
+    "inputs": {
+      "text": "human",
+      "clip": [
+        "16",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "16": {
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "17": {
+    "inputs": {
+      "detection_threshold": 0.5,
+      "max_objects": 0,
+      "detect_interval": 1,
+      "images": [
+        "18",
+        0
+      ],
+      "model": [
+        "16",
+        0
+      ],
+      "conditioning": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "SAM3_VideoTrack",
+    "_meta": {
+      "title": "SAM3 Video Track"
+    }
+  },
+  "18": {
+    "inputs": {
+      "video": "",
       "force_rate": 0,
-      "custom_width": 0,
-      "custom_height": 0,
+      "custom_width": [
+        "13",
+        0
+      ],
+      "custom_height": [
+        "13",
+        1
+      ],
       "frame_load_cap": 0,
       "skip_first_frames": 0,
-      "select_every_nth": 1,
-      "format": "None"
+      "select_every_nth": [
+        "76",
+        0
+      ],
+      "format": "Wan"
     },
     "class_type": "VHS_LoadVideoPath",
     "_meta": {
       "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
     }
   },
-  "16": {
+  "19": {
     "inputs": {
-      "video_info": [
-        "13",
-        3
+      "text": "human",
+      "clip": [
+        "16",
+        1
       ]
     },
-    "class_type": "VHS_VideoInfo",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Video Info 🎥🅥🅗🅢"
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "20": {
+    "inputs": {
+      "detection_threshold": 0.5,
+      "max_objects": 0,
+      "detect_interval": 1,
+      "images": [
+        "12",
+        0
+      ],
+      "model": [
+        "16",
+        0
+      ],
+      "conditioning": [
+        "19",
+        0
+      ]
+    },
+    "class_type": "SAM3_VideoTrack",
+    "_meta": {
+      "title": "SAM3 Video Track"
+    }
+  },
+  "21": {
+    "inputs": {
+      "images": [
+        "14",
+        1
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "23": {
+    "inputs": {
+      "sage_attention": "auto",
+      "allow_compile": true,
+      "model": [
+        "24",
+        0
+      ]
+    },
+    "class_type": "PathchSageAttentionKJ",
+    "_meta": {
+      "title": "Patch Sage Attention KJ"
+    }
+  },
+  "24": {
+    "inputs": {
+      "lora_name": "pusa_v1.safetensors",
+      "strength_model": 1,
+      "model": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "25": {
+    "inputs": {
+      "width": [
+        "13",
+        0
+      ],
+      "height": [
+        "13",
+        1
+      ],
+      "seed": 123,
+      "steps": [
+        "82",
+        0
+      ],
+      "cfg": [
+        "86",
+        0
+      ],
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "window_length": 81,
+      "previous_frame_count": 5,
+      "max_frames": 0,
+      "decode_tiled": false,
+      "vary_seed_per_window": false,
+      "pose_strength": 1,
+      "pose_start": 0,
+      "pose_end": 1,
+      "replacement_mode": [
+        "26",
+        0
+      ],
+      "positive": [
+        "1",
+        0
+      ],
+      "negative": [
+        "2",
+        0
+      ],
+      "model": [
+        "6",
+        0
+      ],
+      "vae": [
+        "5",
+        0
+      ],
+      "pose_video": [
+        "18",
+        0
+      ],
+      "pose_video_mask": [
+        "14",
+        0
+      ],
+      "reference_image": [
+        "9",
+        0
+      ],
+      "reference_image_mask": [
+        "14",
+        1
+      ],
+      "clip_vision_output": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "WanSCAILInfinity",
+    "_meta": {
+      "title": "SCAIL-2 Infinity (auto window)"
     }
   },
   "26": {
     "inputs": {
-      "include_body": true,
-      "include_hand": true,
-      "include_face": true,
-      "ref_image": [
-        "66",
-        0
-      ],
-      "pose_images": [
-        "65",
-        0
-      ]
+      "value": false
     },
-    "class_type": "MimicMotionGetPoses",
+    "class_type": "PrimitiveBoolean",
     "_meta": {
-      "title": "MimicMotion GetPoses"
+      "title": "Character Replacement {replacement_mode}"
     }
   },
   "28": {
     "inputs": {
-      "float": [
-        "55",
+      "anything": [
+        "25",
         0
       ]
     },
-    "class_type": "VFI FloatToInt",
+    "class_type": "easy cleanGpuUsed",
     "_meta": {
-      "title": "VFI FloatToInt"
+      "title": "Clean VRAM Used"
     }
   },
   "29": {
     "inputs": {
-      "steps": 25,
-      "cfg_min": 2,
-      "cfg_max": 2,
-      "seed": 489062365326676,
-      "fps": [
+      "anything": [
         "28",
-        0
-      ],
-      "noise_aug_strength": 0,
-      "context_size": 16,
-      "context_overlap": 6,
-      "keep_model_loaded": true,
-      "pose_strength": 1,
-      "pose_start_percent": 0,
-      "pose_end_percent": 1,
-      "image_embed_strength": 1,
-      "mimic_pipeline": [
-        "30",
-        0
-      ],
-      "ref_image": [
-        "66",
-        0
-      ],
-      "pose_images": [
-        "26",
         0
       ]
     },
-    "class_type": "MimicMotionSampler",
+    "class_type": "easy clearCacheAll",
     "_meta": {
-      "title": "MimicMotion Sampler"
+      "title": "Clear Cache All"
     }
   },
   "30": {
     "inputs": {
-      "model": "MimicMotionMergedUnet_1-0-fp16.safetensors",
-      "precision": "fp16"
-    },
-    "class_type": "DownloadAndLoadMimicMotionModel",
-    "_meta": {
-      "title": "(Down)Load MimicMotionModel"
-    }
-  },
-  "31": {
-    "inputs": {
-      "decode_chunk_size": 4,
-      "mimic_pipeline": [
-        "30",
-        0
-      ],
-      "samples": [
-        "29",
-        0
-      ]
-    },
-    "class_type": "MimicMotionDecode",
-    "_meta": {
-      "title": "MimicMotion Decode"
-    }
-  },
-  "33": {
-    "inputs": {
-      "model": "u2net_human_seg: human segmentation",
-      "providers": "CPU"
-    },
-    "class_type": "RemBGSession+",
-    "_meta": {
-      "title": "🔧 RemBG Session"
-    }
-  },
-  "34": {
-    "inputs": {
-      "rembg_session": [
-        "33",
-        0
-      ],
-      "image": [
-        "31",
-        0
-      ]
-    },
-    "class_type": "ImageRemoveBackground+",
-    "_meta": {
-      "title": "🔧 Image Remove Background"
-    }
-  },
-  "35": {
-    "inputs": {
-      "upscale_method": "nearest-exact",
-      "width": [
-        "55",
-        3
-      ],
-      "height": [
-        "55",
-        4
-      ],
-      "crop": "disabled",
-      "image": [
-        "34",
-        0
-      ]
-    },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "44": {
-    "inputs": {
-      "images_a_x": 0,
-      "images_a_y": 0,
-      "images_b_x": 0,
-      "images_b_y": 0,
-      "container_width": [
-        "55",
-        3
-      ],
-      "container_height": [
-        "55",
-        4
-      ],
-      "background": "images_a",
-      "method": "pair",
-      "images_a": [
-        "6",
-        0
-      ],
-      "images_b": [
-        "35",
-        0
-      ]
-    },
-    "class_type": "ImageCompositeAbsolute",
-    "_meta": {
-      "title": "ImageCompositeAbsolute"
-    }
-  },
-  "45": {
-    "inputs": {
-      "images": [
-        "44",
-        0
-      ]
-    },
-    "class_type": "AlphaChanelRemove",
-    "_meta": {
-      "title": "AlphaChanelRemove"
-    }
-  },
-  "51": {
-    "inputs": {
-      "image": "example.png"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Replacement [in_ref_image]"
-    }
-  },
-  "55": {
-    "inputs": {
       "video_info": [
-        "94",
+        "18",
         3
       ]
     },
@@ -369,10 +453,70 @@
       "title": "Video Info 🎥🅥🅗🅢"
     }
   },
-  "59": {
+  "76": {
+    "inputs": {
+      "int": 2
+    },
+    "class_type": "Int Literal",
+    "_meta": {
+      "title": "Divider {frame_divider}"
+    }
+  },
+  "79": {
+    "inputs": {
+      "value": 50
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "Quality {forge_quality}"
+    }
+  },
+  "82": {
+    "inputs": {
+      "text": "round(4 + 2 * (min(%AUX% - 1, 49) / 49) + 14 * (max(%AUX% - 50, 0) / 50))",
+      "output_type": "FORMULA",
+      "aux": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "steps"
+    }
+  },
+  "84": {
+    "inputs": {
+      "text": "min(1, (100 - %AUX%) / 50)",
+      "output_type": "FORMULA",
+      "aux": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "distill lora strength"
+    }
+  },
+  "86": {
+    "inputs": {
+      "text": "1 + 5 * (max(%AUX% - 50, 0) / 50)",
+      "output_type": "FORMULA",
+      "aux": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "DataMonitor",
+    "_meta": {
+      "title": "cfg"
+    }
+  },
+  "87": {
     "inputs": {
       "frame_rate": [
-        "55",
+        "30",
         0
       ],
       "loop_count": 0,
@@ -385,73 +529,17 @@
       "pingpong": false,
       "save_output": true,
       "images": [
-        "45",
+        "25",
         0
       ],
       "audio": [
-        "94",
+        "18",
         2
       ]
     },
     "class_type": "VHS_VideoCombine",
     "_meta": {
       "title": "PREVIEW BODY REPLACEMENT [out]"
-    }
-  },
-  "65": {
-    "inputs": {
-      "width": 576,
-      "height": 1024,
-      "upscale_method": "nearest-exact",
-      "keep_proportion": "stretch",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 2,
-      "device": "cpu",
-      "image": [
-        "94",
-        0
-      ]
-    },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "66": {
-    "inputs": {
-      "width": 576,
-      "height": 1024,
-      "upscale_method": "nearest-exact",
-      "keep_proportion": "stretch",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 2,
-      "device": "cpu",
-      "image": [
-        "51",
-        0
-      ]
-    },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "94": {
-    "inputs": {
-      "video": "input.mp4",
-      "force_rate": 0,
-      "custom_width": 0,
-      "custom_height": 0,
-      "frame_load_cap": 0,
-      "skip_first_frames": 0,
-      "select_every_nth": 1,
-      "format": "None"
-    },
-    "class_type": "VHS_LoadVideoPath",
-    "_meta": {
-      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
     }
   }
 }

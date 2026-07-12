@@ -5,7 +5,7 @@
  * malformed payloads at the edge so bad requests never reach the GPU.
  */
 
-const VALID_METHODS = ['forge', 'evolve', 'trace', 'hunyuan'];
+const VALID_METHODS = ['forge', 'evolve', 'trace', 'inspire', 'envision'];
 const NUMERIC_FIELDS = ['seed', 'steps', 'cfg', 'denoise', 'frame_divider'];
 
 /**

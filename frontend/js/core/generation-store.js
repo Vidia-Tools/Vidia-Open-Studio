@@ -12,7 +12,7 @@ const params = {};
 const features = {};
 // File slot URLs keyed by [in_*] slot (in_video, in_style_ref, ...).
 const files = {};
-// Selected generate method/mode (forge | evolve | trace | hunyuan).
+// Selected generate method/mode (forge | evolve | trace | inspire | envision).
 let method = 'forge';
 
 export function setParam(key, value) { params[key] = value; }
