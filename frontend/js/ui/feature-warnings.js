@@ -319,7 +319,18 @@ function getStableContainerId(container) {
     if (container.id) {
         return `id-${container.id}`;
     }
-    
+
+    // 2026-07-12: manifest control containers have no id and identical
+    // tag/class/child-count, and the position-path below resolves to -1 at
+    // every depth, so all of them collapsed to the SAME stable id. One rule's
+    // cleanup pass then deleted another rule's freshly created warning (the
+    // envision pose-only warning vanished). Identify by the unique inner
+    // control id (ctl_<param>) instead.
+    const innerId = container.querySelector('[id]')?.id;
+    if (innerId) {
+        return `holds-${innerId}`;
+    }
+
     // Otherwise use a combination of attributes that should be stable
     const classes = container.className.split(' ').join('-');
     const tagName = container.tagName.toLowerCase();

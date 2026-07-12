@@ -14,25 +14,27 @@
   margin-left: 1.25rem;
 }
 
-/* Compact checkbox for showWhen toggle sub-controls: hide the iOS switch and
-   render a native checkbox sized to match the app's checkbox-custom box. */
+/* Compact checkbox for showWhen toggle sub-controls: the .switch label itself
+   becomes the checkbox so clicks hit the input it wraps (2026-07-12: a
+   display:none switch removed the input from hit-testing and made the
+   decorative pseudo-element checkbox unclickable). */
 .advanced-setting.os-subcontrol-toggle .advanced-setting-control .switch {
-  display: none;
-}
-.advanced-setting.os-subcontrol-toggle .advanced-setting-control::before {
-  content: "";
   width: 18px;
   height: 18px;
+  min-width: 18px;
   border: 2px solid var(--primary-color);
   border-radius: 4px;
-  flex: 0 0 auto;
   background-color: transparent;
   background-size: 14px 14px;
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
-.advanced-setting.os-subcontrol-toggle .advanced-setting-control:has(input:checked)::before {
+.advanced-setting.os-subcontrol-toggle .advanced-setting-control .slider {
+  display: none;
+}
+.advanced-setting.os-subcontrol-toggle .advanced-setting-control .switch:has(input:checked) {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");

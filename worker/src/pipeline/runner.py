@@ -181,6 +181,11 @@ def _apply_runtime_defaults(params):
 
     params.setdefault("lora_keywords", "")
 
+    # 2026-07-12: SCAIL-2's {replacement_mode} graph default is False (pose-
+    # mimic). The product feature is character replacement, and the toggle is
+    # not exposed in the UI, so force replacement whenever the stage runs.
+    params.setdefault("replacement_mode", True)
+
     # Coerce the scheduler to the generate method's contract (see
     # SCHEDULER_CONTRACTS). A stale cross-mode value ("sgm_uniform" from forge
     # in an inspire run) makes ComfyUI silently drop the video output branch.

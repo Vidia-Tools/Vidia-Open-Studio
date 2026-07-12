@@ -106,16 +106,26 @@ export class VidiaApp {
             // Prompt enhancement is a worker feature gate (manifest prompt_prep
             // stage, feature:"promptEnhance"); the prompt-area toggle drives it.
             store.setFeature('promptEnhance', !!autoImprove?.checked);
-            // Sound generation is a worker feature gate (manifest audio stage,
-            // feature:"genAudio"); the prompt-area toggle drives it, mirroring
-            // prod's single sound-gen toggle. No advanced-panel duplicate.
-            store.setFeature('genAudio', !!replaceAudio?.checked);
+            // The single prompt-area sound toggle is method-aware (2026-07-12):
+            // Envision generates its own foley inside generate_ltx via the
+            // {sound} boolean, so the toggle drives that param and the MMAudio
+            // audio stage (feature:"genAudio") stays off. All other methods
+            // keep prod's behavior: the toggle drives genAudio.
+            const soundOn = !!replaceAudio?.checked;
+            if (store.getMethod() === 'envision') {
+                store.setParam('sound', soundOn);
+                store.setFeature('genAudio', false);
+            } else {
+                store.setFeature('genAudio', soundOn);
+            }
         };
         subject.addEventListener('input', sync);
         background?.addEventListener('input', sync);
         style?.addEventListener('change', sync);
         autoImprove?.addEventListener('change', sync);
         replaceAudio?.addEventListener('change', sync);
+        // Re-route the sound toggle when the Forge submode (method) changes.
+        document.getElementById('forgeModeSelect')?.addEventListener('change', sync);
         sync();
         logDebug('Prompt area wired to generation store');
     }

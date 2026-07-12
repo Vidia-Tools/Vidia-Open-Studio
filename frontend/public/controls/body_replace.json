@@ -1,6 +1,4 @@
 {
   "stage": "body_replace",
-  "controls": [
-    { "type": "toggle", "param": "replacement_mode", "default": false, "label": "Character Replacement", "feature": "fullBodyReplace", "hint": "When enabled, replaces the subject in the video with the character from your uploaded reference image. When disabled, animates the original subject using the pose from the reference image." }
-  ]
+  "controls": []
 }
