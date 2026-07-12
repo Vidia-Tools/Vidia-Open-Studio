@@ -6,6 +6,10 @@ scanning _meta.title tags ONLY (widget values may legitimately contain literal
 
   [in_prev]        previous stage's output file path
   [in_<slot>]      input file from params.files (in_video, in_ref_image, ...)
+  [in_<slot>?]     optional input: when no file was uploaded the node keeps its
+                   baked value and is expected to be gated off inside the graph
+                   (e.g. Envision's anchor/end-frame branches behind
+                   {use_anchor}/{use_end_frame})
   [out]            terminal save node; filename_prefix = {generationID}_{stageName}
   [out:<name>]     named text output (easy saveText), prompt_prep stage only
   {param_key}      tunable input injected from request params (may repeat)
@@ -17,7 +21,7 @@ import copy
 import json
 import re
 
-TAG_RE = re.compile(r"\[(in_[a-z_]+|out(?::[a-z_]+)?)\]|\{([a-z_]+)\}")
+TAG_RE = re.compile(r"\[(in_[a-z_]+\??|out(?::[a-z_]+)?)\]|\{([a-z_]+)\}")
 
 # Which widget input receives an [in_*] file path, by load-node class.
 INPUT_FIELD_BY_CLASS = {
@@ -155,8 +159,15 @@ def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
         inputs = node.setdefault("inputs", {})
 
         for slot in in_slots:
+            # [in_<slot>?] marks an optional input: with no uploaded file the
+            # node keeps its baked value (the graph gates the branch off, e.g.
+            # Envision anchors behind {use_anchor}/{use_end_frame}).
+            optional = slot.endswith("?")
+            slot = slot.rstrip("?")
             value = prev_output if slot == "in_prev" else file_paths.get(slot)
             if value is None:
+                if optional:
+                    continue
                 raise StageLoadError(
                     f"{stage_name}: no file for [{slot}] (node {node_id})")
             field = INPUT_FIELD_BY_CLASS.get(node.get("class_type"))
