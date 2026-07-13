@@ -56,9 +56,13 @@ function main() {
   const controls = collectControls();
   const gaps = [];
 
+  // Params consumed by the pipeline runner itself (stage selection), not by any workflow tag.
+  const RUNNER_PARAMS = new Set(['body_solo']);
+
   for (const c of controls) {
     if (COMPOSITE.has(c.type)) continue;          // self-managed; writes its own params/slots
     if (c.uiOnly) continue;                       // UI-only: seeds store for showWhen, never sent
+    if (RUNNER_PARAMS.has(c.param)) continue;     // consumed by the pipeline runner, not a workflow
     if (!SIMPLE.has(c.type)) continue;            // unknown type, skip
     if (features.has(c.param)) continue;          // feature-gate toggle
     if (c.optionParams) continue;                 // derived select (T1.5)

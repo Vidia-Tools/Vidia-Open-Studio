@@ -1,60 +1,611 @@
 {
   "stage": "generate",
   "controls": [
-    { "type": "slider", "param": "denoise", "range": [0, 1, 0.01], "default": 0.65, "label": "Change amount", "modes": ["evolve"], "definingFeature": true, "hint": "Adjust how much the video changes from the original. Higher values create more dramatic changes, while lower values keep it closer to the source." },
-
-    { "type": "slider", "param": "denoise", "range": [0, 1, 0.01], "default": 0.65, "label": "Creativity strength", "modes": ["inspire"], "definingFeature": true, "hint": "Adjust how much freedom the AI has to create. Higher values generate more creative but less predictable results, while lower values stay closer to your original prompt." },
-
-    { "type": "slider", "param": "forge_quality", "range": [1, 100, 1], "default": 50, "label": "Speed vs. Quality", "modes": ["forge", "envision"], "definingFeature": true, "hint": "Adjust the balance between generation speed and output quality. Higher values produce better quality but take longer. Upscaler highly encouraged for best quality." },
-
-    { "type": "subject-checklist", "param": "subject", "label": "Subject", "modes": ["forge"], "definingFeature": true, "hint": "Choose the subject type of your video for best results. This affects how the AI analyzes your video." },
-
-    { "type": "slider", "param": "creativity", "range": [0, 100, 1], "default": 50, "label": "Creativity", "modes": ["envision"], "definingFeature": true, "hint": "Lower values stick closer to your reference, while higher values reimagine the scene more freely." },
-
-    { "type": "toggle", "param": "control_guide", "uiOnly": true, "default": true, "label": "Control Guidance", "modes": ["envision"], "definingFeature": true, "hint": "On: guide generation with extracted control signals below. Off: your raw video guides generation directly." },
-    { "type": "toggle", "param": "use_pose", "default": true, "label": "Pose Control", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the pose structure of your reference." },
-    { "type": "toggle", "param": "use_depth", "default": false, "label": "Depth Control", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the depth map of your reference." },
-    { "type": "toggle", "param": "use_canny", "default": false, "label": "Edge Control", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "control_guide", "equals": true }, "hint": "Guide generation using the edge outlines of your reference." },
-
-    { "type": "toggle", "param": "use_anchor", "default": false, "label": "Use Anchor", "modes": ["envision"], "definingFeature": true, "hint": "Enable an anchor image that sets the starting frame and identity anchor for the generated video." },
-    { "type": "image-upload", "param": "anchor_image", "slot": "in_anchor", "fileType": "style", "label": "Anchor Image", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "use_anchor", "equals": true }, "hint": "Upload an image to set the starting frame and identity anchor for the generated video." },
-
-    { "type": "toggle", "param": "use_end_frame", "default": false, "label": "End Frame", "modes": ["envision"], "definingFeature": true, "hint": "Enable an end frame image that the generated video should reach by its final frame." },
-    { "type": "image-upload", "param": "end_anchor_image", "slot": "in_end_anchor", "fileType": "style", "label": "End Frame Image", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "use_end_frame", "equals": true }, "hint": "Upload an image the generated video should arrive at by its final frame." },
-    { "type": "slider", "param": "end_frame_strength", "range": [0, 1, 0.01], "default": 0.5, "label": "End Frame Strength", "modes": ["envision"], "definingFeature": true, "showWhen": { "param": "use_end_frame", "equals": true }, "hint": "How strongly the end frame image pulls the final frames toward it. 1.0 locks the last frame exactly." },
-
-    { "type": "select", "param": "speed", "options": ["Quality", "Balanced", "Speed", "High Speed"], "default": "Quality", "label": "Speed Priority", "modes": ["evolve", "trace", "inspire"], "optionParams": { "Quality": { "steps": 30, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors", "speed_lora_strength": 0 }, "Balanced": { "steps": 12, "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors", "speed_lora_strength": 1 }, "Speed": { "steps": 8, "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors", "speed_lora_strength": 1 }, "High Speed": { "steps": 4, "speed_lora": "Hyper-SDXL-4steps-CFG-lora.safetensors", "speed_lora_strength": 1 } }, "hint": "Higher speed may reduce quality but will make generation time faster. It is recommended to run previews at a high speed to get the gist of the result, and full generations at full quality." },
-
-    { "type": "image-upload", "param": "style_ref", "slot": "in_style_ref", "fileType": "style", "strengthParam": "ipadapter_style_weight", "range": [0, 2, 0.01], "default": 1.2, "label": "Style Transfer", "modes": ["forge", "evolve", "trace", "inspire"], "hint": "Upload an image to transfer its style. Adjust strength to control the intensity." },
-
-    { "type": "toggle", "param": "fullBodyReplace", "default": false, "label": "Full Body Replacement", "hint": "Replaces the subject of the video with a character of your choosing. The subject is detected automatically. <b>WARNING: increases processing time significantly.</b>" },
-    { "type": "image-upload", "param": "body_image", "slot": "in_ref_image", "fileType": "body", "feature": "fullBodyReplace", "label": "Body Replacement Image", "hint": "Upload a full-body image of the character you want to use for replacement." },
-    { "type": "slider", "param": "body_quality", "range": [1, 100, 1], "default": 50, "label": "Body Replacement Quality", "feature": "fullBodyReplace", "hint": "Adjust the balance between speed and quality for the body replacement pass. Higher values produce better quality but take longer." },
-
-    { "type": "toggle", "param": "faceSwap", "default": false, "label": "Face Swap", "hint": "Replace all faces in the video with a face of your choosing." },
-    { "type": "image-upload", "param": "face_image", "slot": "in_face_image", "fileType": "face", "feature": "faceSwap", "label": "Face Image", "hint": "Upload a face image to replace all faces in the video with your uploaded face." },
-
-    { "type": "toggle", "param": "liveportrait", "default": false, "label": "Face Expression Transfer", "hint": "Transfers facial expressions from the original video to the new video." },
-
-    { "type": "lora-gallery", "param": "effects_lora", "label": "Effects", "modes": ["forge", "evolve", "trace", "inspire"], "hint": "Choose a card to apply special effects. Adjust strength to control the intensity." },
-
-    { "type": "toggle", "param": "detailer", "default": false, "label": "Detailer", "badge": "Legacy", "hint": "Tells the generation to add more details to the face, the hands, or the person in your creation. May increase generation time." },
-    { "type": "select", "param": "detailer_type", "options": ["bbox/face_yolov8m.pt", "bbox/hand_yolov8s.pt", "segm/person_yolov8m-seg.pt"], "default": "bbox/face_yolov8m.pt", "label": "Detailer Type", "feature": "detailer", "hint": "Choose where the system should add more detail." },
-    { "type": "slider", "param": "detailer_denoise", "range": [0, 1, 0.01], "default": 0.18, "label": "Detailer Impact Amount", "feature": "detailer", "hint": "Controls the strength of the detailer effect. Lower values make subtle enhancements while higher values apply stronger details." },
-
-    { "type": "toggle", "param": "skinImprovement", "default": false, "label": "Skin Improvement", "hint": "Slightly improves the quality of skin tones and textures in the output." },
-
-    { "type": "toggle", "param": "upscaler", "default": false, "label": "Increase output resolution", "hint": "Increase your video's detail, sharpness, and resolution." },
-    { "type": "slider", "param": "upscale_multiplier", "range": [2, 4, 1], "default": 2, "label": "Upscale multiplier", "feature": "upscaler", "hint": "Choose how much to increase the resolution by." },
-
-    { "type": "select", "param": "seed_mode", "options": ["Random", "Static"], "default": "Random", "optionParams": { "Random": { "seed": -1 }, "Static": {} }, "label": "Seed Control", "badge": "Advanced", "group": "advanced", "hint": "Control the randomness of generation. Random creates unique results each time, while Static allows reproducible results." },
-    { "type": "seed", "param": "seed", "default": -1, "label": "Seed", "group": "advanced", "hint": "The seed used when Seed Control is set to Static (-1 = random)." },
-    { "type": "toggle", "param": "model_temperature", "default": false, "label": "'Creativity' Adjustments", "badge": "Experimental", "group": "advanced", "modes": ["evolve", "trace"], "hint": "In AI, temperature refers to how \"creative\" you want the model to be. I added a few configurations that sometimes work and sometimes don't. Enabling model temperature adjustments may produce unexpected results and encourages your experimentation." },
-
-    { "type": "select", "param": "sampler_name", "options": ["multistep/dpmpp_2m", "none", "multistep/res_2m", "multistep/res_3m", "multistep/dpmpp_3m", "multistep/abnorsett_2m", "multistep/abnorsett_3m", "multistep/abnorsett_4m", "multistep/deis_2m", "multistep/deis_3m", "multistep/deis_4m", "multistep/rk4", "multistep/rk4_alt", "exponential/res_2s_rkmk2e", "exponential/res_2s", "exponential/res_2s_stable", "exponential/res_3s", "exponential/res_3s_non-monotonic", "exponential/res_3s_alt", "exponential/res_3s_cox_matthews", "exponential/res_3s_lie", "exponential/res_3s_sunstar", "exponential/res_3s_strehmel_weiner", "exponential/res_4s_krogstad", "exponential/res_4s_krogstad_alt", "exponential/res_4s_strehmel_weiner", "exponential/res_4s_strehmel_weiner_alt", "exponential/res_4s_cox_matthews", "exponential/res_4s_cfree4", "exponential/res_4s_friedli", "exponential/res_4s_minchev", "exponential/res_4s_munthe-kaas", "exponential/res_5s", "exponential/res_5s_hochbruck-ostermann", "exponential/res_6s", "exponential/res_8s", "exponential/res_8s_alt", "exponential/res_10s", "exponential/res_15s", "exponential/res_16s", "exponential/etdrk2_2s", "exponential/etdrk3_a_3s", "exponential/etdrk3_b_3s", "exponential/etdrk4_4s", "exponential/etdrk4_4s_alt", "exponential/dpmpp_2s", "exponential/dpmpp_sde_2s", "exponential/dpmpp_3s", "exponential/lawson2a_2s", "exponential/lawson2b_2s", "exponential/lawson4_4s", "exponential/lawson41-gen_4s", "exponential/lawson41-gen-mod_4s", "exponential/ddim", "hybrid/pec423_2h2s", "hybrid/pec433_2h3s", "hybrid/abnorsett2_1h2s", "hybrid/abnorsett3_2h2s", "hybrid/abnorsett4_3h2s", "hybrid/lawson42-gen-mod_lh4s", "hybrid/lawson43-gen-mod_2h4s", "hybrid/lawson44-gen-mod_3h4s", "hybrid/lawson45-gen-mod_4h4s", "linear/ralston_2s", "linear/ralston_3s", "linear/ralston_4s", "linear/midpoint_2s", "linear/heun_2s", "linear/heun_3s", "linear/houwen-wray_3s", "linear/kutta_3s", "linear/ssprk3_3s", "linear/ssprk4_4s", "linear/rk38_4s", "linear/rk4_4s", "linear/rk5_7s", "linear/rk6_7s", "linear/bogacki-shampine_4s", "linear/bogacki-shampine_7s", "linear/dormand-prince_6s", "linear/dormand-prince_13s", "linear/tsi_7s", "linear/euler", "diag_implicit/irk_exp_diag_2s", "diag_implicit/kraaijevanger_spijker_2s", "diag_implicit/qin_zhang_2s", "diag_implicit/pareschi_russo_2s", "diag_implicit/pareschi_russo_alt_2s", "diag_implicit/crouzeix_2s", "diag_implicit/crouzeix_3s", "diag_implicit/crouzeix_3s_alt", "fully_implicit/gauss-legendre_2s", "fully_implicit/gauss-legendre_3s", "fully_implicit/gauss-legendre_4s", "fully_implicit/gauss-legendre_4s_alternating_a", "fully_implicit/gauss-legendre_4s_ascending_a", "fully_implicit/gauss-legendre_4s_alt", "fully_implicit/gauss-legendre_5s", "fully_implicit/gauss-legendre_5s_ascending", "fully_implicit/radau_ia_2s", "fully_implicit/radau_ia_3s", "fully_implicit/radau_iia_2s", "fully_implicit/radau_iia_3s", "fully_implicit/radau_iia_3s_alt", "fully_implicit/radau_iia_5s", "fully_implicit/radau_iia_7s", "fully_implicit/radau_iia_9s", "fully_implicit/radau_iia_lls"], "default": "multistep/dpmpp_2m", "label": "Sampler", "badge": "Advanced", "group": "advanced", "modes": ["forge"], "hint": "Choose the sampling method for your video generation. Recommended (multistep/dpmpp_2m): Best balance of quality and speed. See the full list of options in the dropdown for detailed descriptions. Only change this setting if you know what you're doing." },
-
-    { "type": "select", "param": "scheduler", "options": ["sgm_uniform", "simple", "karras", "exponential", "ddim_uniform", "beta", "normal", "linear_quadratic", "kl_optimal", "bong_tangent", "beta57"], "default": "sgm_uniform", "label": "Scheduler", "badge": "Advanced", "group": "advanced", "modes": ["forge"], "hint": "Choose the scheduler method for noise reduction. Recommended (sgm_uniform): Best balance for most videos. Simple: A basic, fast scheduler. Karras: Enhanced detail preservation. Exponential: Smooth, progressive noise reduction. DDIM Uniform: A variation of the classic DDIM scheduler. Beta: A versatile scheduler that adapts well to different content types. Normal: A standard noise reduction schedule. Linear Quadratic: A quadratic-based noise reduction schedule. KL Optimal: Optimized for Kullback-Leibler divergence. Bong Tangent: An experimental scheduler with a unique noise reduction curve. Beta57: An experimental scheduler with a specific beta distribution. Only change this setting if you know what you're doing." },
-
-    { "type": "select", "param": "scheduler", "options": ["DPMSolverMultistepScheduler", "FlowMatchDiscreteScheduler", "SDE-DPMSolverMultistepScheduler", "SASolverScheduler", "UniPCMultistepScheduler"], "default": "DPMSolverMultistepScheduler", "label": "Scheduler", "badge": "Advanced", "group": "advanced", "modes": ["inspire"], "hint": "Choose the scheduler method for Forge Inspire mode. Recommended (DPMSolverMultistepScheduler): Best balance for inspire mode. Creative (FlowMatchDiscreteScheduler): Emphasizes creative transitions. Enhanced (SDE-DPMSolverMultistepScheduler): More detailed generation. Adaptive (SASolverScheduler): Adjusts to video content dynamically. Precise (UniPCMultistepScheduler): Focuses on accuracy in generation. Only change this setting if you know what you're doing." }
+    {
+      "type": "slider",
+      "param": "denoise",
+      "range": [
+        0,
+        1,
+        0.01
+      ],
+      "default": 0.65,
+      "label": "Change amount",
+      "modes": [
+        "evolve"
+      ],
+      "definingFeature": true,
+      "hint": "Adjust how much the video changes from the original. Higher values create more dramatic changes, while lower values keep it closer to the source."
+    },
+    {
+      "type": "slider",
+      "param": "denoise",
+      "range": [
+        0,
+        1,
+        0.01
+      ],
+      "default": 0.65,
+      "label": "Creativity strength",
+      "modes": [
+        "inspire"
+      ],
+      "definingFeature": true,
+      "hint": "Adjust how much freedom the AI has to create. Higher values generate more creative but less predictable results, while lower values stay closer to your original prompt."
+    },
+    {
+      "type": "slider",
+      "param": "forge_quality",
+      "range": [
+        1,
+        100,
+        1
+      ],
+      "default": 50,
+      "label": "Speed vs. Quality",
+      "modes": [
+        "forge",
+        "envision"
+      ],
+      "definingFeature": true,
+      "hint": "Adjust the balance between generation speed and output quality. Higher values produce better quality but take longer. Upscaler highly encouraged for best quality."
+    },
+    {
+      "type": "subject-checklist",
+      "param": "subject",
+      "label": "Subject",
+      "modes": [
+        "forge"
+      ],
+      "definingFeature": true,
+      "hint": "Choose the subject type of your video for best results. This affects how the AI analyzes your video."
+    },
+    {
+      "type": "slider",
+      "param": "creativity",
+      "range": [
+        0,
+        100,
+        1
+      ],
+      "default": 50,
+      "label": "Creativity",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "hint": "Lower values stick closer to your reference, while higher values reimagine the scene more freely."
+    },
+    {
+      "type": "toggle",
+      "param": "control_guide",
+      "uiOnly": true,
+      "default": true,
+      "label": "Control Guidance",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "hint": "On: guide generation with extracted control signals below. Off: your raw video guides generation directly."
+    },
+    {
+      "type": "toggle",
+      "param": "use_pose",
+      "default": true,
+      "label": "Pose Control",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "control_guide",
+        "equals": true
+      },
+      "hint": "Guide generation using the pose structure of your reference."
+    },
+    {
+      "type": "toggle",
+      "param": "use_depth",
+      "default": false,
+      "label": "Depth Control",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "control_guide",
+        "equals": true
+      },
+      "hint": "Guide generation using the depth map of your reference."
+    },
+    {
+      "type": "toggle",
+      "param": "use_canny",
+      "default": false,
+      "label": "Edge Control",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "control_guide",
+        "equals": true
+      },
+      "hint": "Guide generation using the edge outlines of your reference."
+    },
+    {
+      "type": "toggle",
+      "param": "use_anchor",
+      "default": false,
+      "label": "Use Anchor",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "hint": "Enable an anchor image that sets the starting frame and identity anchor for the generated video."
+    },
+    {
+      "type": "image-upload",
+      "param": "anchor_image",
+      "slot": "in_anchor",
+      "fileType": "style",
+      "label": "Anchor Image",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "use_anchor",
+        "equals": true
+      },
+      "hint": "Upload an image to set the starting frame and identity anchor for the generated video."
+    },
+    {
+      "type": "toggle",
+      "param": "use_end_frame",
+      "default": false,
+      "label": "End Frame",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "hint": "Enable an end frame image that the generated video should reach by its final frame."
+    },
+    {
+      "type": "image-upload",
+      "param": "end_anchor_image",
+      "slot": "in_end_anchor",
+      "fileType": "style",
+      "label": "End Frame Image",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "use_end_frame",
+        "equals": true
+      },
+      "hint": "Upload an image the generated video should arrive at by its final frame."
+    },
+    {
+      "type": "slider",
+      "param": "end_frame_strength",
+      "range": [
+        0,
+        1,
+        0.01
+      ],
+      "default": 0.5,
+      "label": "End Frame Strength",
+      "modes": [
+        "envision"
+      ],
+      "definingFeature": true,
+      "showWhen": {
+        "param": "use_end_frame",
+        "equals": true
+      },
+      "hint": "How strongly the end frame image pulls the final frames toward it. 1.0 locks the last frame exactly."
+    },
+    {
+      "type": "select",
+      "param": "speed",
+      "options": [
+        "Quality",
+        "Balanced",
+        "Speed",
+        "High Speed"
+      ],
+      "default": "Quality",
+      "label": "Speed Priority",
+      "modes": [
+        "evolve",
+        "trace",
+        "inspire"
+      ],
+      "optionParams": {
+        "Quality": {
+          "steps": 30,
+          "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors",
+          "speed_lora_strength": 0
+        },
+        "Balanced": {
+          "steps": 12,
+          "speed_lora": "Hyper-SDXL-12steps-CFG-lora.safetensors",
+          "speed_lora_strength": 1
+        },
+        "Speed": {
+          "steps": 8,
+          "speed_lora": "Hyper-SDXL-8steps-CFG-lora.safetensors",
+          "speed_lora_strength": 1
+        },
+        "High Speed": {
+          "steps": 4,
+          "speed_lora": "Hyper-SDXL-4steps-CFG-lora.safetensors",
+          "speed_lora_strength": 1
+        }
+      },
+      "hint": "Higher speed may reduce quality but will make generation time faster. It is recommended to run previews at a high speed to get the gist of the result, and full generations at full quality."
+    },
+    {
+      "type": "image-upload",
+      "param": "style_ref",
+      "slot": "in_style_ref",
+      "fileType": "style",
+      "strengthParam": "ipadapter_style_weight",
+      "range": [
+        0,
+        2,
+        0.01
+      ],
+      "default": 1.2,
+      "label": "Style Transfer",
+      "modes": [
+        "forge",
+        "evolve",
+        "trace",
+        "inspire"
+      ],
+      "hint": "Upload an image to transfer its style. Adjust strength to control the intensity."
+    },
+    {
+      "type": "toggle",
+      "param": "fullBodyReplace",
+      "default": false,
+      "label": "Full Body Replacement",
+      "hint": "Replaces the subject of the video with a character of your choosing. The subject is detected automatically. <b>WARNING: increases processing time significantly.</b>"
+    },
+    {
+      "type": "image-upload",
+      "param": "body_image",
+      "slot": "in_ref_image",
+      "fileType": "body",
+      "feature": "fullBodyReplace",
+      "label": "Body Replacement Image",
+      "hint": "Upload a full-body image of the character you want to use for replacement."
+    },
+    {
+      "type": "slider",
+      "param": "body_quality",
+      "range": [
+        1,
+        100,
+        1
+      ],
+      "default": 50,
+      "label": "Body Replacement Quality",
+      "feature": "fullBodyReplace",
+      "hint": "Adjust the balance between speed and quality for the body replacement pass. Higher values produce better quality but take longer."
+    },
+    {
+      "type": "toggle",
+      "param": "body_solo",
+      "default": false,
+      "feature": "fullBodyReplace",
+      "label": "Solo (Body Replace Only)",
+      "hint": "Skips the main generation stage and exports the body replacement footage directly. Post-processing features like Detailer, Face Swap and Upscaler still apply."
+    },
+    {
+      "type": "toggle",
+      "param": "faceSwap",
+      "default": false,
+      "label": "Face Swap",
+      "hint": "Replace all faces in the video with a face of your choosing."
+    },
+    {
+      "type": "image-upload",
+      "param": "face_image",
+      "slot": "in_face_image",
+      "fileType": "face",
+      "feature": "faceSwap",
+      "label": "Face Image",
+      "hint": "Upload a face image to replace all faces in the video with your uploaded face."
+    },
+    {
+      "type": "toggle",
+      "param": "liveportrait",
+      "default": false,
+      "label": "Face Expression Transfer",
+      "hint": "Transfers facial expressions from the original video to the new video."
+    },
+    {
+      "type": "lora-gallery",
+      "param": "effects_lora",
+      "label": "Effects",
+      "modes": [
+        "forge",
+        "evolve",
+        "trace",
+        "inspire"
+      ],
+      "hint": "Choose a card to apply special effects. Adjust strength to control the intensity."
+    },
+    {
+      "type": "toggle",
+      "param": "detailer",
+      "default": false,
+      "label": "Detailer",
+      "badge": "Legacy",
+      "hint": "Tells the generation to add more details to the face, the hands, or the person in your creation. May increase generation time."
+    },
+    {
+      "type": "select",
+      "param": "detailer_type",
+      "options": [
+        "bbox/face_yolov8m.pt",
+        "bbox/hand_yolov8s.pt",
+        "segm/person_yolov8m-seg.pt"
+      ],
+      "default": "bbox/face_yolov8m.pt",
+      "label": "Detailer Type",
+      "feature": "detailer",
+      "hint": "Choose where the system should add more detail."
+    },
+    {
+      "type": "slider",
+      "param": "detailer_denoise",
+      "range": [
+        0,
+        1,
+        0.01
+      ],
+      "default": 0.18,
+      "label": "Detailer Impact Amount",
+      "feature": "detailer",
+      "hint": "Controls the strength of the detailer effect. Lower values make subtle enhancements while higher values apply stronger details."
+    },
+    {
+      "type": "toggle",
+      "param": "skinImprovement",
+      "default": false,
+      "label": "Skin Improvement",
+      "hint": "Slightly improves the quality of skin tones and textures in the output."
+    },
+    {
+      "type": "toggle",
+      "param": "upscaler",
+      "default": false,
+      "label": "Increase output resolution",
+      "hint": "Increase your video's detail, sharpness, and resolution."
+    },
+    {
+      "type": "slider",
+      "param": "upscale_multiplier",
+      "range": [
+        2,
+        4,
+        1
+      ],
+      "default": 2,
+      "label": "Upscale multiplier",
+      "feature": "upscaler",
+      "hint": "Choose how much to increase the resolution by."
+    },
+    {
+      "type": "select",
+      "param": "seed_mode",
+      "options": [
+        "Random",
+        "Static"
+      ],
+      "default": "Random",
+      "optionParams": {
+        "Random": {
+          "seed": -1
+        },
+        "Static": {}
+      },
+      "label": "Seed Control",
+      "badge": "Advanced",
+      "group": "advanced",
+      "hint": "Control the randomness of generation. Random creates unique results each time, while Static allows reproducible results."
+    },
+    {
+      "type": "seed",
+      "param": "seed",
+      "default": -1,
+      "label": "Seed",
+      "group": "advanced",
+      "hint": "The seed used when Seed Control is set to Static (-1 = random)."
+    },
+    {
+      "type": "toggle",
+      "param": "model_temperature",
+      "default": false,
+      "label": "'Creativity' Adjustments",
+      "badge": "Experimental",
+      "group": "advanced",
+      "modes": [
+        "evolve",
+        "trace"
+      ],
+      "hint": "In AI, temperature refers to how \"creative\" you want the model to be. I added a few configurations that sometimes work and sometimes don't. Enabling model temperature adjustments may produce unexpected results and encourages your experimentation."
+    },
+    {
+      "type": "select",
+      "param": "sampler_name",
+      "options": [
+        "multistep/dpmpp_2m",
+        "none",
+        "multistep/res_2m",
+        "multistep/res_3m",
+        "multistep/dpmpp_3m",
+        "multistep/abnorsett_2m",
+        "multistep/abnorsett_3m",
+        "multistep/abnorsett_4m",
+        "multistep/deis_2m",
+        "multistep/deis_3m",
+        "multistep/deis_4m",
+        "multistep/rk4",
+        "multistep/rk4_alt",
+        "exponential/res_2s_rkmk2e",
+        "exponential/res_2s",
+        "exponential/res_2s_stable",
+        "exponential/res_3s",
+        "exponential/res_3s_non-monotonic",
+        "exponential/res_3s_alt",
+        "exponential/res_3s_cox_matthews",
+        "exponential/res_3s_lie",
+        "exponential/res_3s_sunstar",
+        "exponential/res_3s_strehmel_weiner",
+        "exponential/res_4s_krogstad",
+        "exponential/res_4s_krogstad_alt",
+        "exponential/res_4s_strehmel_weiner",
+        "exponential/res_4s_strehmel_weiner_alt",
+        "exponential/res_4s_cox_matthews",
+        "exponential/res_4s_cfree4",
+        "exponential/res_4s_friedli",
+        "exponential/res_4s_minchev",
+        "exponential/res_4s_munthe-kaas",
+        "exponential/res_5s",
+        "exponential/res_5s_hochbruck-ostermann",
+        "exponential/res_6s",
+        "exponential/res_8s",
+        "exponential/res_8s_alt",
+        "exponential/res_10s",
+        "exponential/res_15s",
+        "exponential/res_16s",
+        "exponential/etdrk2_2s",
+        "exponential/etdrk3_a_3s",
+        "exponential/etdrk3_b_3s",
+        "exponential/etdrk4_4s",
+        "exponential/etdrk4_4s_alt",
+        "exponential/dpmpp_2s",
+        "exponential/dpmpp_sde_2s",
+        "exponential/dpmpp_3s",
+        "exponential/lawson2a_2s",
+        "exponential/lawson2b_2s",
+        "exponential/lawson4_4s",
+        "exponential/lawson41-gen_4s",
+        "exponential/lawson41-gen-mod_4s",
+        "exponential/ddim",
+        "hybrid/pec423_2h2s",
+        "hybrid/pec433_2h3s",
+        "hybrid/abnorsett2_1h2s",
+        "hybrid/abnorsett3_2h2s",
+        "hybrid/abnorsett4_3h2s",
+        "hybrid/lawson42-gen-mod_lh4s",
+        "hybrid/lawson43-gen-mod_2h4s",
+        "hybrid/lawson44-gen-mod_3h4s",
+        "hybrid/lawson45-gen-mod_4h4s",
+        "linear/ralston_2s",
+        "linear/ralston_3s",
+        "linear/ralston_4s",
+        "linear/midpoint_2s",
+        "linear/heun_2s",
+        "linear/heun_3s",
+        "linear/houwen-wray_3s",
+        "linear/kutta_3s",
+        "linear/ssprk3_3s",
+        "linear/ssprk4_4s",
+        "linear/rk38_4s",
+        "linear/rk4_4s",
+        "linear/rk5_7s",
+        "linear/rk6_7s",
+        "linear/bogacki-shampine_4s",
+        "linear/bogacki-shampine_7s",
+        "linear/dormand-prince_6s",
+        "linear/dormand-prince_13s",
+        "linear/tsi_7s",
+        "linear/euler",
+        "diag_implicit/irk_exp_diag_2s",
+        "diag_implicit/kraaijevanger_spijker_2s",
+        "diag_implicit/qin_zhang_2s",
+        "diag_implicit/pareschi_russo_2s",
+        "diag_implicit/pareschi_russo_alt_2s",
+        "diag_implicit/crouzeix_2s",
+        "diag_implicit/crouzeix_3s",
+        "diag_implicit/crouzeix_3s_alt",
+        "fully_implicit/gauss-legendre_2s",
+        "fully_implicit/gauss-legendre_3s",
+        "fully_implicit/gauss-legendre_4s",
+        "fully_implicit/gauss-legendre_4s_alternating_a",
+        "fully_implicit/gauss-legendre_4s_ascending_a",
+        "fully_implicit/gauss-legendre_4s_alt",
+        "fully_implicit/gauss-legendre_5s",
+        "fully_implicit/gauss-legendre_5s_ascending",
+        "fully_implicit/radau_ia_2s",
+        "fully_implicit/radau_ia_3s",
+        "fully_implicit/radau_iia_2s",
+        "fully_implicit/radau_iia_3s",
+        "fully_implicit/radau_iia_3s_alt",
+        "fully_implicit/radau_iia_5s",
+        "fully_implicit/radau_iia_7s",
+        "fully_implicit/radau_iia_9s",
+        "fully_implicit/radau_iia_lls"
+      ],
+      "default": "multistep/dpmpp_2m",
+      "label": "Sampler",
+      "badge": "Advanced",
+      "group": "advanced",
+      "modes": [
+        "forge"
+      ],
+      "hint": "Choose the sampling method for your video generation. Recommended (multistep/dpmpp_2m): Best balance of quality and speed. See the full list of options in the dropdown for detailed descriptions. Only change this setting if you know what you're doing."
+    },
+    {
+      "type": "select",
+      "param": "scheduler",
+      "options": [
+        "sgm_uniform",
+        "simple",
+        "karras",
+        "exponential",
+        "ddim_uniform",
+        "beta",
+        "normal",
+        "linear_quadratic",
+        "kl_optimal",
+        "bong_tangent",
+        "beta57"
+      ],
+      "default": "sgm_uniform",
+      "label": "Scheduler",
+      "badge": "Advanced",
+      "group": "advanced",
+      "modes": [
+        "forge"
+      ],
+      "hint": "Choose the scheduler method for noise reduction. Recommended (sgm_uniform): Best balance for most videos. Simple: A basic, fast scheduler. Karras: Enhanced detail preservation. Exponential: Smooth, progressive noise reduction. DDIM Uniform: A variation of the classic DDIM scheduler. Beta: A versatile scheduler that adapts well to different content types. Normal: A standard noise reduction schedule. Linear Quadratic: A quadratic-based noise reduction schedule. KL Optimal: Optimized for Kullback-Leibler divergence. Bong Tangent: An experimental scheduler with a unique noise reduction curve. Beta57: An experimental scheduler with a specific beta distribution. Only change this setting if you know what you're doing."
+    },
+    {
+      "type": "select",
+      "param": "scheduler",
+      "options": [
+        "DPMSolverMultistepScheduler",
+        "FlowMatchDiscreteScheduler",
+        "SDE-DPMSolverMultistepScheduler",
+        "SASolverScheduler",
+        "UniPCMultistepScheduler"
+      ],
+      "default": "DPMSolverMultistepScheduler",
+      "label": "Scheduler",
+      "badge": "Advanced",
+      "group": "advanced",
+      "modes": [
+        "inspire"
+      ],
+      "hint": "Choose the scheduler method for Forge Inspire mode. Recommended (DPMSolverMultistepScheduler): Best balance for inspire mode. Creative (FlowMatchDiscreteScheduler): Emphasizes creative transitions. Enhanced (SDE-DPMSolverMultistepScheduler): More detailed generation. Adaptive (SASolverScheduler): Adjusts to video content dynamically. Precise (UniPCMultistepScheduler): Focuses on accuracy in generation. Only change this setting if you know what you're doing."
+    }
   ]
 }

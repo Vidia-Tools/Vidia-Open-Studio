@@ -92,6 +92,9 @@ def active_stages(manifest, params):
         # Build Mode can disable a stage without removing it from the array.
         if stage.get("enabled") is False:
             continue
+        # 2026-07-12: body-solo exports the SCAIL body-replace result directly; only generate is skipped
+        if stage["name"] == "generate" and params.get("body_solo") and features.get("fullBodyReplace"):
+            continue
         if "select" in stage:
             method = params.get(stage["select"])
             file = stage["files"].get(method)

@@ -178,6 +178,24 @@ const FEATURE_CONFLICTS = [
         condition: (states) => states.envisionMethod && states.useEndFrame && !states.endFrameFile,
         message: 'End Frame is on but no end frame image is uploaded. Upload an end frame image, or turn off End Frame.',
         severity: 'error'
+    },
+    {
+        // Body Replacement solo: the main generation stage is skipped entirely.
+        id: 'body-solo-active',
+        features: [
+            {
+                id: 'fullBodyReplace',
+                getState: () => !!store.getFeatures().fullBodyReplace,
+            },
+            {
+                id: 'bodySolo',
+                getState: () => store.getParam('body_solo') === true,
+                containerQuery: () => document.getElementById('ctl_body_solo')?.closest('.advanced-setting'),
+            },
+        ],
+        condition: (states) => states.fullBodyReplace && states.bodySolo,
+        message: 'Solo is on: the selected generation mode is bypassed and the body replacement footage is exported directly. Post-processing features still apply.',
+        severity: 'warning'
     }
 ];
 
