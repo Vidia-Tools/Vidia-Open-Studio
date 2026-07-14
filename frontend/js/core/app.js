@@ -111,8 +111,17 @@ export class VidiaApp {
             // {sound} boolean, so the toggle drives that param and the MMAudio
             // audio stage (feature:"genAudio") stays off. All other methods
             // keep prod's behavior: the toggle drives genAudio.
+            // Solo override (2026-07-14): Full Body Replacement in Solo mode
+            // skips the generate stage, so the method-aware {sound} param never
+            // fires and genAudio was force-disabled, producing no audio at all.
+            // Route the toggle to genAudio (MMAudio) regardless of method.
             const soundOn = !!replaceAudio?.checked;
-            if (store.getMethod() === 'envision') {
+            const soloActive = !!store.getFeatures().fullBodyReplace
+                && store.getParam('body_solo') === true;
+            if (soloActive) {
+                store.setParam('sound', false);
+                store.setFeature('genAudio', soundOn);
+            } else if (store.getMethod() === 'envision') {
                 store.setParam('sound', soundOn);
                 store.setFeature('genAudio', false);
             } else {
@@ -126,6 +135,10 @@ export class VidiaApp {
         replaceAudio?.addEventListener('change', sync);
         // Re-route the sound toggle when the Forge submode (method) changes.
         document.getElementById('forgeModeSelect')?.addEventListener('change', sync);
+        // Re-route when Solo or Full Body Replacement flips mid-session: the
+        // Solo override rewires which audio target the toggle drives.
+        document.getElementById('ctl_body_solo')?.addEventListener('change', sync);
+        document.getElementById('ctl_fullBodyReplace')?.addEventListener('change', sync);
         sync();
         logDebug('Prompt area wired to generation store');
     }
