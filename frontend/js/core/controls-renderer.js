@@ -231,6 +231,26 @@ export function applyVisibility() {
       if (isFeatureToggle(control)) store.setFeature(control.param, !!control.default);
       else store.setParam(control.param, control.default);
     }
+    // strengthModes: an image-upload's strength slider is scoped to the modes
+    // whose workflow actually consumes its strengthParam (e.g. the SDXL flows
+    // read ipadapter_style_weight, the forge/WAN ref-image path does not).
+    // Out of scope only the sub-slider hides -- the parent upload area stays --
+    // and the param is cleared so it never rides in the request payload.
+    if (visible && control.strengthParam && Array.isArray(control.strengthModes)) {
+      const inScope = control.strengthModes.includes(mode);
+      for (const s of el.querySelectorAll('.os-upload-strength, .os-upload-strength-value')) {
+        s.style.display = inScope ? '' : 'none';
+      }
+      if (inScope) {
+        const slider = el.querySelector('.os-upload-strength');
+        if (slider && store.getFile(control.slot)) {
+          slider.disabled = false;
+          store.setParam(control.strengthParam, Number(slider.value));
+        }
+      } else {
+        store.setParam(control.strengthParam, undefined);
+      }
+    }
     // Mode-scoped controls can share a param key across modes (e.g. the forge
     // and inspire `scheduler` selects). Defaults are seeded once at render
     // time under the initial method, so on a mode change the now-active

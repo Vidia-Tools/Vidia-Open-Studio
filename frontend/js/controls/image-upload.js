@@ -97,7 +97,10 @@ export default {
           root.dataset.url = result.url;
           store.setFile(spec.slot, result.url);
           if (spec.enablesFeature) store.setFeature(spec.enablesFeature, true);
-          if (strength) {
+          // strengthModes (controls-renderer applyVisibility) hides the slider
+          // in modes whose workflow ignores strengthParam; skip the param write
+          // there so an inert value never rides in the request payload.
+          if (strength && strength.style.display !== 'none') {
             strength.disabled = false;
             // prod defaults the slider on first upload (style-transfer.js: 1.2).
             store.setParam(spec.strengthParam, Number(strength.value));

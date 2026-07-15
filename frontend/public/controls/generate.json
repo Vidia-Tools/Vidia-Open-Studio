@@ -253,6 +253,11 @@
       "slot": "in_style_ref",
       "fileType": "style",
       "strengthParam": "ipadapter_style_weight",
+      "strengthModes": [
+        "evolve",
+        "trace",
+        "inspire"
+      ],
       "range": [
         0,
         2,
