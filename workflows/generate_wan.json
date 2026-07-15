@@ -1,7 +1,7 @@
 {
   "104": {
     "inputs": {
-      "int": 2
+      "int": 1
     },
     "class_type": "Int Literal",
     "_meta": {
@@ -17,12 +17,12 @@
     },
     "class_type": "VHS_VideoInfo",
     "_meta": {
-      "title": "Video Info 🎥🅥🅗🅢"
+      "title": "Video Info \ud83c\udfa5\ud83c\udd65\ud83c\udd57\ud83c\udd62"
     }
   },
   "106": {
     "inputs": {
-      "video": "input.mp4",
+      "video": "https://customer-tx4sic63nzl9h8jm.cloudflarestream.com/92e68cdfa05affa64229d7fb3f1a0ecd/downloads/default.mp4",
       "force_rate": 0,
       "custom_width": 0,
       "custom_height": 0,
@@ -36,12 +36,12 @@
     },
     "class_type": "VHS_LoadVideoPath",
     "_meta": {
-      "title": "Load Video (Path) 🎥🅥🅗🅢 [in_prev]"
+      "title": "Load Video (Path) [in_prev]"
     }
   },
   "167": {
     "inputs": {
-      "image": "https://raw.githubusercontent.com/comfyanonymous/ComfyUI/master/comfyui_screenshot.png",
+      "image": "https://lumiere-a.akamaihd.net/v1/images/han-solo-main_a4c8ff79.jpeg?region=0,0,1920,1080&width=320",
       "keep_alpha_channel": false,
       "output_mode": false
     },
@@ -52,7 +52,7 @@
   },
   "183": {
     "inputs": {
-      "string": "ugly, CARTOON, overexposed, flashing, flicker, blurry, ugly, banding, cataracts, bad anatomy, bad eyes, poorly drawn\nNSFW, nudity, watermark, censored,\ndeformed, bad anatomy, poorly drawn face, mutated,\nextra limb, missing limb, floating limbs, disconnected limbs,\nmalformed hands, long neck,\ncropped, worst quality, low quality,\nabnormal proportions, fused body parts, disappearing body parts, blemishes, nasty, morphed, 过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
+      "string": "ugly, CARTOON, overexposed, flashing, flicker, blurry, ugly, banding, cataracts, bad anatomy, bad eyes, poorly drawn\nNSFW, nudity, watermark, censored,\ndeformed, bad anatomy, poorly drawn face, mutated,\nextra limb, missing limb, floating limbs, disconnected limbs,\nmalformed hands, long neck,\ncropped, worst quality, low quality,\nabnormal proportions, fused body parts, disappearing body parts, blemishes, nasty, morphed, \u8fc7\u66dd\uff0c\u9759\u6001\uff0c\u7ec6\u8282\u6a21\u7cca\u4e0d\u6e05\uff0c\u5b57\u5e55\uff0c\u98ce\u683c\uff0c\u4f5c\u54c1\uff0c\u753b\u4f5c\uff0c\u753b\u9762\uff0c\u9759\u6b62\uff0c\u6574\u4f53\u53d1\u7070\uff0c\u6700\u5dee\u8d28\u91cf\uff0c\u4f4e\u8d28\u91cf\uff0cJPEG\u538b\u7f29\u6b8b\u7559\uff0c\u4e11\u964b\u7684\uff0c\u6b8b\u7f3a\u7684\uff0c\u591a\u4f59\u7684\u624b\u6307\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u624b\u90e8\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u8138\u90e8\uff0c\u7578\u5f62\u7684\uff0c\u6bc1\u5bb9\u7684\uff0c\u5f62\u6001\u7578\u5f62\u7684\u80a2\u4f53\uff0c\u624b\u6307\u878d\u5408\uff0c\u9759\u6b62\u4e0d\u52a8\u7684\u753b\u9762\uff0c\u6742\u4e71\u7684\u80cc\u666f\uff0c\u4e09\u6761\u817f\uff0c\u80cc\u666f\u4eba\u5f88\u591a\uff0c\u5012\u7740\u8d70"
     },
     "class_type": "String Literal",
     "_meta": {
@@ -109,7 +109,7 @@
     },
     "class_type": "Canny",
     "_meta": {
-      "title": "Canny"
+      "title": "Detect Edges (Canny)"
     }
   },
   "575": {
@@ -155,7 +155,7 @@
   },
   "1036": {
     "inputs": {
-      "string": "a cinematic scene"
+      "string": "han solo shooting a gun, photorealistic"
     },
     "class_type": "String Literal",
     "_meta": {
@@ -230,7 +230,7 @@
     },
     "class_type": "SolidMask",
     "_meta": {
-      "title": "SolidMask"
+      "title": "Create Solid Mask"
     }
   },
   "1093": {
@@ -242,7 +242,7 @@
     },
     "class_type": "InvertMask",
     "_meta": {
-      "title": "InvertMask"
+      "title": "Invert Mask"
     }
   },
   "1096": {
@@ -427,7 +427,7 @@
     },
     "class_type": "BatchCount+",
     "_meta": {
-      "title": "🔧 Batch Count"
+      "title": "\ud83d\udd27 Batch Count"
     }
   },
   "1126": {
@@ -503,7 +503,7 @@
         0
       ],
       "ref_image": [
-        "1222",
+        "1237",
         0
       ],
       "control_video": [
@@ -530,7 +530,7 @@
         0
       ],
       "denoise": 1,
-      "cfg": 3.500000000000001,
+      "cfg": 1,
       "seed": 629714984843275,
       "sampler_mode": "resample",
       "bongmath": true,
@@ -547,13 +547,13 @@
         1
       ],
       "latent_image": [
-        "1129",
-        2
+        "1152",
+        0
       ]
     },
     "class_type": "ClownsharKSampler_Beta",
     "_meta": {
-      "title": "ClownsharKSampler {sampler_name} {scheduler}"
+      "title": "ClownsharKSampler"
     }
   },
   "1131": {
@@ -636,7 +636,7 @@
   },
   "1137": {
     "inputs": {
-      "lora_name": "WAN_Wan2.1_T2V_14B_FusionX_LoRA.safetensors",
+      "lora_name": "WAN_wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors",
       "strength_model": [
         "1174",
         0
@@ -673,7 +673,7 @@
     },
     "class_type": "ImpactConditionalBranch",
     "_meta": {
-      "title": "OpenPose Toggle {subject_person}"
+      "title": "OpenPose Toggle"
     }
   },
   "1139": {
@@ -690,7 +690,7 @@
     },
     "class_type": "ImpactConditionalBranch",
     "_meta": {
-      "title": "Depth Toggle {subject_place}"
+      "title": "Depth Toggle"
     }
   },
   "1140": {
@@ -707,7 +707,7 @@
     },
     "class_type": "ImpactConditionalBranch",
     "_meta": {
-      "title": "Canny Toggle {subject_object}"
+      "title": "Canny Toggle"
     }
   },
   "1141": {
@@ -724,7 +724,7 @@
     },
     "class_type": "ImpactConditionalBranch",
     "_meta": {
-      "title": "OG Img Toggle {subject_original}"
+      "title": "OG Img Toggle"
     }
   },
   "1142": {
@@ -738,7 +738,7 @@
     },
     "class_type": "DataMonitor",
     "_meta": {
-      "title": "👁‍🗨Data Monitor ⁄ Generator ⁄ Converter"
+      "title": "\ud83d\udc41\u200d\ud83d\udde8Data Monitor \u2044 Generator \u2044 Converter"
     }
   },
   "1143": {
@@ -752,12 +752,12 @@
     },
     "class_type": "DataMonitor",
     "_meta": {
-      "title": "👁‍🗨Data Monitor ⁄ Generator ⁄ Converter"
+      "title": "\ud83d\udc41\u200d\ud83d\udde8Data Monitor \u2044 Generator \u2044 Converter"
     }
   },
   "1144": {
     "inputs": {
-      "shift": 5.000000000000001,
+      "shift": 8.000000000000002,
       "model": [
         "1136",
         0
@@ -884,7 +884,7 @@
     },
     "class_type": "ClownsharKSampler_Beta",
     "_meta": {
-      "title": "ClownsharKSampler {sampler_name} {scheduler}"
+      "title": "ClownsharKSampler"
     }
   },
   "1153": {
@@ -1050,7 +1050,7 @@
   },
   "1172": {
     "inputs": {
-      "text": "max(4, round(0.375 * (8 + (12 * ((%AUX% - 1) / 99)))))",
+      "text": "max(4, round(0.5 * (8 + (12 * ((%AUX% - 1) / 99)))))",
       "output_type": "FORMULA",
       "aux": [
         "1177",
@@ -1064,7 +1064,7 @@
   },
   "1173": {
     "inputs": {
-      "text": "round(8 + (12 * ((%AUX% - 1) / 99))) - max(4, round(0.375 * (8 + (12 * ((%AUX% - 1) / 99)))))",
+      "text": "round(8 + (12 * ((%AUX% - 1) / 99))) - max(4, round(0.5 * (8 + (12 * ((%AUX% - 1) / 99)))))",
       "output_type": "FORMULA",
       "aux": [
         "1177",
@@ -1110,160 +1110,7 @@
     },
     "class_type": "easy int",
     "_meta": {
-      "title": "Int {forge_quality}"
-    }
-  },
-  "1180": {
-    "inputs": {
-      "image": [
-        "167",
-        0
-      ]
-    },
-    "class_type": "GetImageSize",
-    "_meta": {
-      "title": "Get Image Size"
-    }
-  },
-  "1181": {
-    "inputs": {
-      "ipadapter_file": "ip-adapter-plus-face_sdxl_vit-h.safetensors"
-    },
-    "class_type": "IPAdapterModelLoader",
-    "_meta": {
-      "title": "IPAdapter Model Loader"
-    }
-  },
-  "1182": {
-    "inputs": {
-      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
-    },
-    "class_type": "CLIPVisionLoader",
-    "_meta": {
-      "title": "Load CLIP Vision"
-    }
-  },
-  "1183": {
-    "inputs": {
-      "model_name": "big-lama.pt"
-    },
-    "class_type": "INPAINT_LoadInpaintModel",
-    "_meta": {
-      "title": "Load Inpaint Model"
-    }
-  },
-  "1184": {
-    "inputs": {
-      "head": "fooocus_inpaint_head.pth",
-      "patch": "inpaint_v26.fooocus.patch"
-    },
-    "class_type": "INPAINT_LoadFooocusInpaint",
-    "_meta": {
-      "title": "Load Fooocus Inpaint"
-    }
-  },
-  "1185": {
-    "inputs": {
-      "text": "max(0, round((%AUX4% * (%AUX% / %AUX2%) - %AUX3%) / 2))",
-      "output_type": "FORMULA",
-      "aux": [
-        "1171",
-        1
-      ],
-      "aux2": [
-        "1171",
-        2
-      ],
-      "aux3": [
-        "1180",
-        0
-      ],
-      "aux4": [
-        "1180",
-        1
-      ]
-    },
-    "class_type": "DataMonitor",
-    "_meta": {
-      "title": "Left Padding"
-    }
-  },
-  "1186": {
-    "inputs": {
-      "text": "max(0, round((%AUX4% * (%AUX% / %AUX2%) - %AUX3%) / 2))",
-      "output_type": "FORMULA",
-      "aux": [
-        "1171",
-        1
-      ],
-      "aux2": [
-        "1171",
-        2
-      ],
-      "aux3": [
-        "1180",
-        0
-      ],
-      "aux4": [
-        "1180",
-        1
-      ]
-    },
-    "class_type": "DataMonitor",
-    "_meta": {
-      "title": "Right Padding"
-    }
-  },
-  "1187": {
-    "inputs": {
-      "text": "max(0, round((%AUX3% * (%AUX2% / %AUX%) - %AUX4%) / 2))",
-      "output_type": "FORMULA",
-      "aux": [
-        "1171",
-        1
-      ],
-      "aux2": [
-        "1171",
-        2
-      ],
-      "aux3": [
-        "1180",
-        0
-      ],
-      "aux4": [
-        "1180",
-        1
-      ]
-    },
-    "class_type": "DataMonitor",
-    "_meta": {
-      "title": "Top Padding"
-    }
-  },
-  "1188": {
-    "inputs": {
-      "text": "max(0, round((%AUX3% * (%AUX2% / %AUX%) - %AUX4%) / 2))",
-      "output_type": "FORMULA",
-      "aux": [
-        "1171",
-        1
-      ],
-      "aux2": [
-        "1171",
-        2
-      ],
-      "aux3": [
-        "1180",
-        0
-      ],
-      "aux4": [
-        "1180",
-        1
-      ]
-    },
-    "class_type": "DataMonitor",
-    "_meta": {
-      "title": "Bottom Padding"
+      "title": "Int {steps}"
     }
   },
   "1189": {
@@ -1302,447 +1149,6 @@
     "class_type": "CLIPTextEncode",
     "_meta": {
       "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "1193": {
-    "inputs": {
-      "ckpt_name": "dreamshaperXL_v21TurboDPMSDE.safetensors"
-    },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
-    }
-  },
-  "1194": {
-    "inputs": {
-      "left": [
-        "1185",
-        0
-      ],
-      "top": [
-        "1187",
-        0
-      ],
-      "right": [
-        "1186",
-        0
-      ],
-      "bottom": [
-        "1188",
-        0
-      ],
-      "feathering": 80,
-      "image": [
-        "167",
-        0
-      ]
-    },
-    "class_type": "ImagePadForOutpaint",
-    "_meta": {
-      "title": "Pad Image for Outpainting"
-    }
-  },
-  "1195": {
-    "inputs": {
-      "grow_mask_by": 40,
-      "pixels": [
-        "1196",
-        0
-      ],
-      "vae": [
-        "1193",
-        2
-      ],
-      "mask": [
-        "1194",
-        1
-      ]
-    },
-    "class_type": "VAEEncodeForInpaint",
-    "_meta": {
-      "title": "VAE Encode (for Inpainting)"
-    }
-  },
-  "1196": {
-    "inputs": {
-      "seed": 496207992929863,
-      "inpaint_model": [
-        "1183",
-        0
-      ],
-      "image": [
-        "1194",
-        0
-      ],
-      "mask": [
-        "1194",
-        1
-      ]
-    },
-    "class_type": "INPAINT_InpaintWithModel",
-    "_meta": {
-      "title": "Inpaint (using Model)"
-    }
-  },
-  "1197": {
-    "inputs": {
-      "weight": 0.7000000000000001,
-      "weight_type": "linear",
-      "combine_embeds": "concat",
-      "start_at": 0,
-      "end_at": 1,
-      "embeds_scaling": "V only",
-      "model": [
-        "1193",
-        0
-      ],
-      "ipadapter": [
-        "1181",
-        0
-      ],
-      "image": [
-        "167",
-        0
-      ],
-      "image_negative": [
-        "1196",
-        0
-      ],
-      "clip_vision": [
-        "1182",
-        0
-      ]
-    },
-    "class_type": "IPAdapterAdvanced",
-    "_meta": {
-      "title": "IPAdapter Advanced"
-    }
-  },
-  "1198": {
-    "inputs": {
-      "noise_mask": true,
-      "positive": [
-        "1205",
-        0
-      ],
-      "negative": [
-        "1200",
-        0
-      ],
-      "vae": [
-        "1193",
-        2
-      ],
-      "pixels": [
-        "1196",
-        0
-      ],
-      "mask": [
-        "1194",
-        1
-      ]
-    },
-    "class_type": "InpaintModelConditioning",
-    "_meta": {
-      "title": "InpaintModelConditioning"
-    }
-  },
-  "1200": {
-    "inputs": {
-      "text": [
-        "183",
-        0
-      ],
-      "clip": [
-        "1193",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "1202": {
-    "inputs": {
-      "model": [
-        "1197",
-        0
-      ],
-      "patch": [
-        "1184",
-        0
-      ],
-      "latent": [
-        "1195",
-        0
-      ]
-    },
-    "class_type": "INPAINT_ApplyFooocusInpaint",
-    "_meta": {
-      "title": "Apply Fooocus Inpaint"
-    }
-  },
-  "1203": {
-    "inputs": {
-      "x": 0,
-      "y": 0,
-      "resize_source": false,
-      "destination": [
-        "1194",
-        0
-      ],
-      "source": [
-        "1204",
-        0
-      ],
-      "mask": [
-        "1194",
-        1
-      ]
-    },
-    "class_type": "ImageCompositeMasked",
-    "_meta": {
-      "title": "ImageCompositeMasked"
-    }
-  },
-  "1204": {
-    "inputs": {
-      "samples": [
-        "1212",
-        0
-      ],
-      "vae": [
-        "1193",
-        2
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
-    }
-  },
-  "1205": {
-    "inputs": {
-      "text": [
-        "1036",
-        0
-      ],
-      "clip": [
-        "1193",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "1212": {
-    "inputs": {
-      "seed": 709338013204520,
-      "steps": 30,
-      "cfg": 2,
-      "sampler_name": "dpmpp_sde",
-      "scheduler": "karras",
-      "denoise": 0.9,
-      "model": [
-        "1202",
-        0
-      ],
-      "positive": [
-        "1198",
-        0
-      ],
-      "negative": [
-        "1198",
-        1
-      ],
-      "latent_image": [
-        "1198",
-        2
-      ]
-    },
-    "class_type": "KSampler",
-    "_meta": {
-      "title": "KSampler"
-    }
-  },
-  "1214": {
-    "inputs": {
-      "value": 10
-    },
-    "class_type": "easy int",
-    "_meta": {
-      "title": "Int"
-    }
-  },
-  "1215": {
-    "inputs": {
-      "value": "a/b",
-      "a": [
-        "1219",
-        0
-      ],
-      "b": [
-        "1219",
-        1
-      ]
-    },
-    "class_type": "SimpleMath+",
-    "_meta": {
-      "title": "Current ratio"
-    }
-  },
-  "1216": {
-    "inputs": {
-      "value": "a/b",
-      "a": [
-        "1171",
-        1
-      ],
-      "b": [
-        "1171",
-        2
-      ]
-    },
-    "class_type": "SimpleMath+",
-    "_meta": {
-      "title": "Desired ratio"
-    }
-  },
-  "1218": {
-    "inputs": {
-      "width": [
-        "1171",
-        1
-      ],
-      "height": [
-        "1171",
-        2
-      ],
-      "upscale_method": "nearest-exact",
-      "keep_proportion": "crop",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 2,
-      "device": "cpu",
-      "image": [
-        "1203",
-        0
-      ]
-    },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "1219": {
-    "inputs": {
-      "image": [
-        "167",
-        0
-      ]
-    },
-    "class_type": "GetImageSize",
-    "_meta": {
-      "title": "Get Image Size"
-    }
-  },
-  "1220": {
-    "inputs": {
-      "width": [
-        "1171",
-        1
-      ],
-      "height": [
-        "1171",
-        2
-      ],
-      "upscale_method": "nearest-exact",
-      "keep_proportion": "stretch",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 2,
-      "device": "cpu",
-      "image": [
-        "167",
-        0
-      ]
-    },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "1222": {
-    "inputs": {
-      "cond": [
-        "1224",
-        0
-      ],
-      "tt_value": [
-        "1218",
-        0
-      ],
-      "ff_value": [
-        "1220",
-        0
-      ]
-    },
-    "class_type": "ImpactConditionalBranch",
-    "_meta": {
-      "title": "Outpaint condition"
-    }
-  },
-  "1223": {
-    "inputs": {
-      "comparison": "a != b",
-      "a": [
-        "1216",
-        0
-      ],
-      "b": [
-        "1215",
-        0
-      ]
-    },
-    "class_type": "easy compare",
-    "_meta": {
-      "title": "Compare"
-    }
-  },
-  "1224": {
-    "inputs": {
-      "input1": [
-        "1223",
-        0
-      ],
-      "input2": [
-        "1225",
-        0
-      ]
-    },
-    "class_type": "LogicGateAnd",
-    "_meta": {
-      "title": "AAndBGate"
-    }
-  },
-  "1225": {
-    "inputs": {
-      "comparison": "a > b",
-      "a": [
-        "1177",
-        0
-      ],
-      "b": [
-        "1214",
-        0
-      ]
-    },
-    "class_type": "easy compare",
-    "_meta": {
-      "title": "Compare"
     }
   },
   "1231": {
@@ -1792,7 +1198,7 @@
     },
     "class_type": "SimpleMath+",
     "_meta": {
-      "title": "🔧 Simple Math"
+      "title": "\ud83d\udd27 Simple Math"
     }
   },
   "1236": {
@@ -1804,7 +1210,33 @@
     },
     "class_type": "VHS_GetImageCount",
     "_meta": {
-      "title": "Get Image Count 🎥🅥🅗🅢"
+      "title": "GENERATION PREVIEW"
+    }
+  },
+  "1237": {
+    "inputs": {
+      "width": [
+        "1171",
+        1
+      ],
+      "height": [
+        "1171",
+        2
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "stretch",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 2,
+      "device": "cpu",
+      "image": [
+        "167",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize to WAN dims"
     }
   }
 }

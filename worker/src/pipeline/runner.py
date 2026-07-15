@@ -103,6 +103,11 @@ def active_stages(manifest, params):
         else:
             if stage.get("feature") and not features.get(stage["feature"]):
                 continue
+            # 2026-07-14: outpaint stage runs only when its input file was
+            # uploaded (e.g. in_style_ref); no feature flag exists for it.
+            required = stage.get("requires_file")
+            if required and not (params.get("files") or {}).get(required):
+                continue
             file = stage["file"]
             if VIDIA_MODE == "local" and stage.get("local_file"):
                 file = stage["local_file"]
@@ -110,6 +115,7 @@ def active_stages(manifest, params):
             "name": stage["name"],
             "path": os.path.join(workflows_base, file),
             "final": stage.get("final", False),
+            "output_slot": stage.get("output_slot"),
         })
     return stages
 
@@ -204,6 +210,16 @@ def _apply_runtime_defaults(params):
     # SEGSDetailer still applies a minimal pass rather than skipping entirely.
     if params.get("detailer_denoise") == 0:
         params["detailer_denoise"] = 0.0001
+
+    # 2026-07-14: retuned workflow token contracts. WAN's quality knob is now
+    # `Int {steps}` (percent 1-100 through DataMonitor curves) and the outpaint
+    # module gates on {quality}; both derive from the frontend's forge_quality.
+    # SCAIL-2 renamed {body_quality} to {forge_quality}.
+    if params.get("forge_quality") is None and params.get("body_quality") is not None:
+        params["forge_quality"] = params["body_quality"]
+    if params.get("forge_quality") is not None:
+        params.setdefault("steps", params["forge_quality"])
+        params.setdefault("quality", params["forge_quality"])
 
 
 def _output_file_from_history(history, prompt_id, output_node):
@@ -572,7 +588,11 @@ def run_pipeline(generation_id, user_id, params, relay, progress, run_type="full
             done = state["completed"].get(name)
             if done is not None:
                 logger.info(f"[STAGE {index + 1}/{total}] {name} already complete, resuming past it")
-                prev_output = done.get("output") or prev_output
+                if stage.get("output_slot"):
+                    if done.get("output"):
+                        file_paths[stage["output_slot"]] = done["output"]
+                else:
+                    prev_output = done.get("output") or prev_output
                 for key, value in (done.get("params") or {}).items():
                     params[key] = value
                 continue
@@ -611,7 +631,12 @@ def run_pipeline(generation_id, user_id, params, relay, progress, run_type="full
                     raise PipelineError(f"Stage {name}: no output file found in history")
                 stage_record["output"] = output_file
                 if output_file:
-                    prev_output = output_file
+                    # 2026-07-14: a slot-output stage (outpaint) replaces an
+                    # input file (the style ref) instead of the video chain.
+                    if stage.get("output_slot"):
+                        file_paths[stage["output_slot"]] = output_file
+                    else:
+                        prev_output = output_file
                 logger.info(f"  [out] -> {output_file}")
 
             state["completed"][name] = stage_record

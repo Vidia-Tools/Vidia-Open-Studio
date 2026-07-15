@@ -220,6 +220,15 @@ def load_stage(workflow_path, stage_name, generation_id, params, file_paths,
             else:
                 info["params_unresolved"].append((node_id, key))
 
+    # 2026-07-14: a {param} tag may appear on nodes whose inputs are links
+    # (e.g. CLIPTextEncodeSDXL fed by a String Literal that carries the same
+    # tag). Injection lands on the widget node; drop duplicates that resolved
+    # elsewhere so only genuinely missing params are reported.
+    resolved_keys = {key for _, key in info["params_resolved"]}
+    info["params_unresolved"] = [
+        (node_id, key) for node_id, key in info["params_unresolved"]
+        if key not in resolved_keys]
+
     # Seed broadcast (prod parity): the resolved seed is injected into every
     # node with a seed/random_seed input, not only {seed}-tagged ones. The
     # runner resolves params["seed"] once (-1 -> random) before load_stage.

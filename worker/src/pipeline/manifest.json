@@ -2,6 +2,8 @@
   "stages": [
     { "name": "prompt_prep",  "file": "workflows/prompt_prep.json",  "feature": "promptEnhance", "passthrough_on_skip": true },
     { "name": "body_replace", "file": "workflows/body_replace.json", "feature": "fullBodyReplace" },
+    { "name": "outpaint",     "file": "workflows/outpaint.json",     "feature": null,
+                              "requires_file": "in_style_ref", "output_slot": "in_style_ref" },
     { "name": "generate",     "files": { "forge": "workflows/generate_wan.json",
                                          "evolve": "workflows/generate_animatediff.json",
                                          "trace": "workflows/generate_reversenoise.json",
