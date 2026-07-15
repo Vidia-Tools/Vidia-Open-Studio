@@ -254,7 +254,8 @@
       "fileType": "style",
       "strengthParam": "ipadapter_style_weight",
       "strengthModes": [
-        "evolve"
+        "evolve",
+        "trace"
       ],
       "range": [
         0,

@@ -265,7 +265,7 @@
     },
     "class_type": "IPAdapterStyleComposition",
     "_meta": {
-      "title": "IPAdapter Style & Composition SDXL"
+      "title": "IPAdapter Style & Composition SDXL {ipadapter_style_weight}"
     }
   },
   "167": {
