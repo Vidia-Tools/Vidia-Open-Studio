@@ -138,17 +138,22 @@ export default {
           if (!input) continue;
           savedToggleStates[p] = input.checked;
           input.checked = false;
-          input.disabled = true;
           store.setParam(p, false);
+          // Programmatic .checked changes do not fire 'change'; dependent
+          // visibility logic (e.g. hiding pose/depth/canny under control_guide)
+          // listens for it, so dispatch manually before disabling.
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          input.disabled = true;
         }
         logDebug('Control toggles forced off', savedToggleStates);
       } else if (!forced && savedToggleStates) {
         for (const p of FORCED_TOGGLES) {
           const input = document.getElementById(`ctl_${p}`);
           if (!input) continue;
-          input.checked = !!savedToggleStates[p];
           input.disabled = false;
+          input.checked = !!savedToggleStates[p];
           store.setParam(p, !!savedToggleStates[p]);
+          input.dispatchEvent(new Event('change', { bubbles: true }));
         }
         logDebug('Control toggles restored', savedToggleStates);
         savedToggleStates = null;
