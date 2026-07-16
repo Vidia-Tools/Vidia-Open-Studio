@@ -306,7 +306,7 @@
     },
     "class_type": "LTXICLoRALoaderModelOnly",
     "_meta": {
-      "title": "🅛🅣🅧 IC-LoRA Loader Model Only"
+      "title": "IC LoRA {ic_lora}"
     }
   },
   "20": {
@@ -967,7 +967,7 @@
       "lora_name": "ltxv/ltx2/ltx-2.3-foley-400-steps.safetensors",
       "strength_model": 1,
       "model": [
-        "16",
+        "179",
         0
       ]
     },
@@ -987,7 +987,7 @@
         0
       ],
       "ff_value": [
-        "16",
+        "179",
         0
       ]
     },
@@ -1266,6 +1266,20 @@
     "class_type": "ImpactConditionalBranch",
     "_meta": {
       "title": "NAG Select"
+    }
+  },
+  "179": {
+    "inputs": {
+      "lora_name": "ltx-2.3-22b-distilled-lora-384-1.1.safetensors",
+      "strength_model": 0,
+      "model": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "Style LoRA {style_lora} {lora_strength}"
     }
   }
 }

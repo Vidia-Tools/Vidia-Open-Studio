@@ -46,6 +46,14 @@ export function buildParams(generationId) {
 
   const params = { ...SCALAR_DEFAULTS, ...filtered, method, features, files };
 
+  // Envision VFX (vfx-gallery.js): the selected IC-LoRA's trigger phrase is a
+  // uiOnly param, prepended to the prompt client-side at request build time.
+  const vfxTrigger = controlValues.vfx_trigger;
+  if (vfxTrigger) {
+    params.prompt = `${vfxTrigger} ${params.prompt || ''}`.trim();
+    logDebug('Prepended VFX trigger to prompt', { vfxTrigger });
+  }
+
   logDebug('Built params payload', { generation_id, method,
     paramKeys: Object.keys(filtered), features, fileSlots: Object.keys(files),
     uiOnly: [...uiOnly] });

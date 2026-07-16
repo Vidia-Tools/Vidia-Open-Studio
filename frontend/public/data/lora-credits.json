@@ -1,0 +1,127 @@
+{
+  "_comment": "Credits manifest for the Envision (LTX-2.3 22B) LoRA galleries. Authors resolved from the Civitai API and HF repo metadata on 2026-07-16. Official Lightricks IC-LoRAs are authored by Lightricks. Licenses waived by owner; author attribution required.",
+  "section_a_style": [
+    {
+      "name": "Enhancer Crisp",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2535622",
+      "trigger": "none"
+    },
+    {
+      "name": "Enhancer Soft",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2535622",
+      "trigger": "none"
+    },
+    {
+      "name": "Fantasy Realism",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2540961",
+      "trigger": "none"
+    },
+    {
+      "name": "Pixar CGI Toon",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2536130",
+      "trigger": "none"
+    },
+    {
+      "name": "Cozy Felt",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2525862",
+      "trigger": "none"
+    },
+    {
+      "name": "Claymation",
+      "author": "vrgamedevgirl",
+      "source_url": "https://civitai.com/models/2526420",
+      "trigger": "none"
+    },
+    {
+      "name": "Retro 90s Anime v2.1",
+      "author": "tazmannner379",
+      "source_url": "https://civitai.com/models/2557755",
+      "trigger": "ANIMSTY"
+    },
+    {
+      "name": "Amateur Hour",
+      "author": "QualityControl",
+      "source_url": "https://civitai.com/models/2530917",
+      "trigger": "none"
+    },
+    {
+      "name": "Realism",
+      "author": "phool",
+      "source_url": "https://civitai.com/models/2552181",
+      "trigger": "realism"
+    },
+    {
+      "name": "Furry Enhancer Omni",
+      "author": "freek22",
+      "source_url": "https://civitai.com/models/1782485",
+      "trigger": "anthro"
+    },
+    {
+      "name": "Singularity OmniCine V1",
+      "author": "AIGC_Singularity",
+      "source_url": "https://civitai.com/models/2610733",
+      "trigger": "无字幕"
+    }
+  ],
+  "section_b_vfx": [
+    {
+      "name": "Water Simulation",
+      "author": "Lightricks",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Water-Simulation",
+      "trigger": "ADD WATER"
+    },
+    {
+      "name": "Day To Night",
+      "author": "Lightricks",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Day-To-Night",
+      "trigger": "TODO"
+    },
+    {
+      "name": "Instant Shave",
+      "author": "Lightricks",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Instant-Shave",
+      "trigger": "TODO"
+    },
+    {
+      "name": "Cross Eyed",
+      "author": "Lightricks",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Cross-Eyed",
+      "trigger": "TODO"
+    },
+    {
+      "name": "Colorization",
+      "author": "Lightricks",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Colorization",
+      "trigger": "COLORIZE"
+    },
+    {
+      "name": "Obscura Remova",
+      "author": "WepeNerd",
+      "source_url": "https://civitai.com/models/2590144",
+      "trigger": "Remove the object from the foreground."
+    },
+    {
+      "name": "EditAnything",
+      "author": "NRDX",
+      "source_url": "https://civitai.com/models/2553102",
+      "trigger": "Add/Remove/Replace/Convert templates"
+    },
+    {
+      "name": "Cameraman v2",
+      "author": "Cseti",
+      "source_url": "https://civitai.com/models/2525197",
+      "trigger": "none confirmed"
+    },
+    {
+      "name": "CrossView v1",
+      "author": "Cseti",
+      "source_url": "https://huggingface.co/Cseti/LTX2.3-22B_IC-LoRA-CrossView-Prompt",
+      "trigger": "crossview. new camera angle: <direction>, <height>, <distance>"
+    }
+  ]
+}

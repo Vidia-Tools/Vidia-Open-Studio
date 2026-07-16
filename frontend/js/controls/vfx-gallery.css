@@ -1,0 +1,16 @@
+/* vfx-gallery chrome. All gallery visuals reuse the parity-locked style.css
+   classes (.lora-gallery-button, .lora-gallery-drawer, .lora-option,
+   .lora-selected-slot). Only the EditAnything instruction row is added here;
+   its select/input reuse .advanced-select and .os-text-input. */
+
+.os-vfx-edit {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.os-vfx-edit .os-vfx-edit-text {
+  flex: 1;
+  min-width: 0;
+}

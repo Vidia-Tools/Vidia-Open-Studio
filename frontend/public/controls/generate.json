@@ -340,9 +340,19 @@
         "forge",
         "evolve",
         "trace",
-        "inspire"
+        "inspire",
+        "envision"
       ],
       "hint": "Choose a card to apply special effects. Adjust strength to control the intensity."
+    },
+    {
+      "type": "vfx-gallery",
+      "param": "ic_lora",
+      "label": "VFX",
+      "modes": [
+        "envision"
+      ],
+      "hint": "Choose a VFX adapter to apply a special effect transformation. While a VFX adapter is selected, Pose/Depth/Edge control toggles are disabled."
     },
     {
       "type": "toggle",

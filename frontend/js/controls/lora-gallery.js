@@ -59,6 +59,25 @@ const forgeReconstructLoraOptions = [
   { fileName: 'WAN_Invisibility.safetensors', displayName: 'Invisibility', image: 'https://imagedelivery.net/LpDR7JO2m28imzB37PYhCw/80b98c62-37cd-4deb-77ee-7bd72a10d600/public', keywords: 'H-yinshen-v1' },
 ];
 
+// Envision (LTX-2.3 22B) Section A style loras. File names match the worker's
+// models/loras/ inventory (worker/dependencies.json); authors + triggers from
+// public/data/lora-credits.json. No preview art hosted yet: all cards use the
+// civitai placeholder image (same placeholder credits-page.html already uses).
+const PLACEHOLDER_IMAGE = 'https://image.civitai.com/placeholder';
+const envisionStyleLoraOptions = [
+  { fileName: 'LTX2.3_Crisp_Enhance.safetensors', displayName: 'Enhancer Crisp', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'LTX2.3_Soft_Enhance.safetensors', displayName: 'Enhancer Soft', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'Fantasy_Realism.safetensors', displayName: 'Fantasy Realism', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'Pixar_Toon.safetensors', displayName: 'Pixar CGI Toon', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'CozyFelt.safetensors', displayName: 'Cozy Felt', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'Claymation.safetensors', displayName: 'Claymation', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'anime90s-step00053000.comfy.safetensors', displayName: 'Retro 90s Anime v2.1', image: PLACEHOLDER_IMAGE, keywords: 'ANIMSTY', hint: 'Retro 90s Anime v2.1 - trigger ANIMSTY. Optional SHW_* shot codes can be added to the prompt manually for specific shot styles.' },
+  { fileName: 'AmateurHour_01_rank16.safetensors', displayName: 'Amateur Hour', image: PLACEHOLDER_IMAGE, keywords: '' },
+  { fileName: 'phool-realism-ltx-2.3-v1.0.safetensors', displayName: 'Realism', image: PLACEHOLDER_IMAGE, keywords: 'realism' },
+  { fileName: 'FurryenhancerLTX2.3V4.094fused.safetensors', displayName: 'Furry Enhancer Omni', image: PLACEHOLDER_IMAGE, keywords: 'anthro' },
+  { fileName: 'Singularity-LTX-2.3_OmniCine_V1.safetensors', displayName: 'Singularity OmniCine V1', image: PLACEHOLDER_IMAGE, keywords: '\u65E0\u5B57\u5E55' },
+];
+
 /**
  * Resolve the active catalog + worker lora_name param for the current method.
  * @returns {{options: Array, nameParam: (string|null)}}
@@ -67,6 +86,7 @@ function currentConfig() {
   const method = store.getMethod();
   if (method === 'inspire') return { options: forgeInspireLoraOptions, nameParam: null };
   if (method === 'forge') return { options: forgeReconstructLoraOptions, nameParam: 'effects_lora' };
+  if (method === 'envision') return { options: envisionStyleLoraOptions, nameParam: 'style_lora' };
   return { options: loraOptions, nameParam: 'style_lora' };
 }
 
@@ -213,12 +233,13 @@ function populate(content, onSelect) {
 /**
  * Build a lora card matching prod's .lora-option markup, with the 3D hover
  * effect (style.css reads --rotateX/--rotateY) and optional deselect button.
+ * Exported for reuse by the Envision VFX gallery (vfx-gallery.js).
  * @param {object} lora - Catalog entry.
  * @param {boolean} selected - Whether this is the selected-slot card.
  * @param {Function} onClick - Click (select) or deselect handler.
  * @returns {HTMLElement}
  */
-function card(lora, selected, onClick) {
+export function card(lora, selected, onClick) {
   const el = document.createElement('div');
   el.className = selected ? 'lora-option selected' : 'lora-option';
   el.setAttribute('data-filename', lora.fileName);
@@ -227,7 +248,7 @@ function card(lora, selected, onClick) {
       <div class="lora-cassette"><div class="image-container">
         <img src="${lora.image}" alt="${lora.displayName}" class="lora-preview">
       </div></div>
-      <p title="${lora.displayName}">${lora.displayName}</p>
+      <p title="${lora.hint || lora.displayName}">${lora.displayName}</p>
     </div>`;
   const content = el.querySelector('.card-content');
   el.addEventListener('mousemove', (e) => {

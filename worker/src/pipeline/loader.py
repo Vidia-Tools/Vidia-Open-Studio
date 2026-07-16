@@ -48,6 +48,7 @@ PARAM_INPUT_CANDIDATES = {
     "speed_lora": ["lora_name", "lora"],
     "style_lora": ["lora_name", "lora"],
     "effects_lora": ["lora_name", "lora"],
+    "ic_lora": ["lora_name", "lora"],
     "pusa_lora_low": ["lora_name", "lora"],
     "pusa_lora_high": ["lora_name", "lora"],
     "lora_strength": ["strength", "strength_model"],
