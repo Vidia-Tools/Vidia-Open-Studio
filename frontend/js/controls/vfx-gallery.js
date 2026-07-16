@@ -39,8 +39,10 @@ const vfxLoraOptions = [
   { fileName: 'LTX2.3-22B_IC-LoRA-CrossView-Prompt_v0.9_13700.safetensors', displayName: 'CrossView v1', image: PLACEHOLDER_IMAGE, trigger: 'crossview. new camera angle: <direction>, <height>, <distance>' },
 ];
 
-// Control-signal toggles the IC VFX adapters replace while selected.
-const FORCED_TOGGLES = ['use_pose', 'use_depth', 'use_canny'];
+// Control-signal toggles the IC VFX adapters replace while selected. Includes
+// the master control_guide toggle: IC-LoRAs must not mix with the union
+// control adapter (one IC-LoRA at a time, per AVControl training).
+const FORCED_TOGGLES = ['control_guide', 'use_pose', 'use_depth', 'use_canny'];
 
 const EDIT_TEMPLATES = ['Add', 'Remove', 'Replace', 'Convert'];
 
