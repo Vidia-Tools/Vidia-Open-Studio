@@ -25,16 +25,17 @@ const PLACEHOLDER_IMAGE = 'https://image.civitai.com/placeholder';
 
 // Catalog from public/data/lora-credits.json section_b_vfx + the worker's
 // dependencies.json file paths. Empty trigger = none confirmed / TODO (gated
-// HF repos: Day To Night, Instant Shave, Cross Eyed).
+// HF repos: Day To Night, Instant Shave, Cross Eyed). Lightricks officials +
+// CrossView keep the placeholder image (no Civitai gallery; HF repos gated).
 const vfxLoraOptions = [
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors', displayName: 'Water Simulation', image: PLACEHOLDER_IMAGE, trigger: 'ADD WATER' },
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors', displayName: 'Day To Night', image: PLACEHOLDER_IMAGE, trigger: '' },
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors', displayName: 'Instant Shave', image: PLACEHOLDER_IMAGE, trigger: '' },
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-cross-eyed-0.9.safetensors', displayName: 'Cross Eyed', image: PLACEHOLDER_IMAGE, trigger: '' },
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-colorization-0.9.safetensors', displayName: 'Colorization', image: PLACEHOLDER_IMAGE, trigger: 'COLORIZE' },
-  { fileName: 'LTX23_Obscura_Remova_v1.safetensors', displayName: 'Obscura Remova', image: PLACEHOLDER_IMAGE, trigger: 'Remove the object from the foreground.' },
-  { fileName: 'ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors', displayName: 'EditAnything', image: PLACEHOLDER_IMAGE, trigger: '', editInstruction: true },
-  { fileName: 'LTX2.3-22B_IC-LoRA-Cameraman_v2_14000.safetensors', displayName: 'Cameraman v2', image: PLACEHOLDER_IMAGE, trigger: '' },
+  { fileName: 'LTX23_Obscura_Remova_v1.safetensors', displayName: 'Obscura Remova', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c3b559d0-0ef5-4285-bfa1-c72a895d375b/anim=false,transcode=true,width=450/129260005.jpeg', trigger: 'Remove the object from the foreground.' },
+  { fileName: 'ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors', displayName: 'EditAnything', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e17830bc-adaa-454c-b9bb-105574937659/anim=false,transcode=true,width=450/127899287.jpeg', trigger: '', editInstruction: true },
+  { fileName: 'LTX2.3-22B_IC-LoRA-Cameraman_v2_14000.safetensors', displayName: 'Cameraman v2', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/dffefa1b-a80a-469f-badc-32edbcdb1b32/anim=false,transcode=true,width=450/134815682.jpeg', trigger: '' },
   { fileName: 'LTX2.3-22B_IC-LoRA-CrossView-Prompt_v0.9_13700.safetensors', displayName: 'CrossView v1', image: PLACEHOLDER_IMAGE, trigger: 'crossview. new camera angle: <direction>, <height>, <distance>' },
 ];
 

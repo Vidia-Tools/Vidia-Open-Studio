@@ -61,21 +61,20 @@ const forgeReconstructLoraOptions = [
 
 // Envision (LTX-2.3 22B) Section A style loras. File names match the worker's
 // models/loras/ inventory (worker/dependencies.json); authors + triggers from
-// public/data/lora-credits.json. No preview art hosted yet: all cards use the
-// civitai placeholder image (same placeholder credits-page.html already uses).
-const PLACEHOLDER_IMAGE = 'https://image.civitai.com/placeholder';
+// public/data/lora-credits.json. Preview art: Civitai still-frame transforms
+// (anim=false) of each model's gallery media, verified 200 image/*.
 const envisionStyleLoraOptions = [
-  { fileName: 'LTX2.3_Crisp_Enhance.safetensors', displayName: 'Enhancer Crisp', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'LTX2.3_Soft_Enhance.safetensors', displayName: 'Enhancer Soft', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'Fantasy_Realism.safetensors', displayName: 'Fantasy Realism', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'Pixar_Toon.safetensors', displayName: 'Pixar CGI Toon', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'CozyFelt.safetensors', displayName: 'Cozy Felt', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'Claymation.safetensors', displayName: 'Claymation', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'anime90s-step00053000.comfy.safetensors', displayName: 'Retro 90s Anime v2.1', image: PLACEHOLDER_IMAGE, keywords: 'ANIMSTY', hint: 'Retro 90s Anime v2.1 - trigger ANIMSTY. Optional SHW_* shot codes can be added to the prompt manually for specific shot styles.' },
-  { fileName: 'AmateurHour_01_rank16.safetensors', displayName: 'Amateur Hour', image: PLACEHOLDER_IMAGE, keywords: '' },
-  { fileName: 'phool-realism-ltx-2.3-v1.0.safetensors', displayName: 'Realism', image: PLACEHOLDER_IMAGE, keywords: 'realism' },
-  { fileName: 'FurryenhancerLTX2.3V4.094fused.safetensors', displayName: 'Furry Enhancer Omni', image: PLACEHOLDER_IMAGE, keywords: 'anthro' },
-  { fileName: 'Singularity-LTX-2.3_OmniCine_V1.safetensors', displayName: 'Singularity OmniCine V1', image: PLACEHOLDER_IMAGE, keywords: '\u65E0\u5B57\u5E55' },
+  { fileName: 'LTX2.3_Crisp_Enhance.safetensors', displayName: 'Enhancer Crisp', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2e50610f-07b7-4d68-9582-c1f6a4872c3f/anim=false,transcode=true,width=450/127146275.jpeg', keywords: '' },
+  { fileName: 'LTX2.3_Soft_Enhance.safetensors', displayName: 'Enhancer Soft', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/2e50610f-07b7-4d68-9582-c1f6a4872c3f/anim=false,transcode=true,width=450/127146275.jpeg', keywords: '' },
+  { fileName: 'Fantasy_Realism.safetensors', displayName: 'Fantasy Realism', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/79f356c6-ab6f-4326-9dd0-924d1c5ca3f7/anim=false,transcode=true,width=450/127369512.jpeg', keywords: '' },
+  { fileName: 'Pixar_Toon.safetensors', displayName: 'Pixar CGI Toon', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/acb4cb20-b125-41e7-90b1-69cfe9bca6e7/anim=false,transcode=true,width=450/127171192.jpeg', keywords: '' },
+  { fileName: 'CozyFelt.safetensors', displayName: 'Cozy Felt', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/382bb25c-8dc4-4f0e-bdea-2b6b86e14a4a/anim=false,transcode=true,width=450/126720191.jpeg', keywords: '' },
+  { fileName: 'Claymation.safetensors', displayName: 'Claymation', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7467afbc-8098-4ea6-886a-b080c2c664ab/anim=false,transcode=true,width=450/126743666.jpeg', keywords: '' },
+  { fileName: 'anime90s-step00053000.comfy.safetensors', displayName: 'Retro 90s Anime v2.1', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/7fc99451-ae68-46f5-b81d-773c1d43d68e/anim=false,transcode=true,width=450/128825720.jpeg', keywords: 'ANIMSTY', hint: 'Retro 90s Anime v2.1 - trigger ANIMSTY. Optional SHW_* shot codes can be added to the prompt manually for specific shot styles.' },
+  { fileName: 'AmateurHour_01_rank16.safetensors', displayName: 'Amateur Hour', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/93f694bc-275d-4c20-a1d2-e80d09f10d3c/anim=false,transcode=true,width=450/126944102.jpeg', keywords: '' },
+  { fileName: 'phool-realism-ltx-2.3-v1.0.safetensors', displayName: 'Realism', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e1717de1-429a-4783-9c24-392ae990046f/anim=false,transcode=true,width=450/127834442.jpeg', keywords: 'realism' },
+  { fileName: 'FurryenhancerLTX2.3V4.094fused.safetensors', displayName: 'Furry Enhancer Omni', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c2089427-93a5-43e5-88d2-8ba172d34eeb/width=450/90427926.jpeg', keywords: 'anthro' },
+  { fileName: 'Singularity-LTX-2.3_OmniCine_V1.safetensors', displayName: 'Singularity OmniCine V1', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6d301715-b179-4188-914e-97768c9e9f95/width=450/130182883.jpeg', keywords: '\u65E0\u5B57\u5E55' },
 ];
 
 /**
