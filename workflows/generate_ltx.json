@@ -88,7 +88,7 @@
     },
     "class_type": "LTXVImgToVideoConditionOnly",
     "_meta": {
-      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Img To Video Condition Only"
+      "title": "🅛🅣🅧 LTXV Img To Video Condition Only"
     }
   },
   "6": {
@@ -153,7 +153,7 @@
         0
       ],
       "model": [
-        "19",
+        "178",
         0
       ],
       "positive": [
@@ -246,7 +246,7 @@
   },
   "16": {
     "inputs": {
-      "lora_name": "ltx-2.3-22b-distilled-lora-384.safetensors",
+      "lora_name": "ltx-2.3-22b-distilled-lora-384-1.1.safetensors",
       "strength_model": [
         "118",
         0
@@ -306,7 +306,7 @@
     },
     "class_type": "LTXICLoRALoaderModelOnly",
     "_meta": {
-      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 IC-LoRA Loader Model Only"
+      "title": "🅛🅣🅧 IC-LoRA Loader Model Only"
     }
   },
   "20": {
@@ -324,6 +324,7 @@
       "use_tiled_encode": false,
       "tile_size": 256,
       "tile_overlap": 64,
+      "attention_strength": 0.7,
       "positive": [
         "1",
         0
@@ -345,9 +346,9 @@
         0
       ]
     },
-    "class_type": "LTXAddVideoICLoRAGuide",
+    "class_type": "LTXAddVideoICLoRAGuideAdvanced",
     "_meta": {
-      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide"
+      "title": "🅛🅣🅧 Add Video IC-LoRA Guide Advanced"
     }
   },
   "21": {
@@ -454,7 +455,7 @@
     },
     "class_type": "SimpleMath+",
     "_meta": {
-      "title": "\ud83d\udd27 Simple Math"
+      "title": "🔧 Simple Math"
     }
   },
   "29": {
@@ -532,7 +533,7 @@
     },
     "class_type": "LTXVTiledVAEDecode",
     "_meta": {
-      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Tiled VAE Decode"
+      "title": "🅛🅣🅧 LTXV Tiled VAE Decode"
     }
   },
   "34": {
@@ -544,7 +545,7 @@
     },
     "class_type": "LTXFloatToInt",
     "_meta": {
-      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Float To Int"
+      "title": "🅛🅣🅧 Float To Int"
     }
   },
   "35": {
@@ -584,7 +585,7 @@
     },
     "class_type": "VHS_VideoInfo",
     "_meta": {
-      "title": "Video Info \ud83c\udfa5\ud83c\udd65\ud83c\udd57\ud83c\udd62"
+      "title": "Video Info 🎥🅥🅗🅢"
     }
   },
   "43": {
@@ -660,6 +661,35 @@
     "class_type": "easy cleanGpuUsed",
     "_meta": {
       "title": "Clean VRAM Used"
+    }
+  },
+  "94": {
+    "inputs": {
+      "frame_rate": [
+        "39",
+        0
+      ],
+      "loop_count": 0,
+      "filename_prefix": "Envision",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "33",
+        0
+      ],
+      "audio": [
+        "90",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "ENVISION PREVIEW [out]"
     }
   },
   "96": {
@@ -1198,29 +1228,44 @@
       "title": "Anchor Gate"
     }
   },
-  "175": {
+  "176": {
     "inputs": {
-      "frame_rate": [
-        "39",
+      "nag_scale": 11,
+      "nag_alpha": 0.25,
+      "nag_tau": 2.5,
+      "inplace": true,
+      "model": [
+        "19",
         0
       ],
-      "loop_count": 0,
-      "filename_prefix": "AnimateDiff",
-      "format": "image/gif",
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "33",
-        0
-      ],
-      "audio": [
-        "90",
+      "nag_cond_video": [
+        "135",
         0
       ]
     },
-    "class_type": "VHS_VideoCombine",
+    "class_type": "LTX2_NAG",
     "_meta": {
-      "title": "ENVISION PREVIEW [out]"
+      "title": "LTX2 NAG"
+    }
+  },
+  "178": {
+    "inputs": {
+      "cond": [
+        "127",
+        0
+      ],
+      "tt_value": [
+        "19",
+        0
+      ],
+      "ff_value": [
+        "176",
+        0
+      ]
+    },
+    "class_type": "ImpactConditionalBranch",
+    "_meta": {
+      "title": "NAG Select"
     }
   }
 }
