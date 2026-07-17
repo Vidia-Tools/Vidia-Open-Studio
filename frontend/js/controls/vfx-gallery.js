@@ -35,9 +35,9 @@ const PLACEHOLDER_IMAGE = 'https://image.civitai.com/placeholder';
 // Unsplash stock images are hotlinked instead (codebase hosts no images).
 const vfxLoraOptions = [
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors', displayName: 'Water Simulation', image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=450&q=70&fm=jpg', trigger: 'ADD WATER' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors', displayName: 'Day To Night', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=450&q=70&fm=jpg', trigger: '' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors', displayName: 'Instant Shave', image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=450&q=70&fm=jpg', trigger: '' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-cross-eyed-0.9.safetensors', displayName: 'Cross Eyed', image: 'https://images.unsplash.com/photo-1494869042583-f6c911f04b4c?w=450&q=70&fm=jpg', trigger: '' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors', displayName: 'Day To Night', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=450&q=70&fm=jpg', trigger: 'A realistic nighttime scene. Only the lighting changes from day to night; identical composition, framing, camera movement and motion.' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors', displayName: 'Instant Shave', image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=450&q=70&fm=jpg', trigger: 'REMOVEBEARD, completely smooth and clean-shaven, bare skin, no beard, no stubble, no facial hair.' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-cross-eyed-0.9.safetensors', displayName: 'Cross Eyed', image: 'https://images.unsplash.com/photo-1494869042583-f6c911f04b4c?w=450&q=70&fm=jpg', trigger: 'Permanent severe convergent strabismus: both eyes are continuously turned inward toward the nose throughout the shot, natural facial expression, head movement, lighting and framing preserved.' },
   { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-colorization-0.9.safetensors', displayName: 'Colorization', image: 'https://images.unsplash.com/photo-1502691876148-a84978e59af8?w=450&q=70&fm=jpg', trigger: 'COLORIZE' },
   {
     fileName: 'LTX23_Obscura_Remova_v1.safetensors',
