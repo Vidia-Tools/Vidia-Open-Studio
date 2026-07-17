@@ -17,7 +17,7 @@
 import './vfx-gallery.css';
 import { createLogger } from '../utils/logger.js';
 import * as store from '../core/generation-store.js';
-import { card } from './lora-gallery.js';
+import { card, animateToSlot } from './lora-gallery.js';
 import { applyDisabledState } from '../ui/ui-style-constants.js';
 
 const logDebug = createLogger('VfxGallery');
@@ -226,9 +226,11 @@ export default {
     /**
      * Select a VFX adapter: single selection, sets ic_lora + vfx_trigger,
      * forces the control toggles off, renders the adapter's instruction row.
+     * Animates the clicked card flying into the selected slot.
      * @param {string} file - Adapter file path.
+     * @param {HTMLElement} [el] - The clicked gallery card (for the animation).
      */
-    function select(file) {
+    function select(file, el) {
       const lora = vfxLoraOptions.find(l => l.fileName === file);
       if (!lora) return;
       selectedFile = file;
@@ -237,9 +239,16 @@ export default {
       setControlToggles(true);
       renderInputs(lora);
       syncTrigger();
-      selectedSlot.innerHTML = '';
-      selectedSlot.appendChild(card(lora, true, deselect));
-      drawer.classList.remove('open');
+      const finalize = () => {
+        selectedSlot.innerHTML = '';
+        selectedSlot.appendChild(card(lora, true, deselect));
+        drawer.classList.remove('open');
+      };
+      if (el) {
+        animateToSlot(el, selectedSlot, finalize);
+      } else {
+        finalize();
+      }
       logDebug('VFX adapter selected', { file, trigger: lora.trigger });
     }
 
@@ -287,13 +296,14 @@ function ensureDrawer() {
 /**
  * Populate the VFX gallery grid, skipping the selected adapter.
  * @param {HTMLElement} content - The .lora-gallery-content container.
- * @param {Function) onSelect - (fileName) selection callback.
+ * @param {Function} onSelect - (fileName, cardEl) selection callback.
  * @returns {void}
  */
 function populate(content, onSelect) {
   content.innerHTML = '';
   for (const lora of vfxLoraOptions) {
     if (lora.fileName === selectedFile) continue;
-    content.appendChild(card(lora, false, () => onSelect(lora.fileName)));
+    const el = card(lora, false, () => onSelect(lora.fileName, el));
+    content.appendChild(el);
   }
 }

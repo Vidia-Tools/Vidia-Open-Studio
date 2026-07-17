@@ -20,6 +20,7 @@
 import './lora-gallery.css';
 import { createLogger } from '../utils/logger.js';
 import * as store from '../core/generation-store.js';
+import { applyStyles, DESELECT_BUTTON_STYLES, CONTAINER_WITH_BUTTON_STYLES } from '../ui/ui-style-constants.js';
 
 const logDebug = createLogger('LoraGallery');
 
@@ -130,7 +131,7 @@ export default {
       e.stopPropagation();
       const opening = !drawer.classList.contains('open');
       drawer.classList.toggle('open');
-      if (opening) populate(galleryContent, (file, name) => select(file, name));
+      if (opening) populate(galleryContent, (file, name, el) => select(file, name, el));
     });
 
     document.addEventListener('click', (event) => {
@@ -148,10 +149,13 @@ export default {
 
     /**
      * Select a lora: update slot UI, slider, button, and worker params.
+     * Animates the clicked gallery card flying into the selected slot
+     * (prod animateLoraSelection) before finalizing the slot render.
      * @param {string} file - Lora file name.
      * @param {string} name - Display name.
+     * @param {HTMLElement} [el] - The clicked gallery card (for the animation).
      */
-    function select(file, name) {
+    function select(file, name, el) {
       const cfg = currentConfig();
       const lora = cfg.options.find(l => l.fileName === file);
       if (!lora) return;
@@ -167,9 +171,16 @@ export default {
       store.setParam('lora_keywords', lora.keywords || '');
       if (cfg.nameParam) store.setParam(cfg.nameParam, file);
 
-      selectedSlot.innerHTML = '';
-      selectedSlot.appendChild(card(lora, true, () => deselect()));
-      drawer.classList.remove('open');
+      const finalize = () => {
+        selectedSlot.innerHTML = '';
+        selectedSlot.appendChild(card(lora, true, () => deselect()));
+        drawer.classList.remove('open');
+      };
+      if (el) {
+        animateToSlot(el, selectedSlot, finalize);
+      } else {
+        finalize();
+      }
       logDebug('LoRA selected', { file, strength, nameParam: cfg.nameParam });
     }
 
@@ -218,15 +229,36 @@ function ensureDrawer() {
 /**
  * Populate the gallery grid with the current mode's catalog.
  * @param {HTMLElement} content - The .lora-gallery-content container.
- * @param {Function} onSelect - (fileName, displayName) selection callback.
+ * @param {Function} onSelect - (fileName, displayName, cardEl) selection callback.
  * @returns {void}
  */
 function populate(content, onSelect) {
   content.innerHTML = '';
   for (const lora of currentConfig().options) {
     if (lora.fileName === selectedFile) continue;
-    content.appendChild(card(lora, false, () => onSelect(lora.fileName, lora.displayName)));
+    const el = card(lora, false, () => onSelect(lora.fileName, lora.displayName, el));
+    content.appendChild(el);
   }
+}
+
+/**
+ * Animate a gallery card flying into the selected slot (prod
+ * animateLoraSelection), then run the finalize render after the transition.
+ * Exported for reuse by the Envision VFX gallery.
+ * @param {HTMLElement} el - The clicked gallery card.
+ * @param {HTMLElement} slot - The .lora-selected-slot target.
+ * @param {Function} finalize - Called after the 0.5s transition.
+ * @returns {void}
+ */
+export function animateToSlot(el, slot, finalize) {
+  const rect = el.getBoundingClientRect();
+  const slotRect = slot.getBoundingClientRect();
+  const translateX = slotRect.left - rect.left + (slotRect.width - rect.width) / 2;
+  const translateY = slotRect.top - rect.top + (slotRect.height - rect.height) / 2;
+  el.style.zIndex = '10';
+  el.style.transition = 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+  el.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  setTimeout(finalize, 500);
 }
 
 /**
@@ -261,6 +293,10 @@ export function card(lora, selected, onClick) {
     const btn = document.createElement('div');
     btn.className = 'deselect-button';
     btn.textContent = '\u00D7';
+    // Prod applies these inline (lora-ui.js addDeselectButton): without them
+    // the button has no positioning/z-index and is unclickable.
+    applyStyles(btn, DESELECT_BUTTON_STYLES);
+    applyStyles(el, CONTAINER_WITH_BUTTON_STYLES);
     btn.style.display = 'block';
     el.appendChild(btn);
     btn.addEventListener('click', (e) => { e.stopPropagation(); onClick(); });
