@@ -18,6 +18,7 @@ import './vfx-gallery.css';
 import { createLogger } from '../utils/logger.js';
 import * as store from '../core/generation-store.js';
 import { card } from './lora-gallery.js';
+import { applyDisabledState } from '../ui/ui-style-constants.js';
 
 const logDebug = createLogger('VfxGallery');
 
@@ -45,6 +46,8 @@ const vfxLoraOptions = [
 const FORCED_TOGGLES = ['control_guide', 'use_pose', 'use_depth', 'use_canny'];
 
 const EDIT_TEMPLATES = ['Add', 'Remove', 'Replace', 'Convert'];
+
+const FORCED_REASON = 'Unavailable while a VFX adapter is selected: VFX IC-LoRAs replace the control guidance signals.';
 
 let selectedFile = null;
 // Checkbox states saved when an adapter forces the control toggles off,
@@ -126,8 +129,9 @@ export default {
     editText.addEventListener('input', syncTrigger);
 
     /**
-     * Force the use_pose/use_depth/use_canny toggles off and disable them
-     * (saving their prior states), or restore/enable them.
+     * Force the control-guidance toggles off, grey them out and make them
+     * unclickable with a reason tooltip (established applyDisabledState
+     * pattern, same as the preview button), or restore them.
      * @param {boolean} forced - True while a VFX adapter is selected.
      */
     function setControlToggles(forced) {
@@ -144,12 +148,16 @@ export default {
           // listens for it, so dispatch manually before disabling.
           input.dispatchEvent(new Event('change', { bubbles: true }));
           input.disabled = true;
+          const wrap = input.closest('.advanced-setting');
+          if (wrap) applyDisabledState(wrap, true, FORCED_REASON);
         }
         logDebug('Control toggles forced off', savedToggleStates);
       } else if (!forced && savedToggleStates) {
         for (const p of FORCED_TOGGLES) {
           const input = document.getElementById(`ctl_${p}`);
           if (!input) continue;
+          const wrap = input.closest('.advanced-setting');
+          if (wrap) applyDisabledState(wrap, false, '');
           input.disabled = false;
           input.checked = !!savedToggleStates[p];
           store.setParam(p, !!savedToggleStates[p]);
