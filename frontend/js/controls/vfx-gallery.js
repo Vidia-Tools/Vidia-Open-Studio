@@ -10,8 +10,8 @@
 // While an adapter is selected the use_pose/use_depth/use_canny toggles are
 // forced off and disabled (IC VFX adapters replace the control signals);
 // they are restored on deselect. Exactly one adapter selectable at a time.
-// EditAnything additionally shows a template select + free-text instruction
-// that joins the prompt prepend.
+// Instruction-driven adapters (EditAnything, Obscura Remova, CrossView)
+// declare custom inputs + a buildTrigger() that composes the prompt prepend.
 // =============================================================================
 
 import './vfx-gallery.css';
@@ -26,26 +26,57 @@ const PLACEHOLDER_IMAGE = 'https://image.civitai.com/placeholder';
 
 // Catalog from public/data/lora-credits.json section_b_vfx + the worker's
 // dependencies.json file paths. Empty trigger = none confirmed / TODO (gated
-// HF repos: Day To Night, Instant Shave, Cross Eyed). Lightricks officials +
-// CrossView keep the placeholder image (no Civitai gallery; HF repos gated).
+// HF repos: Day To Night, Instant Shave, Cross Eyed). Instruction-driven
+// adapters carry `inputs` (rendered in the row under the gallery button) and
+// `buildTrigger(values)` composing the prompt prepend from those inputs.
+// Officials + CrossView have no Civitai gallery (gated HF repos): thematic
+// Unsplash stock images are hotlinked instead (codebase hosts no images).
 const vfxLoraOptions = [
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors', displayName: 'Water Simulation', image: PLACEHOLDER_IMAGE, trigger: 'ADD WATER' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors', displayName: 'Day To Night', image: PLACEHOLDER_IMAGE, trigger: '' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors', displayName: 'Instant Shave', image: PLACEHOLDER_IMAGE, trigger: '' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-cross-eyed-0.9.safetensors', displayName: 'Cross Eyed', image: PLACEHOLDER_IMAGE, trigger: '' },
-  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-colorization-0.9.safetensors', displayName: 'Colorization', image: PLACEHOLDER_IMAGE, trigger: 'COLORIZE' },
-  { fileName: 'LTX23_Obscura_Remova_v1.safetensors', displayName: 'Obscura Remova', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c3b559d0-0ef5-4285-bfa1-c72a895d375b/anim=false,transcode=true,width=450/129260005.jpeg', trigger: 'Remove the object from the foreground.' },
-  { fileName: 'ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors', displayName: 'EditAnything', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e17830bc-adaa-454c-b9bb-105574937659/anim=false,transcode=true,width=450/127899287.jpeg', trigger: '', editInstruction: true },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors', displayName: 'Water Simulation', image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=450&q=70&fm=jpg', trigger: 'ADD WATER' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors', displayName: 'Day To Night', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=450&q=70&fm=jpg', trigger: '' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors', displayName: 'Instant Shave', image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=450&q=70&fm=jpg', trigger: '' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-cross-eyed-0.9.safetensors', displayName: 'Cross Eyed', image: 'https://images.unsplash.com/photo-1494869042583-f6c911f04b4c?w=450&q=70&fm=jpg', trigger: '' },
+  { fileName: 'ltxv/ltx2/ltx-2.3-22b-ic-lora-colorization-0.9.safetensors', displayName: 'Colorization', image: 'https://images.unsplash.com/photo-1502691876148-a84978e59af8?w=450&q=70&fm=jpg', trigger: 'COLORIZE' },
+  {
+    fileName: 'LTX23_Obscura_Remova_v1.safetensors',
+    displayName: 'Obscura Remova',
+    image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c3b559d0-0ef5-4285-bfa1-c72a895d375b/anim=false,transcode=true,width=450/129260005.jpeg',
+    trigger: 'Remove the object from the foreground.',
+    inputs: [
+      { name: 'object', kind: 'text', placeholder: 'Object to remove (e.g. the lamppost)' },
+    ],
+    buildTrigger: (v) => v.object ? `Remove ${v.object} from the video.` : 'Remove the object from the foreground.',
+  },
+  {
+    fileName: 'ltx23_edit_anything_global_rank128_v1_9000steps_adamw.safetensors',
+    displayName: 'EditAnything',
+    image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e17830bc-adaa-454c-b9bb-105574937659/anim=false,transcode=true,width=450/127899287.jpeg',
+    trigger: '',
+    inputs: [
+      { name: 'template', kind: 'select', options: ['Add', 'Remove', 'Replace', 'Convert'] },
+      { name: 'text', kind: 'text', placeholder: 'Edit instruction (e.g. a red hat on the man)' },
+    ],
+    buildTrigger: (v) => v.text ? `${v.template} ${v.text}` : '',
+  },
   { fileName: 'LTX2.3-22B_IC-LoRA-Cameraman_v2_14000.safetensors', displayName: 'Cameraman v2', image: 'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/dffefa1b-a80a-469f-badc-32edbcdb1b32/anim=false,transcode=true,width=450/134815682.jpeg', trigger: '' },
-  { fileName: 'LTX2.3-22B_IC-LoRA-CrossView-Prompt_v0.9_13700.safetensors', displayName: 'CrossView v1', image: PLACEHOLDER_IMAGE, trigger: 'crossview. new camera angle: <direction>, <height>, <distance>' },
+  {
+    fileName: 'LTX2.3-22B_IC-LoRA-CrossView-Prompt_v0.9_13700.safetensors',
+    displayName: 'CrossView v1',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=450&q=70&fm=jpg',
+    trigger: '',
+    inputs: [
+      { name: 'direction', kind: 'select', options: ['front', 'back', 'left side', 'right side', 'three-quarter left', 'three-quarter right'] },
+      { name: 'height', kind: 'select', options: ['eye level', 'high angle', 'low angle', 'overhead'] },
+      { name: 'distance', kind: 'select', options: ['close-up', 'medium distance', 'far away'] },
+    ],
+    buildTrigger: (v) => `crossview. new camera angle: ${v.direction}, ${v.height}, ${v.distance}`,
+  },
 ];
 
 // Control-signal toggles the IC VFX adapters replace while selected. Includes
 // the master control_guide toggle: IC-LoRAs must not mix with the union
 // control adapter (one IC-LoRA at a time, per AVControl training).
 const FORCED_TOGGLES = ['control_guide', 'use_pose', 'use_depth', 'use_canny'];
-
-const EDIT_TEMPLATES = ['Add', 'Remove', 'Replace', 'Convert'];
 
 const FORCED_REASON = 'Unavailable while a VFX adapter is selected: VFX IC-LoRAs replace the control guidance signals.';
 
@@ -62,19 +93,14 @@ export default {
   selfManaged: true,
 
   /**
-   * Build the VFX gallery button + the (hidden) EditAnything instruction row.
+   * Build the VFX gallery button + the (hidden) per-adapter instruction row.
    * @param {object} c - Control spec (unused beyond defaults).
    * @param {string} id - DOM id for the gallery button (ctl_<param>).
    * @returns {string}
    */
   control(c, id) {
     return `<button id="${id}" class="lora-gallery-button">View VFX Gallery</button>`
-      + `<div class="os-vfx-edit" style="display:none">`
-      + `<select class="advanced-select os-vfx-edit-template">`
-      + EDIT_TEMPLATES.map(t => `<option value="${t}">${t}</option>`).join('')
-      + `</select>`
-      + `<input type="text" class="os-text-input os-vfx-edit-text" placeholder="Edit instruction (e.g. a red hat on the man)">`
-      + `</div>`;
+      + `<div class="os-vfx-edit" style="display:none"></div>`;
   },
 
   /** @returns {string} The selected VFX adapter file path (or ''). */
@@ -82,7 +108,7 @@ export default {
 
   /**
    * Wire the gallery button, drawer, selection flow, toggle forcing and the
-   * EditAnything instruction input.
+   * per-adapter instruction inputs.
    * @param {HTMLButtonElement} button - The gallery button (ctl_<param>).
    * @returns {void}
    */
@@ -93,8 +119,6 @@ export default {
 
     const wrap = button.closest('.advanced-setting') || button.parentElement;
     const editRow = wrap.querySelector('.os-vfx-edit');
-    const editTemplate = editRow.querySelector('.os-vfx-edit-template');
-    const editText = editRow.querySelector('.os-vfx-edit-text');
     const drawer = ensureDrawer();
     const selectedSlot = drawer.querySelector('.lora-selected-slot');
     const galleryContent = drawer.querySelector('.lora-gallery-content');
@@ -112,21 +136,52 @@ export default {
       }
     });
 
-    /** Recompute vfx_trigger for the selected adapter (EditAnything joins the template + free text). */
+    /** Recompute vfx_trigger from the selected adapter's inputs (or fixed trigger). */
     function syncTrigger() {
       const lora = vfxLoraOptions.find(l => l.fileName === selectedFile);
       if (!lora) return;
       let trigger = lora.trigger;
-      if (lora.editInstruction) {
-        const text = editText.value.trim();
-        trigger = text ? `${editTemplate.value} ${text}` : '';
+      if (lora.buildTrigger) {
+        const values = {};
+        for (const spec of lora.inputs) {
+          const el = editRow.querySelector(`[data-vfx-input="${spec.name}"]`);
+          values[spec.name] = el ? el.value.trim() : '';
+        }
+        trigger = lora.buildTrigger(values);
       }
       store.setParam('vfx_trigger', trigger);
       logDebug('VFX trigger updated', { file: selectedFile, trigger });
     }
 
-    editTemplate.addEventListener('change', syncTrigger);
-    editText.addEventListener('input', syncTrigger);
+    /**
+     * Render the selected adapter's instruction inputs into the row and wire
+     * them to syncTrigger. Hides the row for fixed-trigger adapters.
+     * @param {object|null} lora - Selected catalog entry (or null on deselect).
+     */
+    function renderInputs(lora) {
+      editRow.innerHTML = '';
+      if (!lora || !lora.inputs) {
+        editRow.style.display = 'none';
+        return;
+      }
+      for (const spec of lora.inputs) {
+        let el;
+        if (spec.kind === 'select') {
+          el = document.createElement('select');
+          el.className = 'advanced-select';
+          el.innerHTML = spec.options.map(o => `<option value="${o}">${o}</option>`).join('');
+        } else {
+          el = document.createElement('input');
+          el.type = 'text';
+          el.className = 'os-text-input os-vfx-edit-text';
+          el.placeholder = spec.placeholder || '';
+        }
+        el.setAttribute('data-vfx-input', spec.name);
+        el.addEventListener(spec.kind === 'select' ? 'change' : 'input', syncTrigger);
+        editRow.appendChild(el);
+      }
+      editRow.style.display = '';
+    }
 
     /**
      * Force the control-guidance toggles off, grey them out and make them
@@ -170,7 +225,7 @@ export default {
 
     /**
      * Select a VFX adapter: single selection, sets ic_lora + vfx_trigger,
-     * forces the control toggles off, shows the EditAnything row if needed.
+     * forces the control toggles off, renders the adapter's instruction row.
      * @param {string} file - Adapter file path.
      */
     function select(file) {
@@ -180,7 +235,7 @@ export default {
       button.classList.add('lora-selected');
       store.setParam('ic_lora', file);
       setControlToggles(true);
-      editRow.style.display = lora.editInstruction ? '' : 'none';
+      renderInputs(lora);
       syncTrigger();
       selectedSlot.innerHTML = '';
       selectedSlot.appendChild(card(lora, true, deselect));
@@ -199,8 +254,7 @@ export default {
       store.setParam('ic_lora', undefined);
       store.setParam('vfx_trigger', '');
       setControlToggles(false);
-      editRow.style.display = 'none';
-      editText.value = '';
+      renderInputs(null);
       logDebug('VFX adapter deselected');
     }
   },
@@ -233,7 +287,7 @@ function ensureDrawer() {
 /**
  * Populate the VFX gallery grid, skipping the selected adapter.
  * @param {HTMLElement} content - The .lora-gallery-content container.
- * @param {Function} onSelect - (fileName) selection callback.
+ * @param {Function) onSelect - (fileName) selection callback.
  * @returns {void}
  */
 function populate(content, onSelect) {
