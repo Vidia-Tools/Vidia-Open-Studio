@@ -6,7 +6,9 @@
 //   - ic_lora: adapter file path (officials keep the ltxv/ltx2/ prefix;
 //     community adapters are bare file names). Cleared (undefined) on deselect
 //     so the worker keeps the baked union-control default.
-//   - vfx_trigger: uiOnly; buildParams() prepends it to the prompt.
+//   - vfx_trigger: rides in the payload; buildParams() prepends it client-side
+//     and the worker re-prepends it after prompt_prep rewrites the prompt
+//     (auto-improve would otherwise erase the trigger phrase).
 // While an adapter is selected the use_pose/use_depth/use_canny toggles are
 // forced off and disabled (IC VFX adapters replace the control signals);
 // they are restored on deselect. Exactly one adapter selectable at a time.
@@ -118,9 +120,9 @@ export default {
    * @returns {void}
    */
   mount(button) {
-    // vfx_trigger only feeds the client-side prompt prepend in buildParams();
-    // it must never ride in the request payload.
-    store.markUiOnly('vfx_trigger');
+    // 2026-07-16: vfx_trigger intentionally rides in the payload. prompt_prep's
+    // LLM rewrite replaces params["prompt"] worker-side, erasing any client
+    // prepend, so runner.py re-prepends vfx_trigger after the text stage.
 
     const wrap = button.closest('.advanced-setting') || button.parentElement;
     const editRow = wrap.querySelector('.os-vfx-edit');
@@ -282,7 +284,7 @@ export default {
       // Cleared (undefined) so the payload drops the key and the worker keeps
       // the baked strength for the union-control default.
       store.setParam('ic_lora_strength', undefined);
-      store.setParam('vfx_trigger', '');
+      store.setParam('vfx_trigger', undefined);
       slider.disabled = true;
       slider.value = 0;
       sliderVal.textContent = '0.00';

@@ -624,6 +624,14 @@ def run_pipeline(generation_id, user_id, params, relay, progress, run_type="full
                         logger.info(f"  [out:{pname}] -> {len(params[pname])} chars")
                     except OSError as e:
                         logger.info(f"  WARNING: could not read [out:{pname}] at {path}: {e}")
+                # 2026-07-16: IC-LoRA trigger phrases must survive prompt_prep.
+                # The LLM rewrite discards any client-side prepend, so the
+                # trigger is applied here, after the rewritten prompt lands.
+                vfx_trigger = str(params.get("vfx_trigger", "")).strip()
+                if (vfx_trigger and "prompt" in info["text_outputs"]
+                        and not params["prompt"].startswith(vfx_trigger)):
+                    params["prompt"] = f"{vfx_trigger} {params['prompt']}".strip()
+                    logger.info(f"  [vfx_trigger] prepended -> {vfx_trigger!r}")
                 stage_record["output"] = None
             else:
                 output_file = _output_file_from_history(history, prompt_id, info["output_node"])
