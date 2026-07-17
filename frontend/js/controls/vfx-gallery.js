@@ -80,6 +80,8 @@ const FORCED_TOGGLES = ['control_guide', 'use_pose', 'use_depth', 'use_canny'];
 
 const FORCED_REASON = 'Unavailable while a VFX adapter is selected: VFX IC-LoRAs replace the control guidance signals.';
 
+const DEFAULT_VFX_STRENGTH = 1.0;
+
 let selectedFile = null;
 // Checkbox states saved when an adapter forces the control toggles off,
 // restored on deselect.
@@ -93,13 +95,16 @@ export default {
   selfManaged: true,
 
   /**
-   * Build the VFX gallery button + the (hidden) per-adapter instruction row.
+   * Build the VFX gallery button + strength slider + the (hidden) per-adapter
+   * instruction row.
    * @param {object} c - Control spec (unused beyond defaults).
    * @param {string} id - DOM id for the gallery button (ctl_<param>).
    * @returns {string}
    */
   control(c, id) {
     return `<button id="${id}" class="lora-gallery-button">View VFX Gallery</button>`
+      + `<input type="range" class="os-lora-strength" min="0" max="1" step="0.01" value="0" disabled>`
+      + `<span class="advanced-setting-value os-lora-strength-value">0.00</span>`
       + `<div class="os-vfx-edit" style="display:none"></div>`;
   },
 
@@ -119,9 +124,18 @@ export default {
 
     const wrap = button.closest('.advanced-setting') || button.parentElement;
     const editRow = wrap.querySelector('.os-vfx-edit');
+    const slider = wrap.querySelector('.os-lora-strength');
+    const sliderVal = wrap.querySelector('.os-lora-strength-value');
     const drawer = ensureDrawer();
     const selectedSlot = drawer.querySelector('.lora-selected-slot');
     const galleryContent = drawer.querySelector('.lora-gallery-content');
+
+    slider.addEventListener('input', () => {
+      if (!selectedFile) return;
+      const v = parseFloat(slider.value);
+      sliderVal.textContent = v.toFixed(2);
+      store.setParam('ic_lora_strength', v);
+    });
 
     button.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -236,6 +250,10 @@ export default {
       selectedFile = file;
       button.classList.add('lora-selected');
       store.setParam('ic_lora', file);
+      slider.disabled = false;
+      slider.value = DEFAULT_VFX_STRENGTH;
+      sliderVal.textContent = DEFAULT_VFX_STRENGTH.toFixed(2);
+      store.setParam('ic_lora_strength', DEFAULT_VFX_STRENGTH);
       setControlToggles(true);
       renderInputs(lora);
       syncTrigger();
@@ -261,7 +279,13 @@ export default {
       button.classList.remove('lora-selected');
       selectedSlot.innerHTML = '';
       store.setParam('ic_lora', undefined);
+      // Cleared (undefined) so the payload drops the key and the worker keeps
+      // the baked strength for the union-control default.
+      store.setParam('ic_lora_strength', undefined);
       store.setParam('vfx_trigger', '');
+      slider.disabled = true;
+      slider.value = 0;
+      sliderVal.textContent = '0.00';
       setControlToggles(false);
       renderInputs(null);
       logDebug('VFX adapter deselected');

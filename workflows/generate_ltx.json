@@ -88,7 +88,7 @@
     },
     "class_type": "LTXVImgToVideoConditionOnly",
     "_meta": {
-      "title": "🅛🅣🅧 LTXV Img To Video Condition Only"
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Img To Video Condition Only"
     }
   },
   "6": {
@@ -306,7 +306,7 @@
     },
     "class_type": "LTXICLoRALoaderModelOnly",
     "_meta": {
-      "title": "IC LoRA {ic_lora}"
+      "title": "IC LoRA {ic_lora} {ic_lora_strength}"
     }
   },
   "20": {
@@ -348,7 +348,7 @@
     },
     "class_type": "LTXAddVideoICLoRAGuideAdvanced",
     "_meta": {
-      "title": "🅛🅣🅧 Add Video IC-LoRA Guide Advanced"
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide Advanced"
     }
   },
   "21": {
@@ -455,7 +455,7 @@
     },
     "class_type": "SimpleMath+",
     "_meta": {
-      "title": "🔧 Simple Math"
+      "title": "\ud83d\udd27 Simple Math"
     }
   },
   "29": {
@@ -533,7 +533,7 @@
     },
     "class_type": "LTXVTiledVAEDecode",
     "_meta": {
-      "title": "🅛🅣🅧 LTXV Tiled VAE Decode"
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 LTXV Tiled VAE Decode"
     }
   },
   "34": {
@@ -545,7 +545,7 @@
     },
     "class_type": "LTXFloatToInt",
     "_meta": {
-      "title": "🅛🅣🅧 Float To Int"
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Float To Int"
     }
   },
   "35": {
@@ -585,7 +585,7 @@
     },
     "class_type": "VHS_VideoInfo",
     "_meta": {
-      "title": "Video Info 🎥🅥🅗🅢"
+      "title": "Video Info \ud83c\udfa5\ud83c\udd65\ud83c\udd57\ud83c\udd62"
     }
   },
   "43": {
