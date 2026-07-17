@@ -172,6 +172,14 @@ def _format_node_errors(node_errors):
 
 def _apply_runtime_defaults(params):
     """Fill worker-only defaults that are not exposed as frontend controls."""
+    # 2026-07-17: a selected VFX IC-LoRA replaces the union-control adapter, so
+    # pose/depth/canny guidance must be off. The frontend forces this too, but
+    # a stale client state leaked use_pose=true once; enforce it worker-side.
+    if str(params.get("ic_lora", "")).strip():
+        params["use_pose"] = False
+        params["use_depth"] = False
+        params["use_canny"] = False
+
     provided_key = str(params.get("openrouter_api_key", "")).strip()
     env_key = OPENROUTER_API_KEY if OPENROUTER_API_KEY not in OPENROUTER_PLACEHOLDERS else ""
 

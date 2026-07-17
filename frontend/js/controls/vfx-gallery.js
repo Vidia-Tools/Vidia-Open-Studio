@@ -209,11 +209,15 @@ export default {
       if (forced && !savedToggleStates) {
         savedToggleStates = {};
         for (const p of FORCED_TOGGLES) {
+          // 2026-07-17: save + clear via the store, not the DOM. Handling
+          // control_guide first dispatches a change event whose visibility
+          // logic removes the pose/depth/canny inputs from the DOM, so a
+          // DOM-only loop skipped them and use_pose leaked true to the worker.
+          savedToggleStates[p] = store.getParam(p) === true;
+          store.setParam(p, false);
           const input = document.getElementById(`ctl_${p}`);
           if (!input) continue;
-          savedToggleStates[p] = input.checked;
           input.checked = false;
-          store.setParam(p, false);
           // Programmatic .checked changes do not fire 'change'; dependent
           // visibility logic (e.g. hiding pose/depth/canny under control_guide)
           // listens for it, so dispatch manually before disabling.
@@ -225,13 +229,13 @@ export default {
         logDebug('Control toggles forced off', savedToggleStates);
       } else if (!forced && savedToggleStates) {
         for (const p of FORCED_TOGGLES) {
+          store.setParam(p, !!savedToggleStates[p]);
           const input = document.getElementById(`ctl_${p}`);
           if (!input) continue;
           const wrap = input.closest('.advanced-setting');
           if (wrap) applyDisabledState(wrap, false, '');
           input.disabled = false;
           input.checked = !!savedToggleStates[p];
-          store.setParam(p, !!savedToggleStates[p]);
           input.dispatchEvent(new Event('change', { bubbles: true }));
         }
         logDebug('Control toggles restored', savedToggleStates);
