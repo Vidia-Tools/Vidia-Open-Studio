@@ -86,12 +86,22 @@ Build Mode, and others).
 
 ## License
 
-Vidia Open Studio is licensed under the
-[Functional Source License, Version 1.1, Apache 2.0 Future License](LICENSE.md)
-(FSL-1.1-Apache-2.0). You are free to use, modify, and self-host it for any
-Permitted Purpose. Each release automatically converts to Apache 2.0 two
-years after its publication. For commercial licensing inquiries, contact the
-maintainer.
+Copyright 2026 Federico.
+
+The Vidia Open Studio project code in this repository is licensed under the
+[GNU Affero General Public License v3.0](LICENSE) (`AGPL-3.0-only`).
+If you modify the program and let users interact with it over a network,
+section 13 requires you to offer those users the corresponding source of
+your modified version. For separate commercial licensing inquiries, contact
+the maintainer. Versions previously published under FSL retain the grants
+made with those versions.
+
+Third-party software and model weights are subject to their own terms. The
+hosted worker fetches the separately licensed
+[Vidia Open Studio Nodes](https://github.com/Vidia-Tools/Vidia-Open-Studio-Nodes)
+repository. Some model weights listed in [the worker manifest](worker/dependencies.json)
+have use restrictions. For example, [InsightFace's pretrained models](https://github.com/deepinsight/insightface#license)
+are available for non-commercial research under their public terms.
 
 ## Links
 

@@ -31,6 +31,6 @@ automatically, so do not open pull requests or push commits there.
 ## Contributor license agreement
 
 By submitting a contribution to this repository, you agree that your
-contribution is licensed under the project license (FSL-1.1-Apache-2.0, see
-[LICENSE.md](LICENSE.md)), and you grant the maintainer the right to
+contribution is licensed under the project license (AGPL-3.0-only, see
+[LICENSE](LICENSE)), and you grant the maintainer the right to
 relicense your contribution, including in commercial licenses.
